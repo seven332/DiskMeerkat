@@ -24,6 +24,7 @@ struct DiskMeerkatMenuBarSceneLabel: View {
 }
 
 struct DiskMeerkatMenuScene: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.openSettings) private var openSettings
 
     let controller: DiskMeerkatApplicationController
@@ -49,7 +50,7 @@ struct DiskMeerkatMenuScene: View {
     }
 
     private func dismissMenuBarExtra() {
-        NSApp.keyWindow?.orderOut(nil)
+        dismiss()
     }
 }
 
