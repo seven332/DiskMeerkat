@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+
 @testable import DiskMeerkatApp
 
 final class DiskCapacityFormatterTests: XCTestCase {
@@ -85,5 +86,14 @@ final class DiskCapacityFormatterTests: XCTestCase {
             ),
             "1.000.000 GB"
         )
+    }
+
+    func testFormatsWholeThresholdsWithTheRequestedLocale() throws {
+        let englishFormatter = DiskCapacityFormatter(locale: Locale(identifier: "en_US_POSIX"))
+        let germanFormatter = DiskCapacityFormatter(locale: Locale(identifier: "de_DE"))
+        let threshold = try LowSpaceThreshold(gigabytes: 1_000)
+
+        XCTAssertEqual(englishFormatter.string(for: threshold), "1,000 GB")
+        XCTAssertEqual(germanFormatter.string(for: threshold), "1.000 GB")
     }
 }
