@@ -29,6 +29,14 @@ struct DiskCapacityFormatter: Sendable {
         return "\(formattedNumber) GB"
     }
 
+    func string(for threshold: LowSpaceThreshold) -> String {
+        let formatter = makeNumberFormatter(maximumFractionDigits: 0)
+        let number = NSNumber(value: threshold.gigabytes)
+        let formattedNumber = formatter.string(from: number) ?? number.stringValue
+
+        return "\(formattedNumber) GB"
+    }
+
     private func maximumFractionDigits(
         for capacity: Decimal,
         threshold: Decimal,
