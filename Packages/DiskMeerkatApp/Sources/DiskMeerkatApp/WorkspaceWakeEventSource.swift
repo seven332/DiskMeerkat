@@ -67,6 +67,14 @@ final class WorkspaceWakeEventSource: MonitoringWakeEventSource {
         self.observer = observer
     }
 
+    isolated deinit {
+        guard let subscription = activeSubscription else {
+            return
+        }
+        observer.removeWakeObserver(subscription.token)
+        subscription.continuation.finish()
+    }
+
     func events() async -> AsyncStream<Void> {
         endActiveSubscription()
         let subscriptionID = UUID()

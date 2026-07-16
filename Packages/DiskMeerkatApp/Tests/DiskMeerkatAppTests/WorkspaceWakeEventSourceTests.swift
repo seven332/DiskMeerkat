@@ -50,6 +50,25 @@ final class WorkspaceWakeEventSourceTests: XCTestCase {
         XCTAssertEqual(observer.removedTokens.count, 1)
     }
 
+    func testSourceDeinitializationFinishesStreamAndRemovesObserver() async {
+        let observer = RecordingWorkspaceWakeObserver()
+        var source: WorkspaceWakeEventSource? = WorkspaceWakeEventSource(observer: observer)
+        guard let stream = await source?.events() else {
+            return XCTFail("Expected a wake-event stream")
+        }
+        let consumer = Task {
+            for await _ in stream {}
+        }
+        weak let weakSource = source
+
+        source = nil
+
+        XCTAssertNil(weakSource)
+        await consumer.value
+        XCTAssertEqual(observer.activeTokenCount, 0)
+        XCTAssertEqual(observer.removedTokens.count, 1)
+    }
+
     func testNewSubscriptionReplacesTheOldObserverWithoutOverlap() async {
         let observer = RecordingWorkspaceWakeObserver()
         let source = WorkspaceWakeEventSource(observer: observer)

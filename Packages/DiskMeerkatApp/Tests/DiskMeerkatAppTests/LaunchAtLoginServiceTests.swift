@@ -139,6 +139,15 @@ final class LaunchAtLoginServiceTests: XCTestCase {
             LaunchAtLoginSnapshot(actualState: .disabled, problem: .enableFailed)
         )
 
+        let disableMismatchClient = RecordingMainAppServiceClient(states: [.enabled, .enabled])
+        let disableMismatchService = MainAppLaunchAtLoginService(client: disableMismatchClient)
+        let disableMismatch = await disableMismatchService.setEnabled(false)
+
+        XCTAssertEqual(
+            disableMismatch,
+            LaunchAtLoginSnapshot(actualState: .enabled, problem: .disableFailed)
+        )
+
         let unavailableClient = RecordingMainAppServiceClient(states: [.unavailable])
         let unavailableService = MainAppLaunchAtLoginService(client: unavailableClient)
         let unavailable = await unavailableService.setEnabled(true)
