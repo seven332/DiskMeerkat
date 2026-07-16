@@ -57,11 +57,13 @@ UI labels should describe user-visible outcomes rather than expose the internal 
 
 | Condition | Popover presentation | User action |
 | --- | --- | --- |
+| No successful check yet | `Checking disk…` without displaying a fabricated capacity value | Wait |
 | Monitoring normally | `Monitoring` with the latest successful value | Optional `Check Now` |
 | Low space, alert submitted | `Low disk space · Alert sent` while monitoring remains active | Open Settings or system storage management |
 | Notifications unavailable | `Monitoring, but notifications are off` | `Open System Settings` |
-| Disk read failed | Keep the last successful value and show `Couldn’t check disk · Will retry` | Optional `Check Now` |
-| Check in progress | Show lightweight progress and retain the previous value | Wait; duplicate checks are disabled |
+| Notification submission failed | `Low disk space · Couldn’t send alert · Will retry` while monitoring remains active | Wait for retry |
+| Disk read failed | Keep the last successful value, or show `Available space unavailable` if none exists; show `Couldn’t check disk · Will retry` | Optional `Check Now` |
+| Check in progress | Show lightweight progress and retain the previous successful value when available | Wait; duplicate checks are disabled |
 
 When an alert has already been submitted for the current low-space episode, an optional detail explains that another
 alert becomes eligible only after available space recovers above the threshold and later falls below it again.
@@ -108,6 +110,8 @@ may be added only if the destination is reliable on the supported macOS version.
 - Provide VoiceOver labels for the menu-bar status, capacity indicator, and all icon-only controls.
 - Do not communicate healthy, warning, or error states with color alone.
 - Use locale-aware capacity and relative-time formatting while preserving the exact byte values used by monitoring.
+- Use a consistent capacity unit and enough precision that displayed values never contradict the strict threshold
+  comparison near a rounding boundary.
 - Keep text usable with larger accessibility sizes and avoid encoding important content only in a graphical meter.
 - Ensure every popover and Settings action is reachable by keyboard.
 
