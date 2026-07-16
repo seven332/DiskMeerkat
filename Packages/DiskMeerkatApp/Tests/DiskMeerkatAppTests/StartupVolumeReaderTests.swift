@@ -3,7 +3,7 @@ import XCTest
 @testable import DiskMeerkatApp
 
 final class StartupVolumeReaderTests: XCTestCase {
-    func testValidReadUsesStartupRootAndRequiredResourceKeys() throws {
+    func testValidReadUsesStartupRootAndRequiredResourceKeys() async throws {
         let reader = FoundationStartupVolumeReader { url, keys in
             guard url.path == "/" else {
                 throw TestError.unexpectedURL
@@ -23,8 +23,9 @@ final class StartupVolumeReaderTests: XCTestCase {
             )
         }
 
+        let reading = await reader.readStartupVolume()
         XCTAssertEqual(
-            reader.readStartupVolume(),
+            reading,
             .available(
                 StartupVolumeSnapshot(
                     availableCapacity: try DiskCapacity(bytes: 42_000_000_000),
@@ -34,7 +35,7 @@ final class StartupVolumeReaderTests: XCTestCase {
         )
     }
 
-    func testMissingAndBlankNamesRemainSuccessfulReads() throws {
+    func testMissingAndBlankNamesRemainSuccessfulReads() async throws {
         for name in [nil, "", " \n\t"] as [String?] {
             let reader = FoundationStartupVolumeReader { _, _ in
                 StartupVolumeResourceValues(
@@ -43,8 +44,9 @@ final class StartupVolumeReaderTests: XCTestCase {
                 )
             }
 
+            let reading = await reader.readStartupVolume()
             XCTAssertEqual(
-                reader.readStartupVolume(),
+                reading,
                 .available(
                     StartupVolumeSnapshot(
                         availableCapacity: try DiskCapacity(bytes: 20_000_000_000),
@@ -55,7 +57,7 @@ final class StartupVolumeReaderTests: XCTestCase {
         }
     }
 
-    func testVolumeNameIsTrimmed() throws {
+    func testVolumeNameIsTrimmed() async throws {
         let reader = FoundationStartupVolumeReader { _, _ in
             StartupVolumeResourceValues(
                 availableCapacityForImportantUsage: 20_000_000_000,
@@ -63,8 +65,9 @@ final class StartupVolumeReaderTests: XCTestCase {
             )
         }
 
+        let reading = await reader.readStartupVolume()
         XCTAssertEqual(
-            reader.readStartupVolume(),
+            reading,
             .available(
                 StartupVolumeSnapshot(
                     availableCapacity: try DiskCapacity(bytes: 20_000_000_000),
@@ -74,7 +77,7 @@ final class StartupVolumeReaderTests: XCTestCase {
         )
     }
 
-    func testMissingCapacityIsUnavailableRatherThanZero() {
+    func testMissingCapacityIsUnavailableRatherThanZero() async {
         let reader = FoundationStartupVolumeReader { _, _ in
             StartupVolumeResourceValues(
                 availableCapacityForImportantUsage: nil,
@@ -82,10 +85,11 @@ final class StartupVolumeReaderTests: XCTestCase {
             )
         }
 
-        XCTAssertEqual(reader.readStartupVolume(), .failed(.unavailable))
+        let reading = await reader.readStartupVolume()
+        XCTAssertEqual(reading, .failed(.unavailable))
     }
 
-    func testNegativeCapacityIsInvalidRatherThanZero() {
+    func testNegativeCapacityIsInvalidRatherThanZero() async {
         let reader = FoundationStartupVolumeReader { _, _ in
             StartupVolumeResourceValues(
                 availableCapacityForImportantUsage: -1,
@@ -93,15 +97,17 @@ final class StartupVolumeReaderTests: XCTestCase {
             )
         }
 
-        XCTAssertEqual(reader.readStartupVolume(), .failed(.invalidCapacity))
+        let reading = await reader.readStartupVolume()
+        XCTAssertEqual(reading, .failed(.invalidCapacity))
     }
 
-    func testThrownResourceReadIsUnavailable() {
+    func testThrownResourceReadIsUnavailable() async {
         let reader = FoundationStartupVolumeReader { _, _ in
             throw TestError.readFailed
         }
 
-        XCTAssertEqual(reader.readStartupVolume(), .failed(.unavailable))
+        let reading = await reader.readStartupVolume()
+        XCTAssertEqual(reading, .failed(.unavailable))
     }
 
     private enum TestError: Error {

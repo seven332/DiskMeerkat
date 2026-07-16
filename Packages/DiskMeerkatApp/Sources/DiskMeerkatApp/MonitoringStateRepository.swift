@@ -139,6 +139,10 @@ actor UserDefaultsMonitoringStateRepository: MonitoringStateRepository {
 
     private struct SchemaHeader: Decodable {
         let schemaVersion: Int
+
+        private enum CodingKeys: String, CodingKey {
+            case schemaVersion
+        }
     }
 
     private struct Version1Payload: Codable {
@@ -147,5 +151,13 @@ actor UserDefaultsMonitoringStateRepository: MonitoringStateRepository {
         let checkIntervalSeconds: Int
         let notificationEpisodeState: String
         let hasCompletedOnboarding: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case schemaVersion
+            case thresholdBytes
+            case checkIntervalSeconds
+            case notificationEpisodeState
+            case hasCompletedOnboarding
+        }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 
 protocol StartupVolumeReader: Sendable {
-    func readStartupVolume() -> DiskSpaceReading
+    func readStartupVolume() async -> DiskSpaceReading
 }
 
 struct StartupVolumeResourceValues: Equatable, Sendable {
@@ -29,7 +29,7 @@ struct FoundationStartupVolumeReader: StartupVolumeReader, Sendable {
         self.resourceValuesLoader = resourceValuesLoader
     }
 
-    func readStartupVolume() -> DiskSpaceReading {
+    func readStartupVolume() async -> DiskSpaceReading {
         let resourceValues: StartupVolumeResourceValues
         do {
             resourceValues = try resourceValuesLoader(startupVolumeURL, Self.resourceKeys)
