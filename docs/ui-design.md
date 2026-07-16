@@ -118,8 +118,8 @@ V1 uses one compact form instead of tabs:
   changed.
 - **Low-space alert:** “Notify me when available space falls below,” followed by a whole-number field and explicit
   decimal `GB` unit. The accepted range is 1 through 1,000,000 GB; the default is 20 GB.
-- **Check interval:** Offer exactly 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours; the default is
-  15 minutes.
+- **Check interval:** Offer exactly 1 minute, 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours; the
+  default is 15 minutes.
 - **Notifications:** Show the actual authorization state and either `Enable Notifications` or a useful route to
   System Settings when permission is denied.
 - **Launch at Login:** Provide an opt-in switch, off by default, accompanied by actual system status when the request

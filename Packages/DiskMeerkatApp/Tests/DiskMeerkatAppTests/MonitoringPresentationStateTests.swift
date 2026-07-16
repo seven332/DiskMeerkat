@@ -333,6 +333,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
 
     func testEverySupportedIntervalHasConciseDisplayCopy() {
         let expected: [(CheckInterval, String)] = [
+            (.oneMinute, "1 minute"),
             (.fiveMinutes, "5 minutes"),
             (.fifteenMinutes, "15 minutes"),
             (.thirtyMinutes, "30 minutes"),

@@ -78,6 +78,7 @@ struct LowSpaceThreshold: Comparable, Sendable {
 }
 
 enum CheckInterval: Int, CaseIterable, Sendable {
+    case oneMinute = 60
     case fiveMinutes = 300
     case fifteenMinutes = 900
     case thirtyMinutes = 1_800

@@ -74,8 +74,8 @@ V1 does not:
 2. Supported thresholds are 1 GB through 1 PB inclusive, or 1 through 1,000,000 in the numeric field. The default is
    20 GB.
 3. The app persists the threshold as its exact byte count, not a rounded floating-point value.
-4. Supported check intervals are 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours. The default is
-   15 minutes.
+4. Supported check intervals are 1 minute, 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours. The
+   default is 15 minutes.
 5. Settings edits remain drafts until saved. Invalid or out-of-range drafts do not replace the last valid
    configuration, restart the schedule, or request a check.
 6. Saving valid settings first persists the configuration, then cancels and replaces the existing interval schedule,

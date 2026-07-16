@@ -471,6 +471,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
 extension CheckInterval {
     var displayName: String {
         switch self {
+        case .oneMinute:
+            "1 minute"
         case .fiveMinutes:
             "5 minutes"
         case .fifteenMinutes:
