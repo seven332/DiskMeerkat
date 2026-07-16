@@ -31,6 +31,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
             )
         )
         XCTAssertEqual(state.headline, .checking)
+        XCTAssertEqual(state.statusDetail, "Reading available space on the startup disk.")
         XCTAssertTrue(state.isCheckInProgress)
         XCTAssertFalse(state.canCheckNow)
     }
@@ -49,13 +50,38 @@ final class MonitoringPresentationStateTests: XCTestCase {
             )
         )
 
-        XCTAssertEqual(state.headline, .checking)
+        XCTAssertEqual(state.headline, .monitoring)
         XCTAssertEqual(state.volumeName, "Macintosh HD")
         XCTAssertEqual(state.availableSpaceText, "42 GB available")
         XCTAssertEqual(
             state.statusDetail,
-            "The previous successful value stays visible while the check runs."
+            "DiskMeerkat will alert when available space falls below 20 GB."
         )
+        XCTAssertTrue(state.isCheckInProgress)
+        XCTAssertFalse(state.canCheckNow)
+    }
+
+    func testCheckInProgressDoesNotHideThePreviousLowSpaceOutcome() {
+        let volume = startupVolume(gigabytes: 18)
+        let state = presentation(
+            snapshot: snapshot(
+                lifecycleState: .running,
+                notificationEpisodeState: .suppressed,
+                hasCompletedOnboarding: true,
+                notificationAuthorizationState: .authorized,
+                isCheckInProgress: true,
+                latestSuccessfulVolume: volume,
+                latestAssessment: .available(
+                    startupVolume: volume,
+                    relationship: .below
+                )
+            )
+        )
+
+        XCTAssertEqual(state.headline, .lowSpaceAlertSent)
+        XCTAssertEqual(state.availableSpaceText, "18 GB available")
+        XCTAssertTrue(state.isCheckInProgress)
+        XCTAssertFalse(state.canCheckNow)
     }
 
     func testHealthyAndBoundaryCapacityMapToMonitoring() {

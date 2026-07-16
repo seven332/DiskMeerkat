@@ -189,7 +189,7 @@ struct MonitoringPresentationState: Equatable, Sendable {
             break
         }
 
-        if snapshot.isCheckInProgress || snapshot.latestAssessment == nil {
+        if snapshot.latestAssessment == nil {
             return .checking
         }
 
@@ -230,7 +230,7 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .starting:
             "Restoring saved settings and notification status."
         case .checking:
-            "The previous successful value stays visible while the check runs."
+            "Reading available space on the startup disk."
         case .monitoring:
             "DiskMeerkat will alert when available space falls below \(threshold)."
         case .lowSpace:
