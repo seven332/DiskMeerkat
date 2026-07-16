@@ -58,7 +58,7 @@ public final class DiskMeerkatPresentationModel {
 
     @ObservationIgnored private let runtimeClient: any MonitoringPresentationRuntimeClient
     @ObservationIgnored private let launchAtLoginService: any LaunchAtLoginService
-    @ObservationIgnored private let openNotificationSettingsAction: @Sendable () async -> Void
+    @ObservationIgnored private let openNotificationSettingsAction: @MainActor @Sendable () async -> Void
     @ObservationIgnored private let locale: Locale
     @ObservationIgnored private var observationTask: Task<Void, Never>?
     @ObservationIgnored private var observationID: UUID?
@@ -69,7 +69,7 @@ public final class DiskMeerkatPresentationModel {
         runtimeClient: any MonitoringPresentationRuntimeClient,
         launchAtLoginService: any LaunchAtLoginService,
         locale: Locale = .autoupdatingCurrent,
-        openNotificationSettings: @escaping @Sendable () async -> Void
+        openNotificationSettings: @escaping @MainActor @Sendable () async -> Void
     ) {
         self.snapshot = snapshot
         self.runtimeClient = runtimeClient
