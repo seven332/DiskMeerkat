@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved V1 design. See the [Project Status](../README.md#project-status) for delivery progress.
+Delivered in DiskMeerkat V1. See the [V1 Acceptance Matrix](v1-acceptance.md) for presentation and interaction
+evidence.
 
 ## Purpose
 

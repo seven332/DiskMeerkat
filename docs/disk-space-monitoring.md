@@ -2,7 +2,8 @@
 
 ## Status
 
-Approved for V1 implementation. See the [Project Status](../README.md#project-status) for delivery progress.
+Delivered in DiskMeerkat V1. See the [V1 Acceptance Matrix](v1-acceptance.md) for requirement-to-test and
+built-product evidence.
 
 The companion [UI Design](ui-design.md) defines the approved menu-bar, Settings, status-window, and notification
 experience. This document is authoritative for monitoring behavior, state transitions, persistence, and errors.

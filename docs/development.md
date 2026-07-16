@@ -217,4 +217,8 @@ xcodebuild test \
   MACOSX_DEPLOYMENT_TARGET="$local_deployment_target"
 ```
 
-GitHub CI runs the complete validation suite for every pull request. Local validation should still use the narrowest credible checks for the actual change. When adding a package, add it to the relevant CI formatting and test commands as well.
+GitHub CI runs the complete validation suite for every pull request. It also builds the Release app to verify the
+menu-bar-only bundle setting and ensure debug UI-test fixture entry points are not shipped. Local validation should
+still use the narrowest credible checks for the actual change. When adding a package, add it to the relevant CI
+formatting and test commands as well. The [V1 Acceptance Matrix](v1-acceptance.md) records the current requirement and
+built-product evidence.
