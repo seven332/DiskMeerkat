@@ -69,6 +69,7 @@ UI labels describe user-visible outcomes rather than expose the internal `armed`
 | Low space, notifications off | `Low disk space · Notifications are off` | Enable notifications or open System Settings |
 | Notification submission failed | `Low disk space · Couldn't send alert · Will retry` | Wait for retry |
 | Disk read failed | Keep the last successful value, or show `Available space unavailable`; add `Couldn't check disk · Will retry` | `Check Now` while idle |
+| Persistence failed | Keep the current in-memory status; explain what could not be saved and that DiskMeerkat will retry | Retry a Settings save when applicable |
 | Check in progress | Retain the previous successful value and show lightweight progress | `Check Now` disabled |
 | Launch at login needs attention | Keep monitoring status and add a separate login-item explanation | Review Settings |
 
@@ -111,8 +112,9 @@ the app finishes composition and then presents the singleton window once.
 
 V1 uses one compact form instead of tabs:
 
-- **Monitored Volume:** Show the startup volume and its current capacity as read-only. Do not use disclosure or picker
-  styling that suggests the volume can be changed.
+- **Monitored Volume:** Show the system-provided startup-volume name, or localized `Startup Disk` when it is missing,
+  and the current capacity as read-only. Do not use disclosure or picker styling that suggests the volume can be
+  changed.
 - **Low-space alert:** “Notify me when available space falls below,” followed by a whole-number field and explicit
   decimal `GB` unit. The accepted range is 1 through 1,000,000 GB; the default is 20 GB.
 - **Check interval:** Offer exactly 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours; the default is
@@ -126,6 +128,8 @@ Threshold and interval edits are local drafts. Invalid threshold text shows a ne
 not replace the last valid value. The Save action is enabled only for a valid supported threshold and interval. Saving
 persists the values, closes the draft state, and invokes the immediate-check and schedule-replacement behavior defined
 in the [requirements](disk-space-monitoring.md#configuration). Cancel or closing Settings discards unsaved drafts.
+If persistence fails, keep the draft and prior committed values visible, show an inline retryable error, and do not
+present the new schedule as active.
 
 Settings does not expose notification suppression as a toggle. Resetting it manually would defeat the one-alert-per-
 episode behavior.
@@ -198,7 +202,8 @@ The V1 presentation additionally satisfies these observable interactions:
 
 1. First launch shows one dismissible onboarding/status window without automatically prompting for notifications.
 2. Closing every window leaves the menu-bar item and monitoring active; Quit removes them and stops monitoring.
-3. Invalid Settings drafts show inline errors, cannot be saved, and do not change the displayed committed values.
+3. Invalid Settings drafts show inline errors, cannot be saved, and do not change the displayed committed values. A
+   valid draft whose persistence fails remains editable beside the prior committed values and does not appear applied.
 4. During a check, progress is visible, the last successful capacity remains readable, and `Check Now` is disabled.
 5. Selecting `Enable Notifications` is the only route to the system prompt; denial leaves monitoring usable and
    explained.

@@ -57,8 +57,9 @@ V1 does not:
 2. The monitored volume is fixed. The app does not present a volume picker or maintain per-volume state.
 3. A disk check reads Foundation's `volumeAvailableCapacityForImportantUsage` for `/`. This definition, which can
    account for space the system may make available for important use, is used consistently for comparison and display.
-4. A successful disk check returns the non-negative capacity as an exact byte count and the system-provided volume
-   name when available.
+4. A successful disk check returns the non-negative capacity as an exact byte count. The app uses a non-empty
+   system-provided volume name when available and otherwise uses the localized fallback `Startup Disk`; a missing name
+   alone does not fail the capacity reading.
 5. A missing or negative capacity, or an error while reading the resource value, is a failed check. It is never
    converted to zero available space.
 6. Capacity units are decimal: `1 GB = 1,000,000,000 bytes` and `1 PB = 1,000,000 GB`.
@@ -76,12 +77,14 @@ V1 does not:
    15 minutes.
 5. Settings edits remain drafts until saved. Invalid or out-of-range drafts do not replace the last valid
    configuration, restart the schedule, or request a check.
-6. Saving valid settings persists the configuration, cancels and replaces the existing interval schedule, and requests
-   one immediate check through the shared serialized check path.
-7. Valid configuration changes take effect without restarting the app and survive subsequent launches.
-8. A threshold change is evaluated by the next successful check using the normal notification transition table.
+6. Saving valid settings first persists the configuration, then cancels and replaces the existing interval schedule,
+   and requests one immediate check through the shared serialized check path.
+7. If configuration persistence fails, the last committed configuration and schedule remain active, no check is
+   requested for the failed save, and the UI keeps the draft available with an actionable error.
+8. Valid configuration changes take effect without restarting the app and survive subsequent launches.
+9. A threshold change is evaluated by the next successful check using the normal notification transition table.
    Changing the threshold does not directly reset notification suppression.
-9. Changing only the interval does not change the armed or suppressed state.
+10. Changing only the interval does not change the armed or suppressed state.
 
 ### Scheduling and Disk Checks
 
@@ -137,6 +140,14 @@ recovery is observed, a later drop below the threshold starts a new low-space ep
 6. Raising the threshold may make an armed low-space notification eligible on the next successful reading.
 7. A failed read or failed notification submission never changes persisted notification state.
 8. State needed to remember that first-run onboarding was completed also survives relaunches.
+9. Each actual `armed` or `suppressed` transition updates the serialized in-memory state and immediately attempts to
+   persist it. A persistence failure is exposed to the UI and retried without rolling the in-process transition back.
+10. If suppression persistence fails after an accepted notification submission, the current process remains
+    suppressed and must not submit another request for the same episode. The app retries the durable write.
+11. Notification submission and local persistence cannot be atomic. A process termination after the system accepts a
+    request but before suppression is durably written can restore the prior armed state on relaunch and allow a
+    duplicate request. Implementation minimizes and tests this known boundary; it must not claim crash-safe
+    exactly-once delivery.
 
 Persisting suppression favors avoiding duplicate notifications. If the app was not running, it cannot infer whether
 the disk briefly recovered and became low again during that time.
@@ -186,7 +197,7 @@ The app makes monitoring understandable without logs. Its UI shows:
 - The latest successfully measured available space, if any.
 - The configured threshold and interval.
 - The time of the latest successful check and the next scheduled check.
-- Current disk-read, notification-permission, notification-submission, or launch-at-login problems.
+- Current disk-read, persistence, notification-permission, notification-submission, or launch-at-login problems.
 
 The UI describes outcomes rather than requiring users to understand the internal `armed` and `suppressed` names. A
 notification failure must not be presented as if disk monitoring itself stopped.
@@ -306,6 +317,18 @@ Unless a scenario states otherwise, the threshold is `100 GB`.
       the values appear equal.
     - The app adds precision or an explicit qualifier so the displayed relationship agrees with the comparison.
 
+20. **The volume name is unavailable**
+    - The startup-volume capacity is valid but the system returns no usable volume name.
+    - The check succeeds, status and notification content use the localized `Startup Disk` fallback, and notification
+      transitions continue normally.
+
+21. **A persistence write fails**
+    - A configuration write failure leaves the prior committed settings and schedule active, keeps the draft visible,
+      reports the error, and requests no settings-triggered check.
+    - If a notification request was accepted before suppression persistence fails, the current process stays
+      suppressed, reports and retries the write, and does not resubmit for later low readings in that process.
+    - Tests cover the documented non-atomic termination window between external submission and local persistence.
+
 ## Testing Strategy
 
 Follow the repository-wide unit, integration, then UI test priority in the
@@ -323,6 +346,7 @@ Unit-test configuration validation, decimal-byte conversion and formatting, and 
 - Restored persisted state.
 - Threshold and interval changes.
 - Boundary values from 1 GB through 1 PB and near-rounding byte values.
+- Missing volume-name fallback and persistence-failure transitions.
 
 Use controllable time and injected effects instead of real waits.
 
@@ -332,6 +356,7 @@ Integration-test the monitoring runtime with controlled implementations of:
 
 - Startup-volume capacity reading.
 - Versioned configuration and state persistence.
+- Persistence write failures and the notification-submission durability boundary.
 - Notification authorization and submission.
 - Scheduling, coalescing, wake, settings, permission, and shutdown behavior.
 - Launch-at-login state mapping without changing the test machine's login items.
