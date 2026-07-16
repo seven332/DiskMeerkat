@@ -33,8 +33,12 @@ struct DiskMeerkatMenuScene: View {
         DiskMeerkatMenuView(
             model: controller.model,
             actions: DiskMeerkatSurfaceActions(
-                openStatus: statusRouter.requestStatus,
+                openStatus: {
+                    dismissMenuBarExtra()
+                    statusRouter.requestStatus()
+                },
                 openSettings: {
+                    dismissMenuBarExtra()
                     openSettings()
                 },
                 quit: {
@@ -42,6 +46,10 @@ struct DiskMeerkatMenuScene: View {
                 }
             )
         )
+    }
+
+    private func dismissMenuBarExtra() {
+        NSApp.keyWindow?.close()
     }
 }
 

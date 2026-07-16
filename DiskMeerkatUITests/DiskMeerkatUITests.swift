@@ -87,6 +87,7 @@ final class DiskMeerkatUITests: XCTestCase {
         )
         XCTAssertTrue(openStatus.exists)
         press(openStatus)
+        XCTAssertTrue(menuCapacity.waitForNonExistence(timeout: 2))
         let statusWindow = launch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(statusWindow.waitForExistence(timeout: 2))
         launch.app.typeKey("w", modifierFlags: .command)
@@ -100,6 +101,7 @@ final class DiskMeerkatUITests: XCTestCase {
         )
         XCTAssertTrue(openSettings.waitForExistence(timeout: 2))
         press(openSettings)
+        XCTAssertTrue(openSettings.waitForNonExistence(timeout: 2))
         XCTAssertTrue(launch.app.windows.firstMatch.waitForExistence(timeout: 2))
 
         let settingsRoot = element(
