@@ -16,12 +16,12 @@ final class DiskMeerkatUITests: XCTestCase {
     }
 
     @MainActor
-    func testShowsGreeting() throws {
+    func testShowsTruthfulDisconnectedStatus() throws {
         let app = XCUIApplication()
         app.launchArguments += ["-ApplePersistenceIgnoreState", "YES"]
         app.launch()
 
-        XCTAssertTrue(app.staticTexts["Hello, world!"].waitForExistence(timeout: 2))
+        XCTAssertTrue(app.staticTexts["Monitoring stopped"].waitForExistence(timeout: 2))
     }
 
     @MainActor
