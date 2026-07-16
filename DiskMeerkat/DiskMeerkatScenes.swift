@@ -49,7 +49,7 @@ struct DiskMeerkatMenuScene: View {
     }
 
     private func dismissMenuBarExtra() {
-        NSApp.keyWindow?.close()
+        NSApp.keyWindow?.orderOut(nil)
     }
 }
 
