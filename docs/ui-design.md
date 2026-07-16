@@ -47,8 +47,9 @@ Selecting the status item opens a compact popover:
 ```
 
 The available-space value is the visual priority. The volume name, configured threshold, last successful check, and
-next scheduled check provide context. `Check Now` uses the same serialized check path and state transitions as a
-scheduled check; it is disabled while a check is already running.
+next scheduled check provide context. The proposed `Check Now` control remains subject to product approval. If it is
+included, it uses the same serialized check path and state transitions as a scheduled check and is disabled while a
+check is already running.
 
 ## Status Presentation
 

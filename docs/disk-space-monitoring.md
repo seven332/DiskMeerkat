@@ -67,6 +67,7 @@ The default values, supported ranges, capacity unit, and whether percentage-base
 6. Each successful check returns a non-negative available-space value for the monitored volume.
 7. A failed or invalid disk-space read must not be treated as zero available space.
 8. A failed check must not send a low-space notification or change the notification state. The app retries on a later scheduled check.
+9. If the UI provides a manual check, it uses the same disk-reading and notification-state logic as a scheduled check and must not overlap an active check.
 
 ### Notification State
 
@@ -243,3 +244,4 @@ Before implementation, confirm:
 8. Must monitoring continue when the main window is closed, and should the app support launching at login?
 9. Should saving settings trigger an immediate check, or should changes apply at the next scheduled check?
 10. Should the notification include an action that opens DiskMeerkat or a system storage-management view?
+11. Should the menu bar provide a manual `Check Now` action?
