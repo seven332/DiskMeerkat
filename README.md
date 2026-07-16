@@ -34,4 +34,5 @@ For canonical formatting and test commands, follow [Local Validation](docs/devel
 
 - [Development Guide](docs/development.md): commit conventions, architecture, testing strategy, and local validation.
 - [Disk Space Monitoring Requirements](docs/disk-space-monitoring.md): planned behavior, notification state machine, acceptance criteria, and open decisions.
+- [UI Design](docs/ui-design.md): proposed menu-bar experience, settings, status presentation, and notification content.
 - [Repository Guidelines](AGENTS.md): concise instructions for contributors and coding agents.
