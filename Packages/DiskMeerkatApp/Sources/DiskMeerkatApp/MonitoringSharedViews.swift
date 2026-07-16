@@ -60,7 +60,7 @@ struct MonitoringScheduleView: View {
     var body: some View {
         Grid(alignment: .leading, horizontalSpacing: 18, verticalSpacing: 8) {
             GridRow {
-                Text("Last checked")
+                Text("Last successful check")
                     .foregroundStyle(.secondary)
                 if let date = state.lastSuccessfulCheckAt {
                     Text(date, style: .relative)
@@ -116,7 +116,7 @@ struct NotificationPermissionView: View {
     let openSettings: () -> Void
     var enableIdentifier = DiskMeerkatAccessibilityIdentifiers.statusEnableNotifications
     var openSettingsIdentifier =
-        DiskMeerkatAccessibilityIdentifiers.settingsOpenNotificationSettings
+        DiskMeerkatAccessibilityIdentifiers.statusOpenNotificationSettings
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -195,12 +195,18 @@ struct OnboardingView: View {
                         )
                 } else if state.notificationPermission.canOpenSettings {
                     Button("Open Notification Settings", action: openNotificationSettings)
+                        .accessibilityIdentifier(
+                            DiskMeerkatAccessibilityIdentifiers.statusOpenNotificationSettings
+                        )
                 }
-                Button("Not Now", action: dismiss)
-                    .keyboardShortcut(.cancelAction)
-                    .accessibilityIdentifier(
-                        DiskMeerkatAccessibilityIdentifiers.statusDismissOnboarding
-                    )
+                Button(
+                    state.notificationPermission.kind == .authorized ? "Continue" : "Not Now",
+                    action: dismiss
+                )
+                .keyboardShortcut(.cancelAction)
+                .accessibilityIdentifier(
+                    DiskMeerkatAccessibilityIdentifiers.statusDismissOnboarding
+                )
             }
         }
         .padding(22)

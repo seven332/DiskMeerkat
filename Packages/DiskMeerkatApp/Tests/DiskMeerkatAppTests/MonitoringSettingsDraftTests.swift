@@ -91,7 +91,7 @@ final class MonitoringSettingsDraftTests: XCTestCase {
     func testAccessibilityIdentifiersAreStableAndUnique() {
         let identifiers = DiskMeerkatAccessibilityIdentifiers.all
 
-        XCTAssertEqual(identifiers.count, 21)
+        XCTAssertEqual(identifiers.count, 22)
         XCTAssertEqual(Set(identifiers).count, identifiers.count)
         XCTAssertTrue(identifiers.allSatisfy { $0.hasPrefix("diskMeerkat.") })
     }

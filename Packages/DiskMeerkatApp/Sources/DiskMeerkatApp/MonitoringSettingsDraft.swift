@@ -144,6 +144,8 @@ public enum DiskMeerkatAccessibilityIdentifiers {
     public static let statusCapacity = "diskMeerkat.status.capacity"
     public static let statusCheckNow = "diskMeerkat.status.checkNow"
     public static let statusEnableNotifications = "diskMeerkat.status.enableNotifications"
+    public static let statusOpenNotificationSettings =
+        "diskMeerkat.status.openNotificationSettings"
     public static let statusDismissOnboarding = "diskMeerkat.status.dismissOnboarding"
     public static let settingsRoot = "diskMeerkat.settings.root"
     public static let settingsThreshold = "diskMeerkat.settings.threshold"
@@ -168,6 +170,7 @@ public enum DiskMeerkatAccessibilityIdentifiers {
         statusCapacity,
         statusCheckNow,
         statusEnableNotifications,
+        statusOpenNotificationSettings,
         statusDismissOnboarding,
         settingsRoot,
         settingsThreshold,
