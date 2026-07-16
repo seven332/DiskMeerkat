@@ -51,6 +51,10 @@ next scheduled check provide context. The proposed `Check Now` control remains s
 included, it uses the same serialized check path and state transitions as a scheduled check and is disabled while a
 check is already running.
 
+The popover reads the next-check deadline from shared monitoring state and does not create a second monitoring timer.
+Relative-time text refreshes only while the popover is visible, at the coarsest cadence needed for its displayed
+precision.
+
 ## Status Presentation
 
 UI labels should describe user-visible outcomes rather than expose the internal `armed` and `suppressed` state names.
