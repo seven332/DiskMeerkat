@@ -36,10 +36,13 @@ jobs:
           --parallel
           --strict
           DiskMeerkat
-          DiskMeerkatTests
           DiskMeerkatUITests
+          Packages/DiskMeerkatApp
 
-      - name: Run tests
+      - name: Run package tests
+        run: swift test --package-path Packages/DiskMeerkatApp
+
+      - name: Run app tests
         run: |
           # Hosted runner OS releases can trail the project's deployment target.
           runner_deployment_target="$(sw_vers -productVersion | cut -d. -f1,2)"

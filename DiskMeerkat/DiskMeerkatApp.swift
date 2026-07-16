@@ -1,3 +1,4 @@
+import DiskMeerkatApp
 import SwiftUI
 
 @main
