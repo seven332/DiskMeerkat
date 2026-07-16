@@ -193,7 +193,7 @@ Given a threshold of `100 GB`, the following scenarios must hold:
 
 ## Testing Strategy
 
-Follow the repository-wide unit, integration, then UI test priority.
+Follow the repository-wide unit, integration, then UI test priority defined in the [Development Guide](development.md#testing-strategy). The following expectations are specific to disk-space monitoring.
 
 ### Unit Tests
 
@@ -225,9 +225,7 @@ Reserve UI tests for a small number of critical flows that cannot be covered bel
 
 ## Engineering Constraints
 
-- Monitoring rules, scheduling, configuration, and testable notification decisions belong in `Packages/`.
-- The Xcode application target remains a thin shell and contains only app lifecycle, notification-system wiring, entitlements, and other target-specific integration that cannot live cleanly in a package.
-- System disk and notification APIs should be accessed behind package-facing interfaces so that the state machine can be unit-tested deterministically.
+Follow the [package-first architecture](development.md#package-first-architecture): monitoring rules, scheduling, configuration, and notification decisions belong in `Packages/`, while target-specific system integration remains in the app shell. Access disk and notification APIs through package-facing interfaces so the state machine can be tested deterministically.
 
 ## Open Product Decisions
 
