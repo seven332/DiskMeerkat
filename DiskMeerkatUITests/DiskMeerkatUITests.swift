@@ -1,5 +1,3 @@
-import AppKit
-import ApplicationServices
 import Foundation
 import XCTest
 
@@ -15,7 +13,6 @@ final class DiskMeerkatUITests: XCTestCase {
 
         let statusWindow = dismissalLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(statusWindow.waitForExistence(timeout: 3))
-        moveApplicationWindowsToPrimaryDisplay()
         XCTAssertTrue(dismissalLaunch.app.staticTexts["Welcome to DiskMeerkat"].exists)
         XCTAssertFalse(dismissalLaunch.app.dialogs.firstMatch.exists)
 
@@ -47,7 +44,6 @@ final class DiskMeerkatUITests: XCTestCase {
         defer { terminateIfNeeded(closeLaunch.app) }
         let closeWindow = closeLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(closeWindow.waitForExistence(timeout: 3))
-        moveApplicationWindowsToPrimaryDisplay()
         XCTAssertTrue(closeLaunch.app.staticTexts["Welcome to DiskMeerkat"].exists)
 
         closeLaunch.app.typeKey("w", modifierFlags: .command)
@@ -93,7 +89,6 @@ final class DiskMeerkatUITests: XCTestCase {
         press(openStatus)
         let statusWindow = launch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(statusWindow.waitForExistence(timeout: 2))
-        moveApplicationWindowsToPrimaryDisplay()
         launch.app.typeKey("w", modifierFlags: .command)
         XCTAssertTrue(statusWindow.waitForNonExistence(timeout: 2))
         assertApplicationIsRunning(launch.app)
@@ -106,7 +101,6 @@ final class DiskMeerkatUITests: XCTestCase {
         XCTAssertTrue(openSettings.waitForExistence(timeout: 2))
         press(openSettings)
         XCTAssertTrue(launch.app.windows.firstMatch.waitForExistence(timeout: 2))
-        moveApplicationWindowsToPrimaryDisplay()
 
         let settingsRoot = element(
             in: launch.app,
@@ -140,7 +134,7 @@ final class DiskMeerkatUITests: XCTestCase {
         openMenu(in: launch.app)
         let quit = element(in: launch.app, identifier: "diskMeerkat.menu.quit")
         XCTAssertTrue(quit.waitForExistence(timeout: 2))
-        press(quit, mayTerminateApplication: true)
+        press(quit)
         XCTAssertTrue(launch.app.wait(for: .notRunning, timeout: 3))
     }
 
@@ -151,7 +145,6 @@ final class DiskMeerkatUITests: XCTestCase {
 
         let pendingWindow = pendingLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(pendingWindow.waitForExistence(timeout: 3))
-        moveApplicationWindowsToPrimaryDisplay()
         XCTAssertEqual(
             pendingLaunch.app.windows.matching(identifier: "DiskMeerkat Status").count,
             1
@@ -165,7 +158,6 @@ final class DiskMeerkatUITests: XCTestCase {
 
         let runningWindow = runningLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(runningWindow.waitForExistence(timeout: 3))
-        moveApplicationWindowsToPrimaryDisplay()
         postNotificationActivation(session: runningLaunch.session)
         XCTAssertEqual(
             runningLaunch.app.windows.matching(identifier: "DiskMeerkat Status").count,
@@ -194,7 +186,6 @@ final class DiskMeerkatUITests: XCTestCase {
             XCTAssertTrue(
                 launch.app.windows["DiskMeerkat Status"].waitForExistence(timeout: 3)
             )
-            moveApplicationWindowsToPrimaryDisplay()
             XCTAssertTrue(launch.app.staticTexts[expectedText].waitForExistence(timeout: 2))
             assertApplicationIsRunning(launch.app)
             launch.app.terminate()
@@ -238,105 +229,8 @@ final class DiskMeerkatUITests: XCTestCase {
     }
 
     @MainActor
-    private func press(
-        _ element: XCUIElement,
-        mayTerminateApplication: Bool = false
-    ) {
-        // XCUI can report MenuBarExtra and related window frames outside the
-        // owning display on multi-display hosts, so use the stable AX element.
-        guard
-            let runningApplication = runningApplication(),
-            let accessibilityElement = accessibilityDescendant(
-                of: AXUIElementCreateApplication(runningApplication.processIdentifier),
-                identifier: element.identifier
-            )
-        else {
-            XCTFail("Could not resolve accessibility element \(element.identifier)")
-            return
-        }
-        let result = AXUIElementPerformAction(
-            accessibilityElement,
-            kAXPressAction as CFString
-        )
-        if mayTerminateApplication, result == .cannotComplete {
-            return
-        }
-        XCTAssertEqual(result, .success)
-    }
-
-    private func moveApplicationWindowsToPrimaryDisplay() {
-        guard let runningApplication = runningApplication() else {
-            XCTFail("Could not resolve the DiskMeerkat application")
-            return
-        }
-        let application = AXUIElementCreateApplication(runningApplication.processIdentifier)
-        var windowsValue: CFTypeRef?
-        guard
-            AXUIElementCopyAttributeValue(
-                application,
-                kAXWindowsAttribute as CFString,
-                &windowsValue
-            ) == .success,
-            let windows = windowsValue as? [AXUIElement],
-            !windows.isEmpty
-        else {
-            XCTFail("Could not resolve DiskMeerkat windows")
-            return
-        }
-
-        for (index, window) in windows.enumerated() {
-            let offset = CGFloat(120 + (index * 30))
-            var position = CGPoint(x: offset, y: offset)
-            guard let positionValue = AXValueCreate(.cgPoint, &position) else {
-                XCTFail("Could not create a window position")
-                return
-            }
-            XCTAssertEqual(
-                AXUIElementSetAttributeValue(
-                    window,
-                    kAXPositionAttribute as CFString,
-                    positionValue
-                ),
-                .success
-            )
-        }
-    }
-
-    private func runningApplication() -> NSRunningApplication? {
-        NSRunningApplication.runningApplications(
-            withBundleIdentifier: "Hippo.DiskMeerkat"
-        ).max(by: { $0.processIdentifier < $1.processIdentifier })
-    }
-
-    private func accessibilityDescendant(
-        of element: AXUIElement,
-        identifier: String
-    ) -> AXUIElement? {
-        var identifierValue: CFTypeRef?
-        if AXUIElementCopyAttributeValue(
-            element,
-            kAXIdentifierAttribute as CFString,
-            &identifierValue
-        ) == .success,
-            identifierValue as? String == identifier
-        {
-            return element
-        }
-
-        var childrenValue: CFTypeRef?
-        guard
-            AXUIElementCopyAttributeValue(
-                element,
-                kAXChildrenAttribute as CFString,
-                &childrenValue
-            ) == .success,
-            let children = childrenValue as? [AXUIElement]
-        else {
-            return nil
-        }
-        return children.lazy.compactMap {
-            self.accessibilityDescendant(of: $0, identifier: identifier)
-        }.first
+    private func press(_ element: XCUIElement) {
+        element.click()
     }
 
     @MainActor
