@@ -2,30 +2,31 @@
 
 ## Status
 
-Draft for product review.
+Approved V1 design. See the [Project Status](../README.md#project-status) for delivery progress.
 
 ## Purpose
 
-This document describes how DiskMeerkat presents disk-space monitoring on macOS. The
-[Disk Space Monitoring Requirements](disk-space-monitoring.md) remain authoritative for monitoring behavior,
-notification suppression, persistence, and error handling. This document focuses on presentation and interaction
-without repeating those rules.
+This document defines how DiskMeerkat presents disk-space monitoring on macOS. The
+[Disk Space Monitoring Requirements](disk-space-monitoring.md) are authoritative for capacity semantics,
+scheduling, notification suppression, persistence, lifecycle effects, and error handling. This document focuses on
+presentation and interaction without copying those rules.
 
 ## Product Direction
 
-DiskMeerkat should be a menu-bar-first utility. Monitoring runs while the app is open, but the user should not need to
-keep a window visible. The menu bar provides current status and common actions; a separate Settings window contains
-configuration and permission details. Closing Settings does not stop monitoring. Quitting the app is an explicit menu
-action.
+DiskMeerkat is a menu-bar-only utility. Its `LSUIElement` app does not show a normal Dock or application-switcher icon,
+and the user does not need to keep a window visible. The menu bar provides current status and common actions; separate
+status and Settings windows provide more detail. Closing any surface leaves monitoring active. Choosing Quit stops the
+app and monitoring.
 
-The first version should stay intentionally small: one monitored volume, one threshold, and one schedule. It should
-not present storage categories, cleanup recommendations, history, or charts.
+V1 monitors only the startup volume rooted at `/`, with one whole-GB threshold and one interval preset. It does not
+present volume selection, storage categories, cleanup recommendations, history, charts, percentage thresholds, or a
+system-storage action.
 
 ## Menu Bar Experience
 
 The status item uses a disk symbol in the normal state and an attention variant when the user needs to inspect low
-space, a permission problem, or a read failure. Color may reinforce state, but shape and text must communicate it
-without relying on color alone.
+space, a permission problem, or a read failure. Color may reinforce state, but symbol shape, accessibility text, and
+visible copy communicate it without color.
 
 Selecting the status item opens a compact popover:
 
@@ -41,99 +42,175 @@ Selecting the status item opens a compact popover:
 │ Last checked: Just now       │
 │ Next check: In 15 minutes    │
 │                              │
-│ [ Check Now ]   [ Settings ] │
-│                         Quit │
+│ [ Check Now ] [ Open Status ]│
+│ Settings…                Quit │
 └──────────────────────────────┘
 ```
 
 The available-space value is the visual priority. The volume name, configured threshold, last successful check, and
-next scheduled check provide context. The proposed `Check Now` control remains subject to product approval. If it is
-included, it uses the same serialized check path and state transitions as a scheduled check and is disabled while a
-check is already running.
+next scheduled check provide context. `Check Now` always uses the shared monitoring path defined in the
+[requirements](disk-space-monitoring.md#scheduling-and-disk-checks) and is disabled while a check is active.
 
-The popover reads the next-check deadline from shared monitoring state and does not create a second monitoring timer.
-Relative-time text refreshes only while the popover is visible, at the coarsest cadence needed for its displayed
-precision.
+`Open Status` opens or focuses the singleton status window. `Settings…` opens the standard Settings scene. Quit is an
+explicit, separated action so closing a popover or window is never confused with stopping monitoring.
+
+The popover reads the next-check deadline from shared monitoring state and does not create a timer for disk checks.
+Relative-time text refreshes only while visible and at the coarsest cadence needed for the displayed precision.
 
 ## Status Presentation
 
-UI labels should describe user-visible outcomes rather than expose the internal `armed` and `suppressed` state names.
+UI labels describe user-visible outcomes rather than expose the internal `armed` and `suppressed` state names.
 
-| Condition | Popover presentation | User action |
+| Condition | Status presentation | Available action |
 | --- | --- | --- |
-| No successful check yet | `Checking disk…` without displaying a fabricated capacity value | Wait |
-| Monitoring normally | `Monitoring` with the latest successful value | Optional `Check Now` |
-| Low space, alert submitted | `Low disk space · Alert sent` while monitoring remains active | Open Settings or system storage management |
-| Notifications unavailable | `Monitoring, but notifications are off` | `Open System Settings` |
-| Notification submission failed | `Low disk space · Couldn’t send alert · Will retry` while monitoring remains active | Wait for retry |
-| Disk read failed | Keep the last successful value, or show `Available space unavailable` if none exists; show `Couldn’t check disk · Will retry` | Optional `Check Now` |
-| Check in progress | Show lightweight progress and retain the previous successful value when available | Wait; duplicate checks are disabled |
+| No successful check yet | `Checking disk…`; do not fabricate a capacity | Wait or open Settings |
+| Monitoring normally | `Monitoring` with the latest successful value | `Check Now` while idle |
+| Low space, alert submitted | `Low disk space · Alert sent`; monitoring remains active | Open Status or Settings |
+| Low space, notifications off | `Low disk space · Notifications are off` | Enable notifications or open System Settings |
+| Notification submission failed | `Low disk space · Couldn't send alert · Will retry` | Wait for retry |
+| Disk read failed | Keep the last successful value, or show `Available space unavailable`; add `Couldn't check disk · Will retry` | `Check Now` while idle |
+| Check in progress | Retain the previous successful value and show lightweight progress | `Check Now` disabled |
+| Launch at login needs attention | Keep monitoring status and add a separate login-item explanation | Review Settings |
 
-When an alert has already been submitted for the current low-space episode, an optional detail explains that another
-alert becomes eligible only after available space recovers above the threshold and later falls below it again.
+When an alert was submitted for the current low-space episode, optional detail explains that another alert becomes
+eligible only after space recovers above the threshold and later falls below it again. It does not expose a reset
+control.
+
+Errors remain scoped. A notification or login-item problem must not make healthy disk monitoring look stopped, and a
+disk-read problem must not erase the last known successful value.
+
+## Status and First-run Window
+
+The status window is the one persistent, on-demand detail surface. It shows the same monitoring snapshot as the
+popover with room for the current problem, notification state, last and next check, configured values, and relevant
+actions. Opening it repeatedly focuses the existing window instead of creating copies or another monitoring runtime.
+
+On the first run, this window also presents a short introduction:
+
+```text
+┌────────────────────────────────────┐
+│ Welcome to DiskMeerkat             │
+│                                    │
+│ Monitoring: Macintosh HD           │
+│ Alert below: 20 GB                  │
+│ Check every: 15 minutes             │
+│                                    │
+│ [ Enable Notifications ] [ Not Now ]│
+└────────────────────────────────────┘
+```
+
+The introduction is shown automatically once. `Enable Notifications` is the only control that can initiate the
+system authorization request. `Not Now`, closing the window, or otherwise dismissing onboarding records completion
+without granting permission; monitoring and menu-bar status remain available. Later launches do not reopen onboarding
+automatically, though `Open Status` remains available.
+
+Notification activation opens or focuses this same window at current status. If activation arrives during app launch,
+the app finishes composition and then presents the singleton window once.
 
 ## Settings Window
 
-Use one compact form rather than multiple tabs for the first version:
+V1 uses one compact form instead of tabs:
 
-- **Monitored Volume:** show the selected local volume and its current capacity. If V1 monitors only the startup
-  volume, present this as read-only rather than suggesting it can be changed.
-- **Low-space alert:** phrase the control as “Notify me when available space falls below,” followed by a numeric field
-  and an explicit unit.
-- **Check interval:** provide understandable presets rather than requiring duration syntax.
-- **Notifications:** show the current authorization state and either `Enable Notifications` or `Open System Settings`.
-- **Launch at Login:** offer an explicit opt-in switch if background startup is included in V1.
+- **Monitored Volume:** Show the startup volume and its current capacity as read-only. Do not use disclosure or picker
+  styling that suggests the volume can be changed.
+- **Low-space alert:** “Notify me when available space falls below,” followed by a whole-number field and explicit
+  decimal `GB` unit. The accepted range is 1 through 1,000,000 GB; the default is 20 GB.
+- **Check interval:** Offer exactly 5 minutes, 15 minutes, 30 minutes, 1 hour, 6 hours, and 24 hours; the default is
+  15 minutes.
+- **Notifications:** Show the actual authorization state and either `Enable Notifications` or a useful route to
+  System Settings when permission is denied.
+- **Launch at Login:** Provide an opt-in switch, off by default, accompanied by actual system status when the request
+  needs approval, was changed outside the app, or failed.
 
-Invalid threshold input remains an uncommitted draft, displays an inline explanation, and does not replace the last
-valid persisted value. Valid changes take effect without restarting the app. Settings should not expose notification
-suppression as a toggle because manually resetting it would encourage duplicate alerts.
+Threshold and interval edits are local drafts. Invalid threshold text shows a nearby, specific explanation and does
+not replace the last valid value. The Save action is enabled only for a valid supported threshold and interval. Saving
+persists the values, closes the draft state, and invokes the immediate-check and schedule-replacement behavior defined
+in the [requirements](disk-space-monitoring.md#configuration). Cancel or closing Settings discards unsaved drafts.
 
-## First Launch and Permissions
+Settings does not expose notification suppression as a toggle. Resetting it manually would defeat the one-alert-per-
+episode behavior.
 
-On first launch, show a short introduction identifying the monitored volume and the proposed default threshold and
-interval. Notification authorization is requested only after the user selects `Enable Notifications`; it is not
-triggered by a background check. If authorization is denied, monitoring continues and the UI explains that alerts
-cannot currently be delivered without repeatedly prompting.
+## Notification Permission
 
-The first-run flow must remain dismissible so the app can still report disk status without notification permission.
+DiskMeerkat never displays the system notification prompt merely because the app launched or a disk check ran.
+Presentation depends on the current authorization state:
 
-## Notification Content
+| Authorization state | Presentation |
+| --- | --- |
+| Not determined | Explain the benefit and show `Enable Notifications` |
+| Authorized | Show that alerts are enabled; do not prompt |
+| Denied | Explain that monitoring continues without alerts and offer `Open System Settings` |
+| Unavailable or error | Explain the problem without implying monitoring stopped |
 
-A low-space notification should be direct and contain the values needed to understand it:
+After `Enable Notifications` is selected, the app may show the system prompt once. A grant dismisses the permission
+callout and triggers the behavior specified in the requirements; a denial updates the explanation without repeatedly
+prompting. Permission is not a gate for viewing status, editing configuration, checking manually, or dismissing first
+run.
+
+## Launch at Login
+
+Launch at login uses the main app's `SMAppService` registration and remains separate from monitoring health.
+
+| Actual state | Settings presentation |
+| --- | --- |
+| Disabled | Switch off; user may opt in |
+| Enabled | Switch on |
+| Approval required or denied | Do not show a successful enabled state; explain the required system action |
+| Changed outside DiskMeerkat | Refresh to the actual state and explain the mismatch when useful |
+| Operation failed or unavailable | Restore the actual switch state and show an inline retryable error |
+
+Changing this switch is an explicit user action. Failure does not alter disk configuration, close the app, or stop the
+current monitoring process.
+
+## Notification Content and Activation
+
+A low-space notification is direct and contains the values needed to understand it:
 
 ```text
 Disk space is low
 Macintosh HD has 18.4 GB available, below your 20 GB limit.
 ```
 
-Activating the notification opens DiskMeerkat at the relevant status. An action that opens macOS storage management
-may be added only if the destination is reliable on the supported macOS version.
+Activating the notification opens DiskMeerkat's singleton status window. V1 includes no custom notification action and
+no button that opens system storage management; users free space with their preferred system or third-party tools.
 
 ## Accessibility and Formatting
 
-- Provide VoiceOver labels for the menu-bar status, capacity indicator, and all icon-only controls.
+- Provide VoiceOver labels for the menu-bar status, capacity indicator, progress, and every icon-only control.
 - Do not communicate healthy, warning, or error states with color alone.
-- Use locale-aware capacity and relative-time formatting while preserving the exact byte values used by monitoring.
-- Use a consistent capacity unit and enough precision that displayed values never contradict the strict threshold
-  comparison near a rounding boundary.
-- Keep text usable with larger accessibility sizes and avoid encoding important content only in a graphical meter.
-- Ensure every popover and Settings action is reachable by keyboard.
+- Make every popover, status-window, and Settings action reachable by keyboard with a visible focus state.
+- Keep layouts usable with larger accessibility text and avoid encoding important information only in a graphical
+  meter.
+- Use locale-aware text with decimal capacity semantics: `1 GB = 1,000,000,000 bytes`.
+- Show whole configured thresholds such as `20 GB`; routine measured values may use a concise fractional value such as
+  `82.4 GB`.
+- When normal rounding would contradict the exact strict comparison, add precision and relationship copy. For example,
+  show `19.999 GB available · below 20 GB limit` instead of `20.0 GB available` for a value below the limit. If the
+  byte-level difference cannot be made clear at practical precision, use `just below` or `just above` with the exact
+  limit.
+- Use consistent locale-aware relative time for last and next checks; never imply an exact future check while one is
+  active or pending.
+
+## Interaction Acceptance
+
+The behavioral outcomes remain in the [requirements acceptance criteria](disk-space-monitoring.md#acceptance-criteria).
+The V1 presentation additionally satisfies these observable interactions:
+
+1. First launch shows one dismissible onboarding/status window without automatically prompting for notifications.
+2. Closing every window leaves the menu-bar item and monitoring active; Quit removes them and stops monitoring.
+3. Invalid Settings drafts show inline errors, cannot be saved, and do not change the displayed committed values.
+4. During a check, progress is visible, the last successful capacity remains readable, and `Check Now` is disabled.
+5. Selecting `Enable Notifications` is the only route to the system prompt; denial leaves monitoring usable and
+   explained.
+6. Notification activation focuses one status window whether it was closed, already open, or requested during launch.
+7. Launch-at-login approval, denial, external change, and failure show actual state instead of a falsely successful
+   toggle.
+8. Near a threshold boundary, capacity text never visually contradicts whether the app considers the disk low or
+   recovered.
 
 ## Architecture Boundary
 
-Reusable views, presentation models, input validation, and state-to-copy mapping belong in
-`Packages/DiskMeerkatApp`. The thin Xcode app target owns scene declarations and macOS integration such as the menu-bar
-item, notification authorization, application lifecycle, and launch-at-login registration. Follow the ownership rules
-in the [Development Guide](development.md#package-first-architecture).
-
-## Recommended V1 Decisions
-
-The wireframes use illustrative values, not confirmed requirements. Before implementation, confirm the related open
-decisions in the monitoring requirements. The recommended starting point is:
-
-- monitor the startup volume only;
-- use an absolute threshold displayed in `GB`;
-- default to a `20 GB` threshold and a `15 minute` interval;
-- offer a small interval preset list;
-- offer launch at login without enabling it automatically; and
-- keep the app menu-bar-first, with no persistent main window.
+Reusable views, presentation models, draft validation, formatting, accessibility identifiers, and state-to-copy
+mapping belong in `Packages/DiskMeerkatApp`. The thin Xcode app target owns scene declarations, `LSUIElement`, app and
+window activation, notification launch routing, and production dependency composition. Follow the ownership rules in
+the [Development Guide](development.md#package-first-architecture).

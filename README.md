@@ -9,7 +9,7 @@ DiskMeerkat is a macOS app for monitoring available disk space and notifying the
 > [!NOTE]
 > DiskMeerkat is in early development. Disk-space monitoring is specified but not yet implemented.
 
-The [Disk Space Monitoring Requirements](docs/disk-space-monitoring.md) are the source of truth for planned behavior, state transitions, acceptance criteria, and unresolved product decisions.
+The [Disk Space Monitoring Requirements](docs/disk-space-monitoring.md) are the source of truth for approved V1 behavior, state transitions, product decisions, and acceptance criteria.
 
 ## Requirements
 
@@ -33,6 +33,6 @@ For canonical formatting and test commands, follow [Local Validation](docs/devel
 ## Documentation
 
 - [Development Guide](docs/development.md): commit conventions, architecture, testing strategy, and local validation.
-- [Disk Space Monitoring Requirements](docs/disk-space-monitoring.md): planned behavior, notification state machine, acceptance criteria, and open decisions.
-- [UI Design](docs/ui-design.md): proposed menu-bar experience, settings, status presentation, and notification content.
+- [Disk Space Monitoring Requirements](docs/disk-space-monitoring.md): approved V1 behavior, notification state machine, product decisions, and acceptance criteria.
+- [UI Design](docs/ui-design.md): approved V1 menu-bar experience, settings, status presentation, and notification content.
 - [Repository Guidelines](AGENTS.md): concise instructions for contributors and coding agents.
