@@ -3,8 +3,13 @@ enum DiskSpaceReadFailure: Equatable, Sendable {
     case unavailable
 }
 
+struct StartupVolumeSnapshot: Equatable, Sendable {
+    let availableCapacity: DiskCapacity
+    let volumeName: String?
+}
+
 enum DiskSpaceReading: Equatable, Sendable {
-    case available(DiskCapacity)
+    case available(StartupVolumeSnapshot)
     case failed(DiskSpaceReadFailure)
 }
 
@@ -19,11 +24,19 @@ enum NotificationSubmissionOutcome: Equatable, Sendable {
 }
 
 struct LowSpaceNotificationCandidate: Equatable, Sendable {
-    let availableCapacity: DiskCapacity
+    let startupVolume: StartupVolumeSnapshot
     let threshold: LowSpaceThreshold
 
-    fileprivate init(availableCapacity: DiskCapacity, threshold: LowSpaceThreshold) {
-        self.availableCapacity = availableCapacity
+    var availableCapacity: DiskCapacity {
+        startupVolume.availableCapacity
+    }
+
+    var volumeName: String? {
+        startupVolume.volumeName
+    }
+
+    fileprivate init(startupVolume: StartupVolumeSnapshot, threshold: LowSpaceThreshold) {
+        self.startupVolume = startupVolume
         self.threshold = threshold
     }
 
@@ -43,7 +56,7 @@ enum NotificationDirective: Equatable, Sendable {
 }
 
 enum DiskSpaceAssessment: Equatable, Sendable {
-    case available(capacity: DiskCapacity, relationship: ThresholdRelationship)
+    case available(startupVolume: StartupVolumeSnapshot, relationship: ThresholdRelationship)
     case unavailable(DiskSpaceReadFailure)
 }
 
@@ -67,31 +80,40 @@ enum LowSpaceNotificationPolicy {
                 nextEpisodeState: episodeState
             )
 
-        case .available(let capacity):
-            let relationship = capacity.relationship(to: threshold)
+        case .available(let startupVolume):
+            let relationship = startupVolume.availableCapacity.relationship(to: threshold)
 
             switch (episodeState, relationship) {
             case (.armed, .below):
                 let candidate = LowSpaceNotificationCandidate(
-                    availableCapacity: capacity,
+                    startupVolume: startupVolume,
                     threshold: threshold
                 )
                 return MonitoringEvaluation(
-                    assessment: .available(capacity: capacity, relationship: relationship),
+                    assessment: .available(
+                        startupVolume: startupVolume,
+                        relationship: relationship
+                    ),
                     notificationDirective: .submit(candidate),
                     nextEpisodeState: .armed
                 )
 
             case (.suppressed, .above):
                 return MonitoringEvaluation(
-                    assessment: .available(capacity: capacity, relationship: relationship),
+                    assessment: .available(
+                        startupVolume: startupVolume,
+                        relationship: relationship
+                    ),
                     notificationDirective: .none,
                     nextEpisodeState: .armed
                 )
 
             case (.armed, .equal), (.armed, .above), (.suppressed, .below), (.suppressed, .equal):
                 return MonitoringEvaluation(
-                    assessment: .available(capacity: capacity, relationship: relationship),
+                    assessment: .available(
+                        startupVolume: startupVolume,
+                        relationship: relationship
+                    ),
                     notificationDirective: .none,
                     nextEpisodeState: episodeState
                 )
