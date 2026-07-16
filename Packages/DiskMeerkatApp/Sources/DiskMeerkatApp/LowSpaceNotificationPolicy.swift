@@ -22,6 +22,11 @@ struct LowSpaceNotificationCandidate: Equatable, Sendable {
     let availableCapacity: DiskCapacity
     let threshold: LowSpaceThreshold
 
+    fileprivate init(availableCapacity: DiskCapacity, threshold: LowSpaceThreshold) {
+        self.availableCapacity = availableCapacity
+        self.threshold = threshold
+    }
+
     func episodeState(after outcome: NotificationSubmissionOutcome) -> NotificationEpisodeState {
         switch outcome {
         case .accepted:

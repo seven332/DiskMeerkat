@@ -15,15 +15,15 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
         )
 
         XCTAssertEqual(
-            belowEvaluation,
-            MonitoringEvaluation(
-                assessment: .available(capacity: below, relationship: .below),
-                notificationDirective: .submit(
-                    LowSpaceNotificationCandidate(availableCapacity: below, threshold: threshold)
-                ),
-                nextEpisodeState: .armed
-            )
+            belowEvaluation.assessment,
+            .available(capacity: below, relationship: .below)
         )
+        XCTAssertEqual(belowEvaluation.nextEpisodeState, .armed)
+        guard case .submit(let candidate) = belowEvaluation.notificationDirective else {
+            return XCTFail("Expected a low-space notification candidate")
+        }
+        XCTAssertEqual(candidate.availableCapacity, below)
+        XCTAssertEqual(candidate.threshold, threshold)
 
         for (capacity, relationship) in [(equal, ThresholdRelationship.equal), (above, .above)] {
             XCTAssertEqual(

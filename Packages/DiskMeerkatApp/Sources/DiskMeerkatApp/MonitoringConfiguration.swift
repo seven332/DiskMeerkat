@@ -1,5 +1,3 @@
-import Foundation
-
 enum DiskCapacityValidationError: Error, Equatable, Sendable {
     case negativeBytes
 }
