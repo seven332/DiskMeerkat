@@ -45,6 +45,39 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertFalse(model.settingsDraft.isDirty)
     }
 
+    func testSnapshotObservationStartAndStopAreIdempotentAndRestartable() async throws {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await waitUntil { await runtime.calls().snapshotSubscriptions == 1 }
+
+        model.startObservingSnapshots()
+        await Task.yield()
+        let callsAfterDuplicateStart = await runtime.calls()
+        XCTAssertEqual(callsAfterDuplicateStart.snapshotSubscriptions, 1)
+
+        let firstConfiguration = MonitoringConfiguration(
+            threshold: try LowSpaceThreshold(gigabytes: 30),
+            interval: .oneHour
+        )
+        await runtime.send(snapshot(configuration: firstConfiguration))
+        await waitUntil { model.snapshot.configuration == firstConfiguration }
+
+        model.stopObservingSnapshots()
+        let secondConfiguration = MonitoringConfiguration(
+            threshold: try LowSpaceThreshold(gigabytes: 40),
+            interval: .sixHours
+        )
+        await runtime.send(snapshot(configuration: secondConfiguration))
+        await Task.yield()
+        XCTAssertEqual(model.snapshot.configuration, firstConfiguration)
+
+        model.startObservingSnapshots()
+        await waitUntil { await runtime.calls().snapshotSubscriptions == 2 }
+        await runtime.send(snapshot(configuration: secondConfiguration))
+        await waitUntil { model.snapshot.configuration == secondConfiguration }
+    }
+
     func testCheckNowRoutesOnlyWhenRuntimeStateAllowsIt() async {
         let runtime = RecordingPresentationRuntimeClient()
         let launchService = RecordingLaunchAtLoginService()
@@ -306,6 +339,7 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
 }
 
 private struct PresentationRuntimeCalls: Sendable {
+    var snapshotSubscriptions = 0
     var checkNow = 0
     var savedConfigurations: [MonitoringConfiguration] = []
     var requestAuthorization = 0
@@ -314,23 +348,34 @@ private struct PresentationRuntimeCalls: Sendable {
 }
 
 private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeClient {
-    private let stream: AsyncStream<MonitoringSnapshot>
-    private let continuation: AsyncStream<MonitoringSnapshot>.Continuation
+    private var continuations: [UUID: AsyncStream<MonitoringSnapshot>.Continuation] = [:]
+    private var latestSnapshot: MonitoringSnapshot?
     private var saveOutcomes: [MonitoringConfigurationSaveOutcome]
     private var shouldSuspendNextSave = false
     private var pendingSave: CheckedContinuation<MonitoringConfigurationSaveOutcome, Never>?
     private var recordedCalls = PresentationRuntimeCalls()
 
     init(saveOutcomes: [MonitoringConfigurationSaveOutcome] = []) {
-        (stream, continuation) = AsyncStream.makeStream(
-            of: MonitoringSnapshot.self,
-            bufferingPolicy: .bufferingNewest(1)
-        )
         self.saveOutcomes = saveOutcomes
     }
 
     func snapshots() async -> AsyncStream<MonitoringSnapshot> {
-        stream
+        recordedCalls.snapshotSubscriptions += 1
+        let id = UUID()
+        let (stream, continuation) = AsyncStream.makeStream(
+            of: MonitoringSnapshot.self,
+            bufferingPolicy: .bufferingNewest(1)
+        )
+        continuation.onTermination = { [weak self] _ in
+            Task {
+                await self?.removeContinuation(id: id)
+            }
+        }
+        continuations[id] = continuation
+        if let latestSnapshot {
+            continuation.yield(latestSnapshot)
+        }
+        return stream
     }
 
     func checkNow() async {
@@ -366,7 +411,10 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
     }
 
     func send(_ snapshot: MonitoringSnapshot) {
-        continuation.yield(snapshot)
+        latestSnapshot = snapshot
+        for continuation in continuations.values {
+            continuation.yield(snapshot)
+        }
     }
 
     func suspendNextSave() {
@@ -380,6 +428,10 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
 
     func calls() -> PresentationRuntimeCalls {
         recordedCalls
+    }
+
+    private func removeContinuation(id: UUID) {
+        continuations.removeValue(forKey: id)
     }
 }
 

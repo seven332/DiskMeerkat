@@ -59,6 +59,7 @@ public final class DiskMeerkatPresentationModel {
     @ObservationIgnored private let openNotificationSettingsAction: @Sendable () async -> Void
     @ObservationIgnored private let locale: Locale
     @ObservationIgnored private var observationTask: Task<Void, Never>?
+    @ObservationIgnored private var observationID: UUID?
     @ObservationIgnored private var initialRefreshTask: Task<Void, Never>?
 
     init(
@@ -75,15 +76,7 @@ public final class DiskMeerkatPresentationModel {
         openNotificationSettingsAction = openNotificationSettings
         settingsDraft = MonitoringSettingsDraft(configuration: snapshot.configuration, locale: locale)
 
-        observationTask = Task { [weak self, runtimeClient] in
-            let snapshots = await runtimeClient.snapshots()
-            for await snapshot in snapshots {
-                guard !Task.isCancelled else {
-                    return
-                }
-                self?.receive(snapshot)
-            }
-        }
+        startObservingSnapshots()
         initialRefreshTask = Task { [weak self] in
             await self?.refreshExternalState()
         }
@@ -92,6 +85,30 @@ public final class DiskMeerkatPresentationModel {
     isolated deinit {
         observationTask?.cancel()
         initialRefreshTask?.cancel()
+    }
+
+    func startObservingSnapshots() {
+        guard observationTask == nil else {
+            return
+        }
+        let id = UUID()
+        observationID = id
+        observationTask = Task { [weak self, runtimeClient] in
+            let snapshots = await runtimeClient.snapshots()
+            for await snapshot in snapshots {
+                guard !Task.isCancelled else {
+                    break
+                }
+                self?.receive(snapshot)
+            }
+            self?.finishObservingSnapshots(id: id)
+        }
+    }
+
+    func stopObservingSnapshots() {
+        observationID = nil
+        observationTask?.cancel()
+        observationTask = nil
     }
 
     var presentation: MonitoringPresentationState {
@@ -228,5 +245,13 @@ public final class DiskMeerkatPresentationModel {
         if !isEditingSettings {
             settingsDraft.reset(to: snapshot.configuration)
         }
+    }
+
+    private func finishObservingSnapshots(id: UUID) {
+        guard observationID == id else {
+            return
+        }
+        observationID = nil
+        observationTask = nil
     }
 }
