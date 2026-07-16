@@ -168,11 +168,21 @@ Before opening a pull request, confirm that:
 - Tests follow the unit, integration, then UI priority order.
 - Every new package is covered by CI.
 - Commit messages and the pull request title follow Conventional Commits.
-- The working tree is clean and all formatting and tests pass.
+- The working tree is clean and checks relevant to the changed files and behavior pass.
 
 ## Local Validation
 
-Run the same formatting check as CI:
+Choose validation according to the changed surface. Run a test suite only when the change affects its code, tests, configuration, dependencies, or covered behavior. Do not run an unrelated suite solely because it exists:
+
+- Documentation-only changes require whitespace, Markdown structure, and link checks, but not Swift tests.
+- Swift source changes require formatting.
+- Package source, test, manifest, or cross-package changes require tests for every affected package.
+- App-target, Xcode project, lifecycle, entitlement, or app-boundary changes require relevant app tests.
+- UI tests are required only when the change affects UI tests or behavior that cannot be verified reliably below the UI boundary.
+
+Use `git diff --check` for every change. For documentation, also review the rendered Markdown and verify relative links.
+
+When Swift files change, run the same formatting check as CI:
 
 ```sh
 swift format lint \
@@ -185,13 +195,13 @@ swift format lint \
   Packages/DiskMeerkatApp
 ```
 
-Run package tests:
+When `Packages/DiskMeerkatApp` sources, tests, or manifest change, run its package tests:
 
 ```sh
 swift test --package-path Packages/DiskMeerkatApp
 ```
 
-Run app and UI tests:
+When a change affects behavior at the real application boundary, run app and UI tests:
 
 ```sh
 local_deployment_target="$(sw_vers -productVersion | cut -d. -f1,2)"
@@ -207,4 +217,4 @@ xcodebuild test \
   MACOSX_DEPLOYMENT_TARGET="$local_deployment_target"
 ```
 
-When adding a package, add it to the relevant formatting and test commands as well.
+GitHub CI runs the complete validation suite for every pull request. Local validation should still use the narrowest credible checks for the actual change. When adding a package, add it to the relevant CI formatting and test commands as well.
