@@ -232,6 +232,62 @@ final class MonitoringRuntimeTests: XCTestCase {
         )
     }
 
+    func testStartupAuthorizationFailureDoesNotStopMonitoringAndRefreshGrantChecks() async throws {
+        let fixture = makeFixture(
+            authorization: .denied,
+            readings: [
+                .available(try startupVolume(gigabytes: 30)),
+                .available(try startupVolume(gigabytes: 29)),
+            ]
+        )
+        await fixture.notifications.failNextStatusRequests()
+
+        await fixture.runtime.start()
+        await fixture.scheduler.waitForSleepCount(1)
+
+        var snapshot = await fixture.runtime.currentSnapshot()
+        XCTAssertEqual(snapshot.lifecycleState, .running)
+        XCTAssertEqual(snapshot.notificationAuthorizationState, .unknown)
+        XCTAssertEqual(snapshot.notificationFailure, .authorizationStatus)
+        await assertEqual(await fixture.diskReader.counts().read, 1)
+
+        await fixture.notifications.setAuthorizationState(.authorized)
+        await fixture.runtime.refreshNotificationAuthorization()
+        await fixture.scheduler.waitForSleepCount(2)
+
+        snapshot = await fixture.runtime.currentSnapshot()
+        XCTAssertEqual(snapshot.notificationAuthorizationState, .authorized)
+        XCTAssertNil(snapshot.notificationFailure)
+        await assertEqual(await fixture.diskReader.counts().read, 2)
+    }
+
+    func testAuthorizationRequestFailurePreservesStateScheduleAndCheckCount() async throws {
+        let fixture = makeFixture(
+            authorization: .notDetermined,
+            readings: [.available(try startupVolume(gigabytes: 30))]
+        )
+        await fixture.runtime.start()
+        await fixture.scheduler.waitForSleepCount(1)
+        await fixture.notifications.failNextAuthorizationRequests()
+
+        await fixture.runtime.requestNotificationAuthorization()
+
+        var snapshot = await fixture.runtime.currentSnapshot()
+        XCTAssertEqual(snapshot.notificationAuthorizationState, .notDetermined)
+        XCTAssertEqual(snapshot.notificationFailure, .authorizationRequest)
+        await assertEqual(await fixture.diskReader.counts().read, 1)
+        await assertEqual(await fixture.scheduler.pendingSleepCount(), 1)
+
+        await fixture.notifications.setRequestedState(.denied)
+        await fixture.runtime.requestNotificationAuthorization()
+
+        snapshot = await fixture.runtime.currentSnapshot()
+        XCTAssertEqual(snapshot.notificationAuthorizationState, .denied)
+        XCTAssertNil(snapshot.notificationFailure)
+        await assertEqual(await fixture.diskReader.counts().read, 1)
+        await assertEqual(await fixture.scheduler.durations(), [.seconds(900)])
+    }
+
     func testNotificationEpisodeSuppressesRearmsAndSubmitsAgain() async throws {
         let fixture = makeFixture(
             authorization: .authorized,

@@ -418,40 +418,14 @@ actor TestMonitoringWallClock: MonitoringWallClock {
 
 actor TestMonitoringWakeEventSource: MonitoringWakeEventSource {
     private var continuations: [AsyncStream<Void>.Continuation] = []
-    private var subscriptionWaiters: [(Int, CheckedContinuation<Void, Never>)] = []
-    private(set) var subscriptionCount = 0
 
     func events() async -> AsyncStream<Void> {
         let (stream, continuation) = AsyncStream.makeStream(of: Void.self)
         continuations.append(continuation)
-        subscriptionCount += 1
-        resumeSubscriptionWaiters()
         return stream
     }
 
     func sendWake() {
         continuations.last?.yield()
-    }
-
-    func waitForSubscriptionCount(_ expectedCount: Int) async {
-        guard subscriptionCount < expectedCount else {
-            return
-        }
-
-        await withCheckedContinuation { continuation in
-            subscriptionWaiters.append((expectedCount, continuation))
-        }
-    }
-
-    private func resumeSubscriptionWaiters() {
-        var remaining: [(Int, CheckedContinuation<Void, Never>)] = []
-        for (expectedCount, continuation) in subscriptionWaiters {
-            if subscriptionCount >= expectedCount {
-                continuation.resume()
-            } else {
-                remaining.append((expectedCount, continuation))
-            }
-        }
-        subscriptionWaiters = remaining
     }
 }
