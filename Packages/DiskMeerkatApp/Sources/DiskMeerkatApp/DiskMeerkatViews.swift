@@ -74,13 +74,13 @@ public struct DiskMeerkatMenuView: View {
                 Button {
                     Task { await model.checkNow() }
                 } label: {
-                    if state.isCheckInProgress {
+                    if state.isCheckInProgress || model.isRequestingCheck {
                         Label("Checking…", systemImage: "arrow.triangle.2.circlepath")
                     } else {
                         Label("Check Now", systemImage: "arrow.clockwise")
                     }
                 }
-                .disabled(!state.canCheckNow)
+                .disabled(!model.canCheckNow)
                 .keyboardShortcut("r", modifiers: .command)
                 .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuCheckNow)
 
@@ -118,7 +118,8 @@ public struct DiskMeerkatOnboardingView: View {
         if state.shouldShowOnboarding {
             OnboardingView(
                 state: state,
-                isRequestingAuthorization: model.isRequestingNotificationAuthorization,
+                isUpdatingNotificationPermission: model.isUpdatingNotificationPermission,
+                isCompleting: model.isCompletingOnboarding,
                 enableNotifications: {
                     Task { await model.enableNotificationsAndCompleteOnboarding() }
                 },
@@ -161,14 +162,14 @@ public struct DiskMeerkatStatusView: View {
                     Button {
                         Task { await model.checkNow() }
                     } label: {
-                        if state.isCheckInProgress {
+                        if state.isCheckInProgress || model.isRequestingCheck {
                             Label("Checking…", systemImage: "arrow.triangle.2.circlepath")
                         } else {
                             Label("Check Now", systemImage: "arrow.clockwise")
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    .disabled(!state.canCheckNow)
+                    .disabled(!model.canCheckNow)
                     .keyboardShortcut("r", modifiers: .command)
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusCheckNow)
 
@@ -190,7 +191,7 @@ public struct DiskMeerkatStatusView: View {
                 if !state.shouldShowOnboarding {
                     NotificationPermissionView(
                         permission: state.notificationPermission,
-                        isWorking: model.isRequestingNotificationAuthorization,
+                        isWorking: model.isUpdatingNotificationPermission,
                         enable: {
                             Task { await model.enableNotifications() }
                         },
@@ -268,7 +269,7 @@ public struct DiskMeerkatSettingsView: View {
             Section("Notifications") {
                 NotificationPermissionView(
                     permission: state.notificationPermission,
-                    isWorking: model.isRequestingNotificationAuthorization,
+                    isWorking: model.isUpdatingNotificationPermission,
                     enable: {
                         Task { await model.enableNotifications() }
                     },
@@ -303,7 +304,7 @@ public struct DiskMeerkatSettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
-                .disabled(!state.launchAtLogin.canToggle || model.isChangingLaunchAtLogin)
+                .disabled(!state.launchAtLogin.canToggle || model.isUpdatingLaunchAtLogin)
                 .accessibilityIdentifier(
                     DiskMeerkatAccessibilityIdentifiers.settingsLaunchAtLogin
                 )
@@ -312,6 +313,7 @@ public struct DiskMeerkatSettingsView: View {
                     Button("Open Login Items Settings") {
                         Task { await model.openLaunchAtLoginSettings() }
                     }
+                    .disabled(model.isUpdatingLaunchAtLogin)
                     .accessibilityIdentifier(
                         DiskMeerkatAccessibilityIdentifiers.settingsOpenLoginSettings
                     )

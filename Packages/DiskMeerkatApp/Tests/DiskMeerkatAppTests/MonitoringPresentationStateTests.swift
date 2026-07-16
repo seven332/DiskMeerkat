@@ -160,6 +160,23 @@ final class MonitoringPresentationStateTests: XCTestCase {
         XCTAssertTrue(state.notices[0].detail.contains("last successful value"))
     }
 
+    func testMissingVolumeNameUsesTheStartupDiskFallback() {
+        let volume = startupVolume(gigabytes: 52, name: nil)
+        let state = presentation(
+            snapshot: snapshot(
+                lifecycleState: .running,
+                latestSuccessfulVolume: volume,
+                latestAssessment: .available(
+                    startupVolume: volume,
+                    relationship: .above
+                )
+            )
+        )
+
+        XCTAssertEqual(state.volumeName, "Startup Disk")
+        XCTAssertEqual(state.capacityAccessibilityLabel, "Startup Disk, 52 GB available")
+    }
+
     func testFirstDiskReadFailureShowsUnavailableInsteadOfChecking() {
         let state = presentation(
             snapshot: snapshot(
@@ -217,37 +234,79 @@ final class MonitoringPresentationStateTests: XCTestCase {
         }
     }
 
+    func testEveryNotificationFailureHasAScopedNotice() {
+        let cases: [(MonitoringNotificationFailure, String)] = [
+            (.authorizationStatus, "Couldn't read notification status"),
+            (.authorizationRequest, "Couldn't update notification permission"),
+            (.submission, "Couldn't send the low-space alert"),
+        ]
+
+        for (failure, title) in cases {
+            let state = presentation(
+                snapshot: snapshot(notificationFailure: failure)
+            )
+
+            XCTAssertEqual(state.notices.map(\.kind), [.notification])
+            XCTAssertEqual(state.notices[0].title, title)
+        }
+    }
+
     func testLaunchAtLoginPresentationUsesActualStateAndScopedProblems() {
-        var state = presentation(
+        let loadingState = presentation(
             snapshot: snapshot(),
-            launchAtLoginSnapshot: LaunchAtLoginSnapshot(actualState: .enabled, problem: nil)
+            launchAtLoginSnapshot: nil
         )
-        XCTAssertTrue(state.launchAtLogin.isEnabled)
-        XCTAssertTrue(state.launchAtLogin.canToggle)
-        XCTAssertFalse(state.launchAtLogin.requiresAttention)
+        XCTAssertNil(loadingState.launchAtLogin.actualState)
+        XCTAssertFalse(loadingState.launchAtLogin.canToggle)
+        XCTAssertFalse(loadingState.launchAtLogin.requiresAttention)
 
-        state = presentation(
-            snapshot: snapshot(),
-            launchAtLoginSnapshot: LaunchAtLoginSnapshot(
-                actualState: .disabled,
-                problem: .enableFailed
-            )
-        )
-        XCTAssertFalse(state.launchAtLogin.isEnabled)
-        XCTAssertTrue(state.launchAtLogin.canOpenSettings)
-        XCTAssertTrue(state.launchAtLogin.requiresAttention)
-        XCTAssertEqual(state.notices.map(\.kind), [.launchAtLogin])
+        let actualStateCases: [(LaunchAtLoginActualState, Bool, Bool, Bool, Bool)] = [
+            (.disabled, false, true, false, false),
+            (.enabled, true, true, false, false),
+            (.requiresApproval, false, false, true, true),
+            (.unavailable, false, false, true, true),
+        ]
 
-        state = presentation(
-            snapshot: snapshot(),
-            launchAtLoginSnapshot: LaunchAtLoginSnapshot(
-                actualState: .requiresApproval,
-                problem: nil
+        for (actualState, isEnabled, canToggle, canOpenSettings, requiresAttention) in actualStateCases {
+            let state = presentation(
+                snapshot: snapshot(),
+                launchAtLoginSnapshot: LaunchAtLoginSnapshot(
+                    actualState: actualState,
+                    problem: nil
+                )
             )
-        )
-        XCTAssertFalse(state.launchAtLogin.isEnabled)
-        XCTAssertFalse(state.launchAtLogin.canToggle)
-        XCTAssertTrue(state.launchAtLogin.canOpenSettings)
+            XCTAssertEqual(state.launchAtLogin.actualState, actualState)
+            XCTAssertEqual(state.launchAtLogin.isEnabled, isEnabled)
+            XCTAssertEqual(state.launchAtLogin.canToggle, canToggle)
+            XCTAssertEqual(state.launchAtLogin.canOpenSettings, canOpenSettings)
+            XCTAssertEqual(state.launchAtLogin.requiresAttention, requiresAttention)
+            XCTAssertEqual(
+                state.notices.map(\.kind),
+                requiresAttention ? [.launchAtLogin] : []
+            )
+        }
+
+        let problemCases: [(LaunchAtLoginProblem, String)] = [
+            (.changedExternally, "Launch at Login changed in System Settings"),
+            (.enableFailed, "Couldn't enable Launch at Login"),
+            (.disableFailed, "Couldn't disable Launch at Login"),
+        ]
+
+        for (problem, title) in problemCases {
+            let state = presentation(
+                snapshot: snapshot(),
+                launchAtLoginSnapshot: LaunchAtLoginSnapshot(
+                    actualState: .disabled,
+                    problem: problem
+                )
+            )
+            XCTAssertFalse(state.launchAtLogin.isEnabled)
+            XCTAssertTrue(state.launchAtLogin.canToggle)
+            XCTAssertTrue(state.launchAtLogin.canOpenSettings)
+            XCTAssertTrue(state.launchAtLogin.requiresAttention)
+            XCTAssertEqual(state.launchAtLogin.title, title)
+            XCTAssertEqual(state.notices.map(\.kind), [.launchAtLogin])
+        }
     }
 
     func testCapacityAndConfigurationUseRequestedLocale() {

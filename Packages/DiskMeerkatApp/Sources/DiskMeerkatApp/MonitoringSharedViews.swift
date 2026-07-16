@@ -137,6 +137,7 @@ struct NotificationPermissionView: View {
                         .accessibilityIdentifier(enableIdentifier)
                 } else if permission.canOpenSettings {
                     Button("Open System Settings", action: openSettings)
+                        .disabled(isWorking)
                         .accessibilityIdentifier(openSettingsIdentifier)
                 }
             }
@@ -154,7 +155,8 @@ struct NotificationPermissionView: View {
 
 struct OnboardingView: View {
     let state: MonitoringPresentationState
-    let isRequestingAuthorization: Bool
+    let isUpdatingNotificationPermission: Bool
+    let isCompleting: Bool
     let enableNotifications: () -> Void
     let openNotificationSettings: () -> Void
     let dismiss: () -> Void
@@ -189,12 +191,13 @@ struct OnboardingView: View {
                 if state.notificationPermission.canRequestAuthorization {
                     Button("Enable Notifications", action: enableNotifications)
                         .buttonStyle(.borderedProminent)
-                        .disabled(isRequestingAuthorization)
+                        .disabled(isUpdatingNotificationPermission || isCompleting)
                         .accessibilityIdentifier(
                             DiskMeerkatAccessibilityIdentifiers.statusEnableNotifications
                         )
                 } else if state.notificationPermission.canOpenSettings {
                     Button("Open Notification Settings", action: openNotificationSettings)
+                        .disabled(isUpdatingNotificationPermission || isCompleting)
                         .accessibilityIdentifier(
                             DiskMeerkatAccessibilityIdentifiers.statusOpenNotificationSettings
                         )
@@ -203,6 +206,7 @@ struct OnboardingView: View {
                     state.notificationPermission.kind == .authorized ? "Continue" : "Not Now",
                     action: dismiss
                 )
+                .disabled(isCompleting)
                 .keyboardShortcut(.cancelAction)
                 .accessibilityIdentifier(
                     DiskMeerkatAccessibilityIdentifiers.statusDismissOnboarding

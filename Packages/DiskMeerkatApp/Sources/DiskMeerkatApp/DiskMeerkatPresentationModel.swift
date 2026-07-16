@@ -51,8 +51,10 @@ public final class DiskMeerkatPresentationModel {
     private(set) var isEditingSettings = false
     private(set) var settingsSaveError: String?
     private(set) var isSavingSettings = false
-    private(set) var isRequestingNotificationAuthorization = false
-    private(set) var isChangingLaunchAtLogin = false
+    private(set) var isRequestingCheck = false
+    private(set) var isUpdatingNotificationPermission = false
+    private(set) var isCompletingOnboarding = false
+    private(set) var isUpdatingLaunchAtLogin = false
 
     @ObservationIgnored private let runtimeClient: any MonitoringPresentationRuntimeClient
     @ObservationIgnored private let launchAtLoginService: any LaunchAtLoginService
@@ -127,6 +129,10 @@ public final class DiskMeerkatPresentationModel {
             && !isSavingSettings
     }
 
+    var canCheckNow: Bool {
+        presentation.canCheckNow && !isRequestingCheck
+    }
+
     func beginSettingsEditing() {
         guard !isEditingSettings else {
             return
@@ -170,22 +176,24 @@ public final class DiskMeerkatPresentationModel {
     }
 
     func checkNow() async {
-        guard presentation.canCheckNow else {
+        guard canCheckNow else {
             return
         }
+        isRequestingCheck = true
+        defer { isRequestingCheck = false }
         await runtimeClient.checkNow()
     }
 
     func enableNotifications() async {
         guard
             presentation.notificationPermission.canRequestAuthorization,
-            !isRequestingNotificationAuthorization
+            !isUpdatingNotificationPermission
         else {
             return
         }
-        isRequestingNotificationAuthorization = true
+        isUpdatingNotificationPermission = true
+        defer { isUpdatingNotificationPermission = false }
         await runtimeClient.requestNotificationAuthorization()
-        isRequestingNotificationAuthorization = false
     }
 
     func refreshNotificationAuthorization() async {
@@ -193,49 +201,51 @@ public final class DiskMeerkatPresentationModel {
     }
 
     func openNotificationSettings() async {
-        guard presentation.notificationPermission.canOpenSettings else {
+        guard
+            presentation.notificationPermission.canOpenSettings,
+            !isUpdatingNotificationPermission
+        else {
             return
         }
+        isUpdatingNotificationPermission = true
+        defer { isUpdatingNotificationPermission = false }
         await openNotificationSettingsAction()
         await runtimeClient.refreshNotificationAuthorization()
     }
 
     func completeOnboarding() async {
-        guard presentation.shouldShowOnboarding else {
-            return
-        }
-        await runtimeClient.completeOnboarding()
+        await performOnboardingCompletion(shouldEnableNotifications: false)
     }
 
     func enableNotificationsAndCompleteOnboarding() async {
-        await enableNotifications()
-        await completeOnboarding()
+        await performOnboardingCompletion(shouldEnableNotifications: true)
     }
 
     func refreshExternalState() async {
         async let notificationRefresh: Void = runtimeClient.refreshNotificationAuthorization()
-        let launchAtLoginSnapshot = await launchAtLoginService.refresh()
+        await refreshLaunchAtLogin()
         await notificationRefresh
-        self.launchAtLoginSnapshot = launchAtLoginSnapshot
     }
 
     func setLaunchAtLoginEnabled(_ isEnabled: Bool) async {
         guard
             presentation.launchAtLogin.canToggle,
-            !isChangingLaunchAtLogin,
+            !isUpdatingLaunchAtLogin,
             presentation.launchAtLogin.isEnabled != isEnabled
         else {
             return
         }
-        isChangingLaunchAtLogin = true
+        isUpdatingLaunchAtLogin = true
+        defer { isUpdatingLaunchAtLogin = false }
         launchAtLoginSnapshot = await launchAtLoginService.setEnabled(isEnabled)
-        isChangingLaunchAtLogin = false
     }
 
     func openLaunchAtLoginSettings() async {
-        guard presentation.launchAtLogin.canOpenSettings else {
+        guard presentation.launchAtLogin.canOpenSettings, !isUpdatingLaunchAtLogin else {
             return
         }
+        isUpdatingLaunchAtLogin = true
+        defer { isUpdatingLaunchAtLogin = false }
         await launchAtLoginService.openSystemSettings()
         launchAtLoginSnapshot = await launchAtLoginService.refresh()
     }
@@ -245,6 +255,29 @@ public final class DiskMeerkatPresentationModel {
         if !isEditingSettings {
             settingsDraft.reset(to: snapshot.configuration)
         }
+    }
+
+    private func performOnboardingCompletion(
+        shouldEnableNotifications: Bool
+    ) async {
+        guard presentation.shouldShowOnboarding, !isCompletingOnboarding else {
+            return
+        }
+        isCompletingOnboarding = true
+        defer { isCompletingOnboarding = false }
+        if shouldEnableNotifications {
+            await enableNotifications()
+        }
+        await runtimeClient.completeOnboarding()
+    }
+
+    private func refreshLaunchAtLogin() async {
+        guard !isUpdatingLaunchAtLogin else {
+            return
+        }
+        isUpdatingLaunchAtLogin = true
+        defer { isUpdatingLaunchAtLogin = false }
+        launchAtLoginSnapshot = await launchAtLoginService.refresh()
     }
 
     private func finishObservingSnapshots(id: UUID) {

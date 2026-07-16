@@ -104,6 +104,25 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(runtimeCalls.checkNow, 1)
     }
 
+    func testCheckNowPreventsDuplicateRequestsWhileSubmissionIsPending() async {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await runtime.suspendNextCheck()
+
+        let firstCheck = Task { await model.checkNow() }
+        await waitUntil { model.isRequestingCheck }
+        XCTAssertFalse(model.canCheckNow)
+
+        await model.checkNow()
+        let calls = await runtime.calls()
+        XCTAssertEqual(calls.checkNow, 1)
+
+        await runtime.completePendingCheck()
+        await firstCheck.value
+        XCTAssertFalse(model.isRequestingCheck)
+    }
+
     func testInvalidAndUnchangedDraftsNeverInvokeSave() async {
         let runtime = RecordingPresentationRuntimeClient()
         let launchService = RecordingLaunchAtLoginService()
@@ -164,6 +183,28 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(model.snapshot.configuration, .defaultValue)
     }
 
+    func testUnavailableSaveOutcomesKeepTheDraftAndExplainTheReason() async {
+        let cases: [(MonitoringConfigurationSaveOutcome, String)] = [
+            (.notRunning, "Monitoring is not running, so settings couldn't be saved."),
+            (.alreadySaving, "Another settings save is still in progress."),
+        ]
+
+        for (outcome, message) in cases {
+            let runtime = RecordingPresentationRuntimeClient(saveOutcomes: [outcome])
+            let launchService = RecordingLaunchAtLoginService()
+            let model = makeModel(runtime: runtime, launchService: launchService)
+            model.beginSettingsEditing()
+            model.settingsDraft.thresholdText = "35"
+
+            let didSave = await model.saveSettings()
+
+            XCTAssertFalse(didSave)
+            XCTAssertTrue(model.isEditingSettings)
+            XCTAssertEqual(model.settingsDraft.thresholdText, "35")
+            XCTAssertEqual(model.settingsSaveError, message)
+        }
+    }
+
     func testSaveGuardPreventsDuplicateSubmissionWhileARequestIsPending() async {
         let runtime = RecordingPresentationRuntimeClient()
         let launchService = RecordingLaunchAtLoginService()
@@ -208,6 +249,24 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(calls.requestAuthorization, 1)
     }
 
+    func testNotificationPromptPreventsDuplicateRequestsWhilePending() async {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await runtime.suspendNextAuthorizationRequest()
+
+        let firstRequest = Task { await model.enableNotifications() }
+        await waitUntil { model.isUpdatingNotificationPermission }
+
+        await model.enableNotifications()
+        let calls = await runtime.calls()
+        XCTAssertEqual(calls.requestAuthorization, 1)
+
+        await runtime.completePendingAuthorizationRequest()
+        await firstRequest.value
+        XCTAssertFalse(model.isUpdatingNotificationPermission)
+    }
+
     func testDeniedPermissionOpensInjectedSettingsThenRefreshes() async {
         let runtime = RecordingPresentationRuntimeClient()
         let launchService = RecordingLaunchAtLoginService()
@@ -248,6 +307,24 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(calls.completeOnboarding, 1)
     }
 
+    func testOnboardingPreventsDuplicateCompletionWhilePending() async {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await runtime.suspendNextOnboardingCompletion()
+
+        let firstCompletion = Task { await model.completeOnboarding() }
+        await waitUntil { model.isCompletingOnboarding }
+
+        await model.completeOnboarding()
+        let calls = await runtime.calls()
+        XCTAssertEqual(calls.completeOnboarding, 1)
+
+        await runtime.completePendingOnboarding()
+        await firstCompletion.value
+        XCTAssertFalse(model.isCompletingOnboarding)
+    }
+
     func testLaunchAtLoginUsesReturnedActualStateAndRoutesSystemSettings() async {
         let runtime = RecordingPresentationRuntimeClient()
         let launchService = RecordingLaunchAtLoginService(
@@ -272,6 +349,49 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(calls.setValues, [true])
         XCTAssertEqual(calls.openSettings, 1)
         XCTAssertEqual(model.launchAtLoginSnapshot?.actualState, .enabled)
+    }
+
+    func testLaunchAtLoginPreventsDuplicateMutationsWhilePending() async {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await waitUntil { model.launchAtLoginSnapshot?.actualState == .disabled }
+        await launchService.suspendNextSet()
+
+        let firstMutation = Task { await model.setLaunchAtLoginEnabled(true) }
+        await waitUntil { model.isUpdatingLaunchAtLogin }
+
+        await model.setLaunchAtLoginEnabled(true)
+        let calls = await launchService.calls()
+        XCTAssertEqual(calls.setValues, [true])
+
+        await launchService.completePendingSet(
+            with: LaunchAtLoginSnapshot(actualState: .enabled, problem: nil)
+        )
+        await firstMutation.value
+        XCTAssertEqual(model.launchAtLoginSnapshot?.actualState, .enabled)
+        XCTAssertFalse(model.isUpdatingLaunchAtLogin)
+    }
+
+    func testLaunchAtLoginRefreshPreventsAConcurrentMutation() async {
+        let runtime = RecordingPresentationRuntimeClient()
+        let launchService = RecordingLaunchAtLoginService()
+        let model = makeModel(runtime: runtime, launchService: launchService)
+        await waitUntil { model.launchAtLoginSnapshot?.actualState == .disabled }
+        await launchService.suspendNextRefresh()
+
+        let refresh = Task { await model.refreshExternalState() }
+        await waitUntil { model.isUpdatingLaunchAtLogin }
+        await model.setLaunchAtLoginEnabled(true)
+        let pendingCalls = await launchService.calls()
+        XCTAssertTrue(pendingCalls.setValues.isEmpty)
+
+        await launchService.completePendingRefresh(
+            with: LaunchAtLoginSnapshot(actualState: .disabled, problem: nil)
+        )
+        await refresh.value
+        XCTAssertEqual(model.launchAtLoginSnapshot?.actualState, .disabled)
+        XCTAssertFalse(model.isUpdatingLaunchAtLogin)
     }
 
     private func makeModel(
@@ -353,6 +473,12 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
     private var saveOutcomes: [MonitoringConfigurationSaveOutcome]
     private var shouldSuspendNextSave = false
     private var pendingSave: CheckedContinuation<MonitoringConfigurationSaveOutcome, Never>?
+    private var shouldSuspendNextCheck = false
+    private var pendingCheck: CheckedContinuation<Void, Never>?
+    private var shouldSuspendNextAuthorizationRequest = false
+    private var pendingAuthorizationRequest: CheckedContinuation<Void, Never>?
+    private var shouldSuspendNextOnboardingCompletion = false
+    private var pendingOnboardingCompletion: CheckedContinuation<Void, Never>?
     private var recordedCalls = PresentationRuntimeCalls()
 
     init(saveOutcomes: [MonitoringConfigurationSaveOutcome] = []) {
@@ -380,6 +506,12 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
 
     func checkNow() async {
         recordedCalls.checkNow += 1
+        if shouldSuspendNextCheck {
+            shouldSuspendNextCheck = false
+            await withCheckedContinuation { continuation in
+                pendingCheck = continuation
+            }
+        }
     }
 
     func saveConfiguration(
@@ -400,6 +532,12 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
 
     func requestNotificationAuthorization() async {
         recordedCalls.requestAuthorization += 1
+        if shouldSuspendNextAuthorizationRequest {
+            shouldSuspendNextAuthorizationRequest = false
+            await withCheckedContinuation { continuation in
+                pendingAuthorizationRequest = continuation
+            }
+        }
     }
 
     func refreshNotificationAuthorization() async {
@@ -408,6 +546,12 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
 
     func completeOnboarding() async {
         recordedCalls.completeOnboarding += 1
+        if shouldSuspendNextOnboardingCompletion {
+            shouldSuspendNextOnboardingCompletion = false
+            await withCheckedContinuation { continuation in
+                pendingOnboardingCompletion = continuation
+            }
+        }
     }
 
     func send(_ snapshot: MonitoringSnapshot) {
@@ -419,6 +563,33 @@ private actor RecordingPresentationRuntimeClient: MonitoringPresentationRuntimeC
 
     func suspendNextSave() {
         shouldSuspendNextSave = true
+    }
+
+    func suspendNextCheck() {
+        shouldSuspendNextCheck = true
+    }
+
+    func completePendingCheck() {
+        pendingCheck?.resume()
+        pendingCheck = nil
+    }
+
+    func suspendNextAuthorizationRequest() {
+        shouldSuspendNextAuthorizationRequest = true
+    }
+
+    func completePendingAuthorizationRequest() {
+        pendingAuthorizationRequest?.resume()
+        pendingAuthorizationRequest = nil
+    }
+
+    func suspendNextOnboardingCompletion() {
+        shouldSuspendNextOnboardingCompletion = true
+    }
+
+    func completePendingOnboarding() {
+        pendingOnboardingCompletion?.resume()
+        pendingOnboardingCompletion = nil
     }
 
     func completePendingSave(with outcome: MonitoringConfigurationSaveOutcome) {
@@ -446,6 +617,10 @@ private actor RecordingLaunchAtLoginService: LaunchAtLoginService {
     private var setSnapshots: [LaunchAtLoginSnapshot]
     private var latestSnapshot: LaunchAtLoginSnapshot
     private var recordedCalls = LaunchAtLoginServiceCalls()
+    private var shouldSuspendNextRefresh = false
+    private var pendingRefresh: CheckedContinuation<LaunchAtLoginSnapshot, Never>?
+    private var shouldSuspendNextSet = false
+    private var pendingSet: CheckedContinuation<LaunchAtLoginSnapshot, Never>?
 
     init(
         refreshSnapshots: [LaunchAtLoginSnapshot] = [
@@ -461,6 +636,12 @@ private actor RecordingLaunchAtLoginService: LaunchAtLoginService {
 
     func refresh() async -> LaunchAtLoginSnapshot {
         recordedCalls.refresh += 1
+        if shouldSuspendNextRefresh {
+            shouldSuspendNextRefresh = false
+            return await withCheckedContinuation { continuation in
+                pendingRefresh = continuation
+            }
+        }
         if !refreshSnapshots.isEmpty {
             latestSnapshot = refreshSnapshots.removeFirst()
         }
@@ -469,6 +650,12 @@ private actor RecordingLaunchAtLoginService: LaunchAtLoginService {
 
     func setEnabled(_ isEnabled: Bool) async -> LaunchAtLoginSnapshot {
         recordedCalls.setValues.append(isEnabled)
+        if shouldSuspendNextSet {
+            shouldSuspendNextSet = false
+            return await withCheckedContinuation { continuation in
+                pendingSet = continuation
+            }
+        }
         if !setSnapshots.isEmpty {
             latestSnapshot = setSnapshots.removeFirst()
         }
@@ -481,6 +668,26 @@ private actor RecordingLaunchAtLoginService: LaunchAtLoginService {
 
     func calls() -> LaunchAtLoginServiceCalls {
         recordedCalls
+    }
+
+    func suspendNextRefresh() {
+        shouldSuspendNextRefresh = true
+    }
+
+    func completePendingRefresh(with snapshot: LaunchAtLoginSnapshot) {
+        latestSnapshot = snapshot
+        pendingRefresh?.resume(returning: snapshot)
+        pendingRefresh = nil
+    }
+
+    func suspendNextSet() {
+        shouldSuspendNextSet = true
+    }
+
+    func completePendingSet(with snapshot: LaunchAtLoginSnapshot) {
+        latestSnapshot = snapshot
+        pendingSet?.resume(returning: snapshot)
+        pendingSet = nil
     }
 }
 
