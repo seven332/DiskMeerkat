@@ -370,3 +370,43 @@ public struct DiskMeerkatSettingsView: View {
         }
     }
 }
+
+#if DEBUG
+    #Preview("Menu · Healthy") {
+        DiskMeerkatMenuView(
+            model: DiskMeerkatPreviewFixtures.healthyModel(),
+            actions: DiskMeerkatSurfaceActions(
+                openStatus: {},
+                openSettings: {},
+                quit: {}
+            )
+        )
+    }
+
+    #Preview("Status · First run") {
+        DiskMeerkatStatusView(
+            model: DiskMeerkatPreviewFixtures.firstRunModel(),
+            openSettings: {}
+        )
+    }
+
+    #Preview("Status · Low space, notifications off") {
+        DiskMeerkatStatusView(
+            model: DiskMeerkatPreviewFixtures.lowSpaceDeniedModel(),
+            openSettings: {}
+        )
+    }
+
+    #Preview("Status · Read failure") {
+        DiskMeerkatStatusView(
+            model: DiskMeerkatPreviewFixtures.readFailureModel(),
+            openSettings: {}
+        )
+    }
+
+    #Preview("Settings · Invalid threshold") {
+        DiskMeerkatSettingsView(
+            model: DiskMeerkatPreviewFixtures.invalidSettingsModel()
+        )
+    }
+#endif
