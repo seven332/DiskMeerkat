@@ -27,10 +27,10 @@ struct MonitoringSummaryView: View {
                     .font(compact ? .title2.weight(.semibold) : .largeTitle.weight(.semibold))
                     .monospacedDigit()
                     .minimumScaleFactor(0.75)
-                    .accessibilityIdentifier(capacityIdentifier)
             }
             .accessibilityElement(children: .combine)
             .accessibilityLabel(state.capacityAccessibilityLabel)
+            .accessibilityIdentifier(capacityIdentifier)
 
             Text(state.statusDetail)
                 .font(.callout)
