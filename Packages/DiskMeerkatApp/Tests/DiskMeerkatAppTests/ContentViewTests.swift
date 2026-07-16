@@ -1,6 +1,5 @@
+import DiskMeerkatApp
 import XCTest
-
-@testable import DiskMeerkatApp
 
 @MainActor
 final class ContentViewTests: XCTestCase {
