@@ -4,6 +4,8 @@
 
 Draft for product review.
 
+See the companion [UI Design](ui-design.md) for the proposed menu-bar, Settings, and notification experience.
+
 ## Summary
 
 DiskMeerkat monitors the available space on a disk at a configurable interval. When the available space falls below a configurable threshold, the app sends a notification.
