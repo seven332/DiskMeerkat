@@ -93,17 +93,19 @@ V1 does not:
 2. Only one disk-space check may be active at a time.
 3. Check triggers from startup, the interval, wake, settings save, notification-permission grant, and `Check Now` use
    one serialized path. Triggers received during an active check coalesce into at most one follow-up check.
-4. A changed interval cancels and replaces the existing schedule rather than creating another timer. The replacement
+4. At most one interval wait exists. When a follow-up is pending at check completion, the app runs that follow-up
+   before creating another interval wait; only the final check in the serialized work starts the next deadline.
+5. A changed interval cancels and replaces the existing schedule rather than creating another timer. The replacement
    schedule starts from completion of the settings-triggered check.
-5. Missed intervals caused by sleep, suspension, or the app not running do not produce catch-up checks.
-6. After a wake event, the app requests at most one immediate check through the coalescing path and then resumes the
+6. Missed intervals caused by sleep, suspension, or the app not running do not produce catch-up checks.
+7. After a wake event, the app requests at most one immediate check through the coalescing path and then resumes the
    configured schedule from check completion.
-7. A failed or invalid disk-space read does not send a low-space notification or change the notification state. The app
+8. A failed or invalid disk-space read does not send a low-space notification or change the notification state. The app
    exposes the failure and retries on a later check.
-8. `Check Now` uses the same reading, transition, notification, persistence, and scheduling behavior as every other
+9. `Check Now` uses the same reading, transition, notification, persistence, and scheduling behavior as every other
    trigger. The UI disables it while a check is active; a trigger that races with the active check still follows the
    coalescing rule.
-9. Quitting stops monitoring, cancels scheduled work, and prevents a pending or stale result from mutating state after
+10. Quitting stops monitoring, cancels scheduled work, and prevents a pending or stale result from mutating state after
    shutdown.
 
 ### Notification State
@@ -271,6 +273,7 @@ Unless a scenario states otherwise, the threshold is `100 GB`.
     - `Check Now` is enabled while idle and disabled while a check is active.
     - An idle request starts one check through the normal path.
     - A request that races with active work produces at most one coalesced follow-up, never an overlapping read.
+    - The follow-up completes before one new interval deadline is installed; no timer from the earlier check remains.
 
 11. **The app wakes after missed intervals**
     - Several intervals pass while the Mac sleeps.
