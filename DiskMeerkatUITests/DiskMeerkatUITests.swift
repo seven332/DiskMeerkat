@@ -10,13 +10,13 @@ final class DiskMeerkatUITests: XCTestCase {
 
     @MainActor
     func testFirstRunDismissalAndWindowCloseLeaveMenuAppRunning() throws {
-        let launch = launch(fixture: .firstRun)
-        defer { terminateIfNeeded(launch.app) }
+        let dismissalLaunch = launch(fixture: .firstRun)
+        defer { terminateIfNeeded(dismissalLaunch.app) }
 
-        let statusWindow = launch.app.windows["DiskMeerkat Status"]
+        let statusWindow = dismissalLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(statusWindow.waitForExistence(timeout: 3))
-        XCTAssertTrue(launch.app.staticTexts["Welcome to DiskMeerkat"].exists)
-        XCTAssertFalse(launch.app.dialogs.firstMatch.exists)
+        XCTAssertTrue(dismissalLaunch.app.staticTexts["Welcome to DiskMeerkat"].exists)
+        XCTAssertFalse(dismissalLaunch.app.dialogs.firstMatch.exists)
 
         let screenshot = XCTAttachment(screenshot: statusWindow.screenshot())
         screenshot.name = "Integrated first-run status"
@@ -24,19 +24,49 @@ final class DiskMeerkatUITests: XCTestCase {
         add(screenshot)
 
         let dismiss = element(
-            in: launch.app,
+            in: dismissalLaunch.app,
             identifier: "diskMeerkat.status.dismissOnboarding"
         )
         XCTAssertTrue(dismiss.waitForExistence(timeout: 2))
-        dismiss.click()
+        press(dismiss)
         XCTAssertTrue(
-            launch.app.staticTexts["Welcome to DiskMeerkat"].waitForNonExistence(timeout: 2)
+            dismissalLaunch.app.staticTexts["Welcome to DiskMeerkat"].waitForNonExistence(
+                timeout: 2
+            )
         )
 
-        statusWindow.buttons[XCUIIdentifierCloseWindow].click()
+        dismissalLaunch.app.typeKey("w", modifierFlags: .command)
         XCTAssertTrue(statusWindow.waitForNonExistence(timeout: 2))
-        XCTAssertEqual(launch.app.state, .runningForeground)
-        XCTAssertTrue(menuBarItem(in: launch.app).waitForExistence(timeout: 2))
+        XCTAssertEqual(dismissalLaunch.app.state, .runningForeground)
+        XCTAssertTrue(menuBarItem(in: dismissalLaunch.app).waitForExistence(timeout: 2))
+        dismissalLaunch.app.terminate()
+        XCTAssertTrue(dismissalLaunch.app.wait(for: .notRunning, timeout: 3))
+
+        let closeLaunch = launch(fixture: .firstRun)
+        defer { terminateIfNeeded(closeLaunch.app) }
+        let closeWindow = closeLaunch.app.windows["DiskMeerkat Status"]
+        XCTAssertTrue(closeWindow.waitForExistence(timeout: 3))
+        XCTAssertTrue(closeLaunch.app.staticTexts["Welcome to DiskMeerkat"].exists)
+
+        closeLaunch.app.typeKey("w", modifierFlags: .command)
+        XCTAssertTrue(closeWindow.waitForNonExistence(timeout: 2))
+        let closeMenuBarItem = menuBarItem(in: closeLaunch.app)
+        XCTAssertTrue(closeMenuBarItem.waitForExistence(timeout: 2))
+        press(closeMenuBarItem)
+        let openStatus = element(
+            in: closeLaunch.app,
+            identifier: "diskMeerkat.menu.openStatus"
+        )
+        XCTAssertTrue(openStatus.waitForExistence(timeout: 2))
+        press(openStatus)
+
+        XCTAssertTrue(closeWindow.waitForExistence(timeout: 2))
+        XCTAssertTrue(
+            closeLaunch.app.staticTexts["Welcome to DiskMeerkat"].waitForNonExistence(
+                timeout: 2
+            )
+        )
+        XCTAssertEqual(closeLaunch.app.state, .runningForeground)
     }
 
     @MainActor
@@ -46,7 +76,7 @@ final class DiskMeerkatUITests: XCTestCase {
 
         let menuBarItem = menuBarItem(in: launch.app)
         XCTAssertTrue(menuBarItem.waitForExistence(timeout: 3))
-        press(menuBarItem: menuBarItem)
+        press(menuBarItem)
 
         let menuCapacity = element(
             in: launch.app,
@@ -69,7 +99,7 @@ final class DiskMeerkatUITests: XCTestCase {
         XCTAssertTrue(statusWindow.waitForNonExistence(timeout: 2))
         XCTAssertEqual(launch.app.state, .runningForeground)
 
-        press(menuBarItem: menuBarItem)
+        press(menuBarItem)
         let openSettings = element(
             in: launch.app,
             identifier: "diskMeerkat.menu.openSettings"
@@ -106,7 +136,7 @@ final class DiskMeerkatUITests: XCTestCase {
         element(in: launch.app, identifier: "diskMeerkat.settings.cancel").click()
         XCTAssertTrue(settingsRoot.waitForNonExistence(timeout: 2))
 
-        press(menuBarItem: menuBarItem)
+        press(menuBarItem)
         let quit = element(in: launch.app, identifier: "diskMeerkat.menu.quit")
         XCTAssertTrue(quit.waitForExistence(timeout: 2))
         quit.click()
@@ -191,23 +221,23 @@ final class DiskMeerkatUITests: XCTestCase {
     }
 
     @MainActor
-    private func press(menuBarItem: XCUIElement) {
-        // XCUI can report MenuBarExtra frames outside the owning display on
-        // multi-display hosts, so press the stable accessibility element.
+    private func press(_ element: XCUIElement) {
+        // XCUI can report MenuBarExtra and related window frames outside the
+        // owning display on multi-display hosts, so use the stable AX element.
         guard
             let runningApplication = NSRunningApplication.runningApplications(
                 withBundleIdentifier: "Hippo.DiskMeerkat"
             ).max(by: { $0.processIdentifier < $1.processIdentifier }),
-            let statusItem = accessibilityDescendant(
+            let accessibilityElement = accessibilityDescendant(
                 of: AXUIElementCreateApplication(runningApplication.processIdentifier),
-                identifier: menuBarItem.identifier
+                identifier: element.identifier
             )
         else {
-            XCTFail("Could not resolve the DiskMeerkat status item")
+            XCTFail("Could not resolve accessibility element \(element.identifier)")
             return
         }
         XCTAssertEqual(
-            AXUIElementPerformAction(statusItem, kAXPressAction as CFString),
+            AXUIElementPerformAction(accessibilityElement, kAXPressAction as CFString),
             .success
         )
     }
