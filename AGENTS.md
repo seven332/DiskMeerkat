@@ -10,7 +10,7 @@ Use this file as a quick contributor reference. The [Development Guide](docs/dev
 
 - `open DiskMeerkat.xcodeproj` opens the app for local building and running.
 - `swift test --package-path Packages/DiskMeerkatApp` runs package tests.
-- [Local Validation](docs/development.md#local-validation) contains the canonical formatting and app/UI test commands. Use those exact commands before submission instead of maintaining copies here.
+- [Local Validation](docs/development.md#local-validation) maps changed surfaces to canonical checks. Run the checks relevant to the change; documentation-only work does not require Swift or UI tests.
 
 ## Coding Style & Naming Conventions
 
