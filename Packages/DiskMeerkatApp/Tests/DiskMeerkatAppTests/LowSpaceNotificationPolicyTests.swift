@@ -7,33 +7,40 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
         let below = try DiskCapacity(bytes: threshold.bytes - 1)
         let equal = try DiskCapacity(bytes: threshold.bytes)
         let above = try DiskCapacity(bytes: threshold.bytes + 1)
+        let belowSnapshot = StartupVolumeSnapshot(
+            availableCapacity: below,
+            volumeName: "Macintosh HD"
+        )
 
         let belowEvaluation = LowSpaceNotificationPolicy.evaluate(
-            reading: .available(below),
+            reading: .available(belowSnapshot),
             threshold: threshold,
             episodeState: .armed
         )
 
         XCTAssertEqual(
             belowEvaluation.assessment,
-            .available(capacity: below, relationship: .below)
+            .available(startupVolume: belowSnapshot, relationship: .below)
         )
         XCTAssertEqual(belowEvaluation.nextEpisodeState, .armed)
         guard case .submit(let candidate) = belowEvaluation.notificationDirective else {
             return XCTFail("Expected a low-space notification candidate")
         }
         XCTAssertEqual(candidate.availableCapacity, below)
+        XCTAssertEqual(candidate.volumeName, "Macintosh HD")
+        XCTAssertEqual(candidate.startupVolume, belowSnapshot)
         XCTAssertEqual(candidate.threshold, threshold)
 
         for (capacity, relationship) in [(equal, ThresholdRelationship.equal), (above, .above)] {
+            let snapshot = StartupVolumeSnapshot(availableCapacity: capacity, volumeName: nil)
             XCTAssertEqual(
                 LowSpaceNotificationPolicy.evaluate(
-                    reading: .available(capacity),
+                    reading: .available(snapshot),
                     threshold: threshold,
                     episodeState: .armed
                 ),
                 MonitoringEvaluation(
-                    assessment: .available(capacity: capacity, relationship: relationship),
+                    assessment: .available(startupVolume: snapshot, relationship: relationship),
                     notificationDirective: .none,
                     nextEpisodeState: .armed
                 )
@@ -65,8 +72,9 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
     func testSubmissionOutcomeChangesStateOnlyAfterCandidateExists() throws {
         let threshold = try LowSpaceThreshold(gigabytes: 100)
         let capacity = try DiskCapacity(bytes: threshold.bytes - 1)
+        let snapshot = StartupVolumeSnapshot(availableCapacity: capacity, volumeName: nil)
         let evaluation = LowSpaceNotificationPolicy.evaluate(
-            reading: .available(capacity),
+            reading: .available(snapshot),
             threshold: threshold,
             episodeState: .armed
         )
@@ -90,14 +98,15 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
 
         for (bytes, relationship, expectedState) in values {
             let capacity = try DiskCapacity(bytes: bytes)
+            let snapshot = StartupVolumeSnapshot(availableCapacity: capacity, volumeName: nil)
             XCTAssertEqual(
                 LowSpaceNotificationPolicy.evaluate(
-                    reading: .available(capacity),
+                    reading: .available(snapshot),
                     threshold: threshold,
                     episodeState: .suppressed
                 ),
                 MonitoringEvaluation(
-                    assessment: .available(capacity: capacity, relationship: relationship),
+                    assessment: .available(startupVolume: snapshot, relationship: relationship),
                     notificationDirective: .none,
                     nextEpisodeState: expectedState
                 )
@@ -107,12 +116,13 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
 
     func testThresholdChangesUseTheSameTransitionRules() throws {
         let capacity = try DiskCapacity(bytes: 90_000_000_000)
+        let snapshot = StartupVolumeSnapshot(availableCapacity: capacity, volumeName: nil)
         let lowerThreshold = try LowSpaceThreshold(gigabytes: 80)
         let higherThreshold = try LowSpaceThreshold(gigabytes: 100)
 
         XCTAssertEqual(
             LowSpaceNotificationPolicy.evaluate(
-                reading: .available(capacity),
+                reading: .available(snapshot),
                 threshold: lowerThreshold,
                 episodeState: .suppressed
             ).nextEpisodeState,
@@ -120,7 +130,7 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
         )
 
         let raisedThresholdEvaluation = LowSpaceNotificationPolicy.evaluate(
-            reading: .available(capacity),
+            reading: .available(snapshot),
             threshold: higherThreshold,
             episodeState: .armed
         )
