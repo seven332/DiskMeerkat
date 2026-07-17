@@ -1,5 +1,9 @@
 # DiskMeerkat
 
+<p align="center">
+  <img src="docs/design/app-icon.png" alt="DiskMeerkat app icon" width="192">
+</p>
+
 [![CI](https://github.com/seven332/DiskMeerkat/actions/workflows/ci.yml/badge.svg)](https://github.com/seven332/DiskMeerkat/actions/workflows/ci.yml)
 
 DiskMeerkat is a macOS app for monitoring available disk space and notifying the user before a monitored volume runs too low.
