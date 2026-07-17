@@ -4,6 +4,7 @@ import XCTest
 final class MonitoringConfigurationTests: XCTestCase {
     func testCheckIntervalPresetsExposeStableSecondsAndDurations() {
         let expectedValues: [(CheckInterval, Int)] = [
+            (.oneMinute, 60),
             (.fiveMinutes, 300),
             (.fifteenMinutes, 900),
             (.thirtyMinutes, 1_800),
