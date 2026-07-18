@@ -3,7 +3,7 @@ import XCTest
 @testable import DiskMeerkatApp
 
 final class StartupVolumeReaderTests: XCTestCase {
-    func testReadClearsCachedResourceValuesBeforeLoading() async throws {
+    func testRepeatedReadsClearCachedResourceValuesBeforeLoading() async throws {
         let cachedValueKey = URLResourceKey("Hippo.DiskMeerkat.tests.cachedValue")
         var startupVolumeURL = URL(fileURLWithPath: "/", isDirectory: true)
         startupVolumeURL.setTemporaryResourceValue(Int64(1), forKey: cachedValueKey)
@@ -18,17 +18,17 @@ final class StartupVolumeReaderTests: XCTestCase {
             )
         }
 
-        let reading = await reader.readStartupVolume()
-
-        XCTAssertEqual(
-            reading,
-            .available(
-                StartupVolumeSnapshot(
-                    availableCapacity: try DiskCapacity(bytes: 42_000_000_000),
-                    volumeName: "Macintosh HD"
-                )
+        let firstReading = await reader.readStartupVolume()
+        let secondReading = await reader.readStartupVolume()
+        let expectedReading = DiskSpaceReading.available(
+            StartupVolumeSnapshot(
+                availableCapacity: try DiskCapacity(bytes: 42_000_000_000),
+                volumeName: "Macintosh HD"
             )
         )
+
+        XCTAssertEqual(firstReading, expectedReading)
+        XCTAssertEqual(secondReading, expectedReading)
     }
 
     func testValidReadUsesStartupRootAndRequiredResourceKeys() async throws {
