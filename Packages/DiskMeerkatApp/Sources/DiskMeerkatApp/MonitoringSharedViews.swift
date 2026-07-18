@@ -125,6 +125,13 @@ struct MonitoringCapacityHeroView: View {
                 .accessibilityHidden(true)
             }
 
+            if !compact && state.headline != .monitoring {
+                Text(state.headline.text)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(heroTint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             Text(state.statusDetail)
                 .font(.callout)
                 .foregroundStyle(.secondary)

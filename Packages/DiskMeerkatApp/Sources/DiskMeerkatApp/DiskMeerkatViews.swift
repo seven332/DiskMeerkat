@@ -454,19 +454,17 @@ public struct DiskMeerkatSettingsView: View {
                 .disabled(model.isSavingSettings || state.isSavingConfiguration)
                 .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
 
-                Button {
+                if model.isSavingSettings || state.isSavingConfiguration {
+                    ProgressView()
+                        .controlSize(.small)
+                        .accessibilityLabel("Saving settings")
+                }
+
+                Button("Save") {
                     Task {
                         if await model.saveSettings() {
                             dismiss()
                         }
-                    }
-                } label: {
-                    if model.isSavingSettings || state.isSavingConfiguration {
-                        ProgressView()
-                            .controlSize(.small)
-                            .accessibilityLabel("Saving settings")
-                    } else {
-                        Text("Save")
                     }
                 }
                 .buttonStyle(.borderedProminent)
