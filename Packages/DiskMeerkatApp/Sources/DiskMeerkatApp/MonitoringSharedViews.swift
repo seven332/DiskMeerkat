@@ -427,11 +427,11 @@ struct OnboardingView: View {
             HStack {
                 if state.notificationPermission.canRequestAuthorization {
                     Button("Enable Notifications", action: enableNotifications)
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isUpdatingNotificationPermission || isCompleting)
                         .accessibilityIdentifier(
                             DiskMeerkatAccessibilityIdentifiers.statusEnableNotifications
                         )
+                        .buttonStyle(.borderedProminent)
+                        .disabled(isUpdatingNotificationPermission || isCompleting)
                 } else if state.notificationPermission.canOpenSettings {
                     Button("Open Notification Settings", action: openNotificationSettings)
                         .disabled(isUpdatingNotificationPermission || isCompleting)

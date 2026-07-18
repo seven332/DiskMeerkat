@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 @MainActor
@@ -99,10 +100,10 @@ public struct DiskMeerkatMenuView: View {
                         )
                         .frame(maxWidth: .infinity)
                     }
+                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuCheckNow)
                     .buttonStyle(.borderedProminent)
                     .disabled(!model.canCheckNow)
                     .keyboardShortcut("r", modifiers: .command)
-                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuCheckNow)
 
                     Button {
                         actions.openStatus()
@@ -278,10 +279,10 @@ public struct DiskMeerkatStatusView: View {
                         systemImage: "arrow.clockwise"
                     )
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusCheckNow)
                 .buttonStyle(.borderedProminent)
                 .disabled(!model.canCheckNow)
                 .keyboardShortcut("r", modifiers: .command)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusCheckNow)
             }
             .controlSize(.regular)
             .padding(.horizontal, 18)
@@ -446,13 +447,15 @@ public struct DiskMeerkatSettingsView: View {
 
             HStack(spacing: 8) {
                 Spacer()
-                Button("Cancel") {
+                DiskMeerkatSettingsActionButton(
+                    title: "Cancel",
+                    accessibilityIdentifier: DiskMeerkatAccessibilityIdentifiers.settingsCancel,
+                    keyEquivalent: "\u{1b}",
+                    isEnabled: !model.isSavingSettings && !state.isSavingConfiguration
+                ) {
                     model.cancelSettingsEditing()
                     dismiss()
                 }
-                .keyboardShortcut(.cancelAction)
-                .disabled(model.isSavingSettings || state.isSavingConfiguration)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
 
                 if model.isSavingSettings || state.isSavingConfiguration {
                     ProgressView()
@@ -460,19 +463,19 @@ public struct DiskMeerkatSettingsView: View {
                         .accessibilityLabel("Saving settings")
                 }
 
-                Button("Save") {
+                DiskMeerkatSettingsActionButton(
+                    title: "Save",
+                    accessibilityIdentifier: DiskMeerkatAccessibilityIdentifiers.settingsSave,
+                    keyEquivalent: "\r",
+                    isEnabled: model.canSaveSettings
+                ) {
                     Task {
                         if await model.saveSettings() {
                             dismiss()
                         }
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut(.defaultAction)
-                .disabled(!model.canSaveSettings)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsSave)
             }
-            .controlSize(.regular)
             .padding(.horizontal, 18)
             .padding(.vertical, 11)
         }
@@ -515,6 +518,54 @@ public struct DiskMeerkatSettingsView: View {
             )
         } else {
             MonitoringInlineBadge(text: "Unavailable", tint: .orange)
+        }
+    }
+}
+
+@MainActor
+private struct DiskMeerkatSettingsActionButton: NSViewRepresentable {
+    let title: String
+    let accessibilityIdentifier: String
+    let keyEquivalent: String
+    let isEnabled: Bool
+    let action: () -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(action: action)
+    }
+
+    func makeNSView(context: Context) -> NSButton {
+        let button = NSButton(
+            title: title,
+            target: context.coordinator,
+            action: #selector(Coordinator.performAction)
+        )
+        button.bezelStyle = .rounded
+        button.controlSize = .regular
+        button.identifier = NSUserInterfaceItemIdentifier(accessibilityIdentifier)
+        button.setAccessibilityIdentifier(accessibilityIdentifier)
+        return button
+    }
+
+    func updateNSView(_ button: NSButton, context: Context) {
+        context.coordinator.action = action
+        button.title = title
+        button.keyEquivalent = keyEquivalent
+        button.isEnabled = isEnabled
+        button.identifier = NSUserInterfaceItemIdentifier(accessibilityIdentifier)
+        button.setAccessibilityIdentifier(accessibilityIdentifier)
+    }
+
+    @MainActor
+    final class Coordinator: NSObject {
+        var action: () -> Void
+
+        init(action: @escaping () -> Void) {
+            self.action = action
+        }
+
+        @objc func performAction() {
+            action()
         }
     }
 }
