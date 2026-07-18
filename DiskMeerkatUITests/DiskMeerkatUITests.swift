@@ -109,6 +109,15 @@ final class DiskMeerkatUITests: XCTestCase {
             identifier: "diskMeerkat.settings.root"
         )
         XCTAssertTrue(settingsRoot.waitForExistence(timeout: 2))
+        let save = element(
+            in: launch.app,
+            identifier: "diskMeerkat.settings.save"
+        )
+        XCTAssertTrue(
+            save.waitForExistence(timeout: 2),
+            "Settings Save button is missing before validation: \(launch.app.debugDescription)"
+        )
+        XCTAssertFalse(save.isEnabled)
         let threshold = element(
             in: launch.app,
             identifier: "diskMeerkat.settings.threshold"
@@ -125,9 +134,9 @@ final class DiskMeerkatUITests: XCTestCase {
         XCTAssertTrue(
             thresholdError.waitForExistence(timeout: 2)
         )
-        let save = element(
-            in: launch.app,
-            identifier: "diskMeerkat.settings.save"
+        XCTAssertTrue(
+            save.exists,
+            "Settings Save button disappeared after validation: \(launch.app.debugDescription)"
         )
         XCTAssertFalse(save.isEnabled)
         press(element(in: launch.app, identifier: "diskMeerkat.settings.cancel"))

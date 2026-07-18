@@ -22,6 +22,7 @@ struct DiskMeerkatApp: App {
         Window("DiskMeerkat Status", id: DiskMeerkatSceneIdentifier.status) {
             DiskMeerkatStatusScene(controller: applicationDelegate.controller)
         }
+        .defaultSize(width: 640, height: 540)
         .defaultLaunchBehavior(.suppressed)
         .restorationBehavior(.disabled)
         .windowResizability(.contentSize)

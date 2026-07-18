@@ -15,7 +15,6 @@ public struct DiskMeerkatSurfaceActions {
         self.openSettings = openSettings
         self.quit = quit
     }
-
 }
 
 public struct DiskMeerkatMenuBarLabel: View {
@@ -47,51 +46,80 @@ public struct DiskMeerkatMenuView: View {
     public var body: some View {
         let state = model.presentation
 
-        VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .firstTextBaseline) {
-                Text("DiskMeerkat")
-                    .font(.headline)
-                Spacer()
-                Text(state.headline.text)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        VStack(spacing: 0) {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                        .fill(Color.accentColor.opacity(0.11))
+                    Image(systemName: "internaldrive")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(.tint)
+                }
+                .frame(width: 30, height: 30)
+                .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 1) {
+                    Text("DiskMeerkat")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Startup disk monitor")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
+                MonitoringStatusBadge(state: state)
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuStatus)
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 13)
 
-            MonitoringSummaryView(
-                state: state,
-                compact: true,
-                capacityIdentifier: DiskMeerkatAccessibilityIdentifiers.menuCapacity
-            )
+            Divider()
 
-            MonitoringScheduleView(state: state)
+            VStack(alignment: .leading, spacing: 14) {
+                MonitoringCapacityHeroView(
+                    state: state,
+                    compact: true,
+                    showsFacts: true,
+                    capacityIdentifier: DiskMeerkatAccessibilityIdentifiers.menuCapacity
+                )
 
-            if let notice = state.notices.first {
-                MonitoringNoticeView(notice: notice)
-            }
+                MonitoringScheduleStripView(state: state)
 
-            HStack {
-                Button {
-                    Task { await model.checkNow() }
-                } label: {
-                    if state.isCheckInProgress || model.isRequestingCheck {
-                        Label("Checking…", systemImage: "arrow.triangle.2.circlepath")
-                    } else {
-                        Label("Check Now", systemImage: "arrow.clockwise")
-                    }
+                if let notice = state.notices.first {
+                    MonitoringNoticeView(notice: notice)
                 }
-                .disabled(!model.canCheckNow)
-                .keyboardShortcut("r", modifiers: .command)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuCheckNow)
 
-                Button("Open Status", action: actions.openStatus)
+                HStack(spacing: 8) {
+                    Button {
+                        Task { await model.checkNow() }
+                    } label: {
+                        Label(
+                            state.isCheckInProgress || model.isRequestingCheck
+                                ? "Checking…" : "Check Now",
+                            systemImage: "arrow.clockwise"
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
+                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuCheckNow)
+                    .buttonStyle(.borderedProminent)
+                    .disabled(!model.canCheckNow)
+                    .keyboardShortcut("r", modifiers: .command)
+
+                    Button {
+                        actions.openStatus()
+                    } label: {
+                        Text("Open Status")
+                            .frame(maxWidth: .infinity)
+                    }
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuOpenStatus)
+                }
+                .controlSize(.regular)
             }
+            .padding(16)
 
             Divider()
 
             HStack {
-                Button("Settings…", action: actions.openSettings)
+                Button("Settings", action: actions.openSettings)
                     .keyboardShortcut(",", modifiers: .command)
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuOpenSettings)
                 Spacer()
@@ -99,9 +127,13 @@ public struct DiskMeerkatMenuView: View {
                     .keyboardShortcut("q", modifiers: .command)
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuQuit)
             }
+            .buttonStyle(.plain)
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 11)
         }
-        .padding(16)
-        .frame(width: 340)
+        .frame(width: 370)
     }
 }
 
@@ -149,65 +181,128 @@ public struct DiskMeerkatStatusView: View {
     public var body: some View {
         let state = model.presentation
 
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                if state.shouldShowOnboarding {
-                    DiskMeerkatOnboardingView(model: model)
-                }
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(alignment: .center, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Current status")
+                                .font(.title2.weight(.semibold))
+                            Text("Your startup disk is checked automatically in the background.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer(minLength: 8)
+                        MonitoringStatusBadge(state: state)
+                    }
 
-                MonitoringSummaryView(state: state)
-                MonitoringScheduleView(state: state)
+                    if state.shouldShowOnboarding {
+                        DiskMeerkatOnboardingView(model: model)
+                    }
 
-                HStack {
-                    Button {
-                        Task { await model.checkNow() }
-                    } label: {
-                        if state.isCheckInProgress || model.isRequestingCheck {
-                            Label("Checking…", systemImage: "arrow.triangle.2.circlepath")
-                        } else {
-                            Label("Check Now", systemImage: "arrow.clockwise")
+                    MonitoringCapacityHeroView(state: state)
+
+                    HStack(alignment: .top, spacing: 12) {
+                        MonitoringInfoCard(title: "Monitoring", systemImage: "slider.horizontal.3") {
+                            MonitoringInfoRow("Alert below") {
+                                Text(thresholdValue(for: state))
+                            }
+                            MonitoringInfoRow("Check every") {
+                                Text(state.intervalText)
+                            }
+                        }
+
+                        MonitoringInfoCard(title: "Schedule", systemImage: "clock") {
+                            MonitoringInfoRow("Last check") {
+                                MonitoringRelativeDateView(
+                                    date: state.lastSuccessfulCheckAt,
+                                    fallback: "Not yet"
+                                )
+                            }
+                            MonitoringInfoRow("Next check") {
+                                MonitoringRelativeDateView(
+                                    date: state.nextScheduledCheckAt,
+                                    fallback: state.isCheckInProgress
+                                        ? "After this check" : "Not scheduled"
+                                )
+                            }
                         }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(!model.canCheckNow)
-                    .keyboardShortcut("r", modifiers: .command)
-                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusCheckNow)
 
-                    Button("Settings…", action: openSettings)
-                        .keyboardShortcut(",", modifiers: .command)
+                    if let suppressionExplanation = state.suppressionExplanation {
+                        Label(suppressionExplanation, systemImage: "bell.badge")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                Color.primary.opacity(0.045),
+                                in: RoundedRectangle(cornerRadius: 11)
+                            )
+                    }
+
+                    ForEach(state.notices) { notice in
+                        MonitoringNoticeView(notice: notice)
+                    }
+
+                    if !state.shouldShowOnboarding {
+                        NotificationPermissionView(
+                            permission: state.notificationPermission,
+                            isWorking: model.isUpdatingNotificationPermission,
+                            enable: {
+                                Task { await model.enableNotifications() }
+                            },
+                            openSettings: {
+                                Task { await model.openNotificationSettings() }
+                            }
+                        )
+                    }
                 }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 22)
+            }
 
-                if let suppressionExplanation = state.suppressionExplanation {
-                    Label(suppressionExplanation, systemImage: "bell.badge")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+            Divider()
 
-                ForEach(state.notices) { notice in
-                    MonitoringNoticeView(notice: notice)
-                }
-
-                if !state.shouldShowOnboarding {
-                    NotificationPermissionView(
-                        permission: state.notificationPermission,
-                        isWorking: model.isUpdatingNotificationPermission,
-                        enable: {
-                            Task { await model.enableNotifications() }
-                        },
-                        openSettings: {
-                            Task { await model.openNotificationSettings() }
-                        }
+            HStack(spacing: 8) {
+                Button("Settings", action: openSettings)
+                    .keyboardShortcut(",", modifiers: .command)
+                Spacer()
+                Button {
+                    Task { await model.checkNow() }
+                } label: {
+                    Label(
+                        state.isCheckInProgress || model.isRequestingCheck
+                            ? "Checking…" : "Check Now",
+                        systemImage: "arrow.clockwise"
                     )
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusCheckNow)
+                .buttonStyle(.borderedProminent)
+                .disabled(!model.canCheckNow)
+                .keyboardShortcut("r", modifiers: .command)
             }
-            .padding(24)
+            .controlSize(.regular)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 11)
         }
-        .frame(minWidth: 480, idealWidth: 520, minHeight: 460, idealHeight: 600)
+        .frame(
+            minWidth: 560,
+            idealWidth: 640,
+            maxWidth: .infinity,
+            minHeight: 480,
+            idealHeight: 540,
+            maxHeight: .infinity
+        )
         .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.statusRoot)
         .task {
             await model.refreshExternalState()
         }
+    }
+
+    private func thresholdValue(for state: MonitoringPresentationState) -> String {
+        state.thresholdText.replacingOccurrences(of: "Alert below ", with: "")
     }
 }
 
@@ -223,144 +318,167 @@ public struct DiskMeerkatSettingsView: View {
         @Bindable var model = model
         let state = model.presentation
 
-        Form {
-            Section("Monitoring") {
-                LabeledContent("Monitored volume") {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text(state.volumeName)
-                        Text(state.availableSpaceText)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                LabeledContent("Notify me when available space falls below") {
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        TextField("Threshold", text: $model.settingsDraft.thresholdText)
-                            .frame(width: 110)
-                            .multilineTextAlignment(.trailing)
-                            .accessibilityLabel("Low-space threshold in decimal gigabytes")
-                            .accessibilityIdentifier(
-                                DiskMeerkatAccessibilityIdentifiers.settingsThreshold
-                            )
-                        Text("GB")
-                            .foregroundStyle(.secondary)
-                    }
-                }
-
-                if let error = model.settingsDraft.thresholdError {
-                    Text(error.message)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .accessibilityLabel("Threshold error: \(error.message)")
-                }
-
-                Picker("Check interval", selection: $model.settingsDraft.interval) {
-                    ForEach(CheckInterval.allCases, id: \.rawValue) { interval in
-                        Text(interval.displayName)
-                            .tag(interval)
-                    }
-                }
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsInterval)
-            }
-            .disabled(model.isSavingSettings || state.isSavingConfiguration)
-
-            Section("Notifications") {
-                NotificationPermissionView(
-                    permission: state.notificationPermission,
-                    isWorking: model.isUpdatingNotificationPermission,
-                    enable: {
-                        Task { await model.enableNotifications() }
-                    },
-                    openSettings: {
-                        Task { await model.openNotificationSettings() }
-                    },
-                    enableIdentifier:
-                        DiskMeerkatAccessibilityIdentifiers.settingsEnableNotifications,
-                    openSettingsIdentifier:
-                        DiskMeerkatAccessibilityIdentifiers.settingsOpenNotificationSettings
-                )
-            }
-
-            Section("Startup") {
-                Toggle(
-                    isOn: Binding(
-                        get: { state.launchAtLogin.isEnabled },
-                        set: { isEnabled in
-                            Task { await model.setLaunchAtLoginEnabled(isEnabled) }
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 15) {
+                    DiskMeerkatSettingsSection(title: "Monitoring") {
+                        DiskMeerkatSettingsRow(title: "Startup disk") {
+                            VStack(alignment: .trailing, spacing: 2) {
+                                Text(state.volumeName)
+                                    .fontWeight(.semibold)
+                                Text(state.availableSpaceText)
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
-                    )
-                ) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Launch at Login")
-                        Text(state.launchAtLogin.title)
-                            .font(.caption)
-                            .foregroundStyle(
-                                state.launchAtLogin.requiresAttention ? .orange : .secondary
+
+                        DiskMeerkatSettingsDivider()
+
+                        DiskMeerkatSettingsRow(
+                            title: "Alert threshold",
+                            detail: "Notify when available space is below this value."
+                        ) {
+                            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                TextField("Threshold", text: $model.settingsDraft.thresholdText)
+                                    .frame(width: 74)
+                                    .multilineTextAlignment(.trailing)
+                                    .accessibilityLabel("Low-space threshold in decimal gigabytes")
+                                    .accessibilityIdentifier(
+                                        DiskMeerkatAccessibilityIdentifiers.settingsThreshold
+                                    )
+                                Text("GB")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        if let error = model.settingsDraft.thresholdError {
+                            Text(error.message)
+                                .font(.caption2)
+                                .foregroundStyle(.red)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                                .padding(.horizontal, 13)
+                                .padding(.bottom, 8)
+                                .accessibilityLabel("Threshold error: \(error.message)")
+                        }
+
+                        DiskMeerkatSettingsDivider()
+
+                        DiskMeerkatSettingsRow(title: "Check interval") {
+                            Picker("Check interval", selection: $model.settingsDraft.interval) {
+                                ForEach(CheckInterval.allCases, id: \.rawValue) { interval in
+                                    Text(interval.displayName)
+                                        .tag(interval)
+                                }
+                            }
+                            .labelsHidden()
+                            .frame(width: 150)
+                            .accessibilityIdentifier(
+                                DiskMeerkatAccessibilityIdentifiers.settingsInterval
                             )
-                        Text(state.launchAtLogin.detail)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        }
+                    }
+                    .disabled(model.isSavingSettings || state.isSavingConfiguration)
+
+                    DiskMeerkatSettingsSection(title: "Notifications") {
+                        DiskMeerkatSettingsRow(
+                            title: "Low-space alerts",
+                            detail: state.notificationPermission.title
+                        ) {
+                            settingsNotificationAction
+                        }
+                    }
+
+                    DiskMeerkatSettingsSection(title: "Startup") {
+                        DiskMeerkatSettingsRow(
+                            title: "Launch at Login",
+                            detail: state.launchAtLogin.title
+                        ) {
+                            Toggle(
+                                "",
+                                isOn: Binding(
+                                    get: { state.launchAtLogin.isEnabled },
+                                    set: { isEnabled in
+                                        Task { await model.setLaunchAtLoginEnabled(isEnabled) }
+                                    }
+                                )
+                            )
+                            .labelsHidden()
+                            .disabled(
+                                !state.launchAtLogin.canToggle || model.isUpdatingLaunchAtLogin
+                            )
+                            .accessibilityIdentifier(
+                                DiskMeerkatAccessibilityIdentifiers.settingsLaunchAtLogin
+                            )
+                        }
+
+                        if state.launchAtLogin.canOpenSettings {
+                            DiskMeerkatSettingsDivider()
+                            DiskMeerkatSettingsRow(
+                                title: "Login Items",
+                                detail: state.launchAtLogin.detail
+                            ) {
+                                Button("Open Settings") {
+                                    Task { await model.openLaunchAtLoginSettings() }
+                                }
+                                .disabled(model.isUpdatingLaunchAtLogin)
+                                .accessibilityIdentifier(
+                                    DiskMeerkatAccessibilityIdentifiers.settingsOpenLoginSettings
+                                )
+                            }
+                        }
+                    }
+
+                    if let error = model.settingsSaveError {
+                        Label(error, systemImage: "exclamationmark.triangle.fill")
+                            .font(.callout)
+                            .foregroundStyle(.red)
+                            .padding(12)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(.red.opacity(0.08), in: RoundedRectangle(cornerRadius: 11))
                     }
                 }
-                .disabled(!state.launchAtLogin.canToggle || model.isUpdatingLaunchAtLogin)
-                .accessibilityIdentifier(
-                    DiskMeerkatAccessibilityIdentifiers.settingsLaunchAtLogin
-                )
-
-                if state.launchAtLogin.canOpenSettings {
-                    Button("Open Login Items Settings") {
-                        Task { await model.openLaunchAtLoginSettings() }
-                    }
-                    .disabled(model.isUpdatingLaunchAtLogin)
-                    .accessibilityIdentifier(
-                        DiskMeerkatAccessibilityIdentifiers.settingsOpenLoginSettings
-                    )
-                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 17)
             }
 
-            if let error = model.settingsSaveError {
-                Section {
-                    Label(error, systemImage: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.red)
-                }
-            }
-        }
-        .formStyle(.grouped)
-        .frame(width: 520, height: 520)
-        .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsRoot)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
+            Divider()
+
+            HStack(spacing: 8) {
+                Spacer()
                 Button("Cancel") {
                     model.cancelSettingsEditing()
                     dismiss()
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
                 .keyboardShortcut(.cancelAction)
                 .disabled(model.isSavingSettings || state.isSavingConfiguration)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
-            }
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
+
+                if model.isSavingSettings || state.isSavingConfiguration {
+                    ProgressView()
+                        .controlSize(.small)
+                        .accessibilityLabel("Saving settings")
+                }
+
+                Button("Save") {
                     Task {
                         if await model.saveSettings() {
                             dismiss()
                         }
                     }
-                } label: {
-                    if model.isSavingSettings || state.isSavingConfiguration {
-                        ProgressView()
-                            .controlSize(.small)
-                            .accessibilityLabel("Saving settings")
-                    } else {
-                        Text("Save")
-                    }
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsSave)
+                .buttonStyle(.borderedProminent)
                 .keyboardShortcut(.defaultAction)
                 .disabled(!model.canSaveSettings)
-                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsSave)
             }
+            .controlSize(.regular)
+            .accessibilityElement(children: .contain)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 11)
         }
+        .frame(width: 500, height: 470)
+        .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsRoot)
         .onAppear {
             model.beginSettingsEditing()
         }
@@ -370,6 +488,110 @@ public struct DiskMeerkatSettingsView: View {
         .task {
             await model.refreshExternalState()
         }
+    }
+
+    @ViewBuilder
+    private var settingsNotificationAction: some View {
+        let permission = model.presentation.notificationPermission
+
+        if model.isUpdatingNotificationPermission {
+            ProgressView()
+                .controlSize(.small)
+                .accessibilityLabel("Updating notification permission")
+        } else if permission.kind == .authorized {
+            MonitoringInlineBadge(text: "Enabled", tint: .green)
+        } else if permission.canRequestAuthorization {
+            Button("Enable") {
+                Task { await model.enableNotifications() }
+            }
+            .accessibilityIdentifier(
+                DiskMeerkatAccessibilityIdentifiers.settingsEnableNotifications
+            )
+        } else if permission.canOpenSettings {
+            Button("Open Settings") {
+                Task { await model.openNotificationSettings() }
+            }
+            .accessibilityIdentifier(
+                DiskMeerkatAccessibilityIdentifiers.settingsOpenNotificationSettings
+            )
+        } else {
+            MonitoringInlineBadge(text: "Unavailable", tint: .orange)
+        }
+    }
+}
+
+private struct DiskMeerkatSettingsSection<Content: View>: View {
+    let title: String
+    let content: Content
+
+    init(title: String, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(title.uppercased())
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .padding(.leading, 8)
+
+            VStack(spacing: 0) {
+                content
+            }
+            .background(
+                Color(nsColor: .controlBackgroundColor),
+                in: RoundedRectangle(cornerRadius: 12)
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Color.primary.opacity(0.09))
+            }
+        }
+    }
+}
+
+private struct DiskMeerkatSettingsRow<Control: View>: View {
+    let title: String
+    let detail: String?
+    let control: Control
+
+    init(
+        title: String,
+        detail: String? = nil,
+        @ViewBuilder control: () -> Control
+    ) {
+        self.title = title
+        self.detail = detail
+        self.control = control()
+    }
+
+    var body: some View {
+        HStack(alignment: .center, spacing: 16) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.caption.weight(.medium))
+                if let detail {
+                    Text(detail)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            control
+        }
+        .padding(.horizontal, 13)
+        .padding(.vertical, 10)
+        .frame(minHeight: 52)
+    }
+}
+
+private struct DiskMeerkatSettingsDivider: View {
+    var body: some View {
+        Divider()
+            .padding(.leading, 13)
     }
 }
 

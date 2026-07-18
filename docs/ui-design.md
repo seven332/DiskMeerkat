@@ -29,30 +29,31 @@ The status item uses a disk symbol in the normal state and an attention variant 
 space, a permission problem, or a read failure. Color may reinforce state, but symbol shape, accessibility text, and
 visible copy communicate it without color.
 
-Selecting the status item opens a compact popover:
+Selecting the status item opens a 370-point-wide compact popover:
 
 ```text
-┌──────────────────────────────┐
-│ DiskMeerkat       Monitoring │
-│                              │
-│ Macintosh HD                 │
-│ 82.4 GB available            │
-│ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━ │
-│ Alert below 20 GB            │
-│                              │
-│ Last checked: Just now       │
-│ Next check: In 15 minutes    │
-│                              │
-│ [ Check Now ] [ Open Status ]│
-│ Settings…                Quit │
-└──────────────────────────────┘
+┌──────────────────────────────────┐
+│ ◉ DiskMeerkat        Monitoring  │
+├──────────────────────────────────┤
+│ Macintosh HD               [▣]  │
+│ 82.4 GB                          │
+│ available                        │
+│ Alert below 20 GB · Every 15 min │
+│                                  │
+│ Last check       Next check      │
+│ Just now         In 15 minutes   │
+│                                  │
+│ [ Check Now ] [ Open Status ]    │
+├──────────────────────────────────┤
+│ Settings        Quit DiskMeerkat │
+└──────────────────────────────────┘
 ```
 
 The available-space value is the visual priority. The volume name, configured threshold, last successful check, and
 next scheduled check provide context. `Check Now` always uses the shared monitoring path defined in the
 [requirements](disk-space-monitoring.md#scheduling-and-disk-checks) and is disabled while a check is active.
 
-`Open Status` opens or focuses the singleton status window. `Settings…` opens the standard Settings scene. Quit is an
+`Open Status` opens or focuses the singleton status window. `Settings` opens the standard Settings scene. Quit is an
 explicit, separated action so closing a popover or window is never confused with stopping monitoring.
 
 The popover reads the next-check deadline from shared monitoring state and does not create a timer for disk checks.
@@ -83,9 +84,11 @@ disk-read problem must not erase the last known successful value.
 
 ## Status and First-run Window
 
-The status window is the one persistent, on-demand detail surface. It shows the same monitoring snapshot as the
-popover with room for the current problem, notification state, last and next check, configured values, and relevant
-actions. Opening it repeatedly focuses the existing window instead of creating copies or another monitoring runtime.
+The status window is the one persistent, on-demand detail surface. Its default size is 640 by 540 points. A landscape
+dashboard places the current capacity in a prominent hero card, monitoring and schedule facts in two adjacent cards,
+and notification or problem details below them. The content region scrolls when needed, while `Settings` and
+`Check Now` stay in a fixed bottom action bar. Opening it repeatedly focuses the existing window instead of creating
+copies or another monitoring runtime.
 
 On the first run, this window also presents a short introduction:
 
@@ -111,7 +114,8 @@ the app finishes composition and then presents the singleton window once.
 
 ## Settings Window
 
-V1 uses one compact form instead of tabs:
+The Settings window uses a compact 500-by-470-point grouped form instead of tabs. Monitoring, Notifications, and
+Startup appear as visually distinct groups, and Cancel and Save stay in a fixed bottom action bar:
 
 - **Monitored Volume:** Show the system-provided startup-volume name, or localized `Startup Disk` when it is missing,
   and the current capacity as read-only. Do not use disclosure or picker styling that suggests the volume can be
