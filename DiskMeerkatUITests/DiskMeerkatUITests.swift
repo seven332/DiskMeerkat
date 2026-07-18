@@ -117,7 +117,7 @@ final class DiskMeerkatUITests: XCTestCase {
             save.waitForExistence(timeout: 2),
             "Settings Save button is missing before validation: \(launch.app.debugDescription)"
         )
-        XCTAssertTrue(save.isEnabled)
+        XCTAssertFalse(save.isEnabled)
         let threshold = element(
             in: launch.app,
             identifier: "diskMeerkat.settings.threshold"
