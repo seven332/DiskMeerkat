@@ -30,9 +30,15 @@ struct FoundationStartupVolumeReader: StartupVolumeReader, Sendable {
     }
 
     func readStartupVolume() async -> DiskSpaceReading {
+        var uncachedStartupVolumeURL = startupVolumeURL
+        uncachedStartupVolumeURL.removeAllCachedResourceValues()
+
         let resourceValues: StartupVolumeResourceValues
         do {
-            resourceValues = try resourceValuesLoader(startupVolumeURL, Self.resourceKeys)
+            resourceValues = try resourceValuesLoader(
+                uncachedStartupVolumeURL,
+                Self.resourceKeys
+            )
         } catch {
             return .failed(.unavailable)
         }
