@@ -1,4 +1,3 @@
-import AppKit
 import SwiftUI
 
 @MainActor
@@ -447,15 +446,13 @@ public struct DiskMeerkatSettingsView: View {
 
             HStack(spacing: 8) {
                 Spacer()
-                DiskMeerkatSettingsActionButton(
-                    title: "Cancel",
-                    accessibilityIdentifier: DiskMeerkatAccessibilityIdentifiers.settingsCancel,
-                    keyEquivalent: "\u{1b}",
-                    isEnabled: !model.isSavingSettings && !state.isSavingConfiguration
-                ) {
+                Button("Cancel") {
                     model.cancelSettingsEditing()
                     dismiss()
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
+                .keyboardShortcut(.cancelAction)
+                .disabled(model.isSavingSettings || state.isSavingConfiguration)
 
                 if model.isSavingSettings || state.isSavingConfiguration {
                     ProgressView()
@@ -463,19 +460,20 @@ public struct DiskMeerkatSettingsView: View {
                         .accessibilityLabel("Saving settings")
                 }
 
-                DiskMeerkatSettingsActionButton(
-                    title: "Save",
-                    accessibilityIdentifier: DiskMeerkatAccessibilityIdentifiers.settingsSave,
-                    keyEquivalent: "\r",
-                    isEnabled: model.canSaveSettings
-                ) {
+                Button("Save") {
                     Task {
                         if await model.saveSettings() {
                             dismiss()
                         }
                     }
                 }
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsSave)
+                .buttonStyle(.borderedProminent)
+                .keyboardShortcut(.defaultAction)
+                .disabled(!model.canSaveSettings)
             }
+            .controlSize(.regular)
+            .accessibilityElement(children: .contain)
             .padding(.horizontal, 18)
             .padding(.vertical, 11)
         }
@@ -518,54 +516,6 @@ public struct DiskMeerkatSettingsView: View {
             )
         } else {
             MonitoringInlineBadge(text: "Unavailable", tint: .orange)
-        }
-    }
-}
-
-@MainActor
-private struct DiskMeerkatSettingsActionButton: NSViewRepresentable {
-    let title: String
-    let accessibilityIdentifier: String
-    let keyEquivalent: String
-    let isEnabled: Bool
-    let action: () -> Void
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(action: action)
-    }
-
-    func makeNSView(context: Context) -> NSButton {
-        let button = NSButton(
-            title: title,
-            target: context.coordinator,
-            action: #selector(Coordinator.performAction)
-        )
-        button.bezelStyle = .rounded
-        button.controlSize = .regular
-        button.identifier = NSUserInterfaceItemIdentifier(accessibilityIdentifier)
-        button.setAccessibilityIdentifier(accessibilityIdentifier)
-        return button
-    }
-
-    func updateNSView(_ button: NSButton, context: Context) {
-        context.coordinator.action = action
-        button.title = title
-        button.keyEquivalent = keyEquivalent
-        button.isEnabled = isEnabled
-        button.identifier = NSUserInterfaceItemIdentifier(accessibilityIdentifier)
-        button.setAccessibilityIdentifier(accessibilityIdentifier)
-    }
-
-    @MainActor
-    final class Coordinator: NSObject {
-        var action: () -> Void
-
-        init(action: @escaping () -> Void) {
-            self.action = action
-        }
-
-        @objc func performAction() {
-            action()
         }
     }
 }
