@@ -1,4 +1,5 @@
 import XCTest
+
 @testable import DiskMeerkatApp
 
 final class LowSpaceNotificationPolicyTests: XCTestCase {
@@ -88,15 +89,15 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
         XCTAssertEqual(candidate.episodeState(after: .failed), .armed)
     }
 
-    func testSuppressedStateRearmsOnlyAboveThreshold() throws {
+    func testSuppressedStateRemovesDeliveredNotificationAndRearmsOnlyAboveThreshold() throws {
         let threshold = try LowSpaceThreshold(gigabytes: 100)
-        let values: [(Int64, ThresholdRelationship, NotificationEpisodeState)] = [
-            (threshold.bytes - 1, .below, .suppressed),
-            (threshold.bytes, .equal, .suppressed),
-            (threshold.bytes + 1, .above, .armed),
+        let values: [(Int64, ThresholdRelationship, NotificationDirective, NotificationEpisodeState)] = [
+            (threshold.bytes - 1, .below, .none, .suppressed),
+            (threshold.bytes, .equal, .none, .suppressed),
+            (threshold.bytes + 1, .above, .removeDelivered, .armed),
         ]
 
-        for (bytes, relationship, expectedState) in values {
+        for (bytes, relationship, expectedDirective, expectedState) in values {
             let capacity = try DiskCapacity(bytes: bytes)
             let snapshot = StartupVolumeSnapshot(availableCapacity: capacity, volumeName: nil)
             XCTAssertEqual(
@@ -107,7 +108,7 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
                 ),
                 MonitoringEvaluation(
                     assessment: .available(startupVolume: snapshot, relationship: relationship),
-                    notificationDirective: .none,
+                    notificationDirective: expectedDirective,
                     nextEpisodeState: expectedState
                 )
             )
@@ -125,8 +126,12 @@ final class LowSpaceNotificationPolicyTests: XCTestCase {
                 reading: .available(snapshot),
                 threshold: lowerThreshold,
                 episodeState: .suppressed
-            ).nextEpisodeState,
-            .armed
+            ),
+            MonitoringEvaluation(
+                assessment: .available(startupVolume: snapshot, relationship: .above),
+                notificationDirective: .removeDelivered,
+                nextEpisodeState: .armed
+            )
         )
 
         let raisedThresholdEvaluation = LowSpaceNotificationPolicy.evaluate(

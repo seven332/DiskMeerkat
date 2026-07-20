@@ -35,6 +35,7 @@ final class UserNotificationsMonitoringServiceTests: XCTestCase {
             XCTAssertEqual(calls.status, 1)
             XCTAssertEqual(calls.request, 0)
             XCTAssertEqual(calls.add, 0)
+            XCTAssertEqual(calls.removeDelivered, 0)
         }
     }
 
@@ -107,6 +108,22 @@ final class UserNotificationsMonitoringServiceTests: XCTestCase {
             "Macintosh HD has 18.4 GB available, below your 20 GB limit."
         )
         XCTAssertTrue(requests[0].usesDefaultSound)
+    }
+
+    func testRecoveryCleanupRemovesOnlyTheStableLowSpaceIdentifier() async {
+        let client = RecordingUserNotificationCenterClient(status: .denied)
+        let service = makeService(client: client)
+
+        await service.removeDeliveredLowSpaceNotification()
+
+        let removedIdentifierBatches = await client.removedIdentifierBatches()
+        XCTAssertEqual(
+            removedIdentifierBatches,
+            [[UserNotificationsMonitoringService.lowSpaceRequestIdentifier]]
+        )
+        let calls = await client.calls()
+        XCTAssertEqual(calls.add, 0)
+        XCTAssertEqual(calls.removeDelivered, 1)
     }
 
     func testSubmissionUsesFallbackNameAndLocaleAwareThresholdSafeValues() async throws {
@@ -218,6 +235,7 @@ private struct NotificationClientCalls: Equatable, Sendable {
     let status: Int
     let request: Int
     let add: Int
+    let removeDelivered: Int
 }
 
 private actor RecordingUserNotificationCenterClient: UserNotificationCenterClient {
@@ -227,6 +245,7 @@ private actor RecordingUserNotificationCenterClient: UserNotificationCenterClien
     private var statusCallCount = 0
     private var requestCallCount = 0
     private var submittedRequests: [UserNotificationRequestDescriptor] = []
+    private var removedIdentifiers: [[String]] = []
 
     init(
         status: UserNotificationAuthorizationStatus,
@@ -254,6 +273,10 @@ private actor RecordingUserNotificationCenterClient: UserNotificationCenterClien
         return requestedStatus
     }
 
+    func removeDeliveredNotifications(withIdentifiers identifiers: [String]) async {
+        removedIdentifiers.append(identifiers)
+    }
+
     func add(_ request: UserNotificationRequestDescriptor) async throws {
         submittedRequests.append(request)
         if failures.contains(.add) {
@@ -265,11 +288,16 @@ private actor RecordingUserNotificationCenterClient: UserNotificationCenterClien
         NotificationClientCalls(
             status: statusCallCount,
             request: requestCallCount,
-            add: submittedRequests.count
+            add: submittedRequests.count,
+            removeDelivered: removedIdentifiers.count
         )
     }
 
     func requests() -> [UserNotificationRequestDescriptor] {
         submittedRequests
+    }
+
+    func removedIdentifierBatches() -> [[String]] {
+        removedIdentifiers
     }
 }

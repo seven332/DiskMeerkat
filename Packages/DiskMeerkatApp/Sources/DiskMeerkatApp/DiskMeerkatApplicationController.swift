@@ -282,6 +282,8 @@ public final class DiskMeerkatApplicationController {
             return state
         }
 
+        func removeDeliveredLowSpaceNotification() async {}
+
         func submit(_ candidate: LowSpaceNotificationCandidate) async throws {}
     }
 

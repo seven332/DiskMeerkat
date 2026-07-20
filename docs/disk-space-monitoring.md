@@ -14,8 +14,8 @@ DiskMeerkat monitors the startup volume at a configurable interval. When the ava
 configurable threshold, the app submits a notification.
 
 The app must not repeat the notification while the disk remains at or below the threshold. A new notification becomes
-eligible only after a successful check observes that the available space has risen above the threshold and a later
-check observes that it has fallen below the threshold again.
+eligible only after a successful check observes that the available space has risen above the threshold, removes the
+delivered low-space notification, and a later check observes that space has fallen below the threshold again.
 
 ## Goals
 
@@ -23,6 +23,7 @@ check observes that it has fallen below the threshold again.
 - Let the user choose an approved check interval and whole-GB low-space threshold.
 - Send one useful notification for each distinct low-space episode.
 - Avoid repeated notifications while the disk remains low on space.
+- Remove the delivered low-space notification after recovery makes it obsolete.
 - Preserve monitoring configuration and notification suppression across app restarts.
 - Keep monitoring active while the menu-bar app is running, even when no window is open.
 
@@ -46,7 +47,7 @@ V1 does not:
 - **Low-space threshold:** The exact byte count represented by the configured whole decimal-GB value.
 - **Armed:** A low-space notification may be submitted when the next successful check is below the threshold.
 - **Suppressed:** A low-space notification was submitted for the current episode and another must not be submitted until
-  recovery is observed.
+  recovery is observed and the delivered notification is removed.
 - **Low-space episode:** The period beginning when an armed check first observes space below the threshold and ending
   when a later successful check observes space above the threshold.
 
@@ -101,8 +102,8 @@ V1 does not:
 6. Missed intervals caused by sleep, suspension, or the app not running do not produce catch-up checks.
 7. After a wake event, the app requests at most one immediate check through the coalescing path and then resumes the
    configured schedule from check completion.
-8. A failed or invalid disk-space read does not send a low-space notification or change the notification state. The app
-   exposes the failure and retries on a later check.
+8. A failed or invalid disk-space read does not send or remove a low-space notification or change the notification
+   state. The app exposes the failure and retries on a later check.
 9. `Check Now` uses the same reading, transition, notification, persistence, and scheduling behavior as every other
    trigger. The UI disables it while a check is active; a trigger that races with the active check still follows the
    coalescing rule.
@@ -119,17 +120,19 @@ The monitoring logic has two persistent states: `armed` and `suppressed`.
 | Armed | Available space is below the threshold but a notification cannot be submitted | None | Armed |
 | Armed | Available space equals or exceeds the threshold | None | Armed |
 | Suppressed | Available space is at or below the threshold | None | Suppressed |
-| Suppressed | Available space is above the threshold | None | Armed |
+| Suppressed | Available space is above the threshold | Remove the delivered low-space notification | Armed |
 | Either state | Check fails or returns an invalid value | None | Unchanged |
 
 The boundary comparisons are intentionally strict:
 
 - A notification is eligible only when `availableSpace < threshold`.
-- Suppression is cleared only when `availableSpace > threshold`.
-- A value equal to the threshold neither sends a notification nor clears suppression.
+- The delivered low-space notification is removed and suppression is cleared only when `availableSpace > threshold`.
+- A value equal to the threshold neither sends a notification, removes the delivered notification, nor clears
+  suppression.
 
 Remaining below the threshold therefore produces one notification request after a successful submission. After
-recovery is observed, a later drop below the threshold starts a new low-space episode and may produce one new request.
+recovery is observed and the delivered notification is removed, a later drop below the threshold starts a new
+low-space episode and may produce one new request.
 
 ### State Persistence and Configuration Changes
 
@@ -137,8 +140,8 @@ recovery is observed, a later drop below the threshold starts a new low-space ep
 2. Restarting while notification state is suppressed must not produce another request merely because the disk remains
    low on space.
 3. On the first successful check after launch, the app evaluates persisted state using the normal transition table.
-4. If persisted state is suppressed and the first check is above the threshold, notifications become armed again
-   without sending a recovery notification.
+4. If persisted state is suppressed and the first check is above the threshold, the app removes its delivered
+   low-space notification and becomes armed again without sending a recovery notification.
 5. Lowering the threshold may rearm notifications when the next successful reading is above the new threshold.
 6. Raising the threshold may make an armed low-space notification eligible on the next successful reading.
 7. A failed read or failed notification submission never changes persisted notification state.
@@ -151,6 +154,10 @@ recovery is observed, a later drop below the threshold starts a new low-space ep
     request but before suppression is durably written can restore the prior armed state on relaunch and allow a
     duplicate request. Implementation minimizes and tests this known boundary; it must not claim crash-safe
     exactly-once delivery.
+
+Recovery cleanup precedes the transition to `armed`. If the app stops after cleanup but before persistence, the
+persisted suppressed state causes a later above-threshold check to retry the idempotent cleanup. The app never persists
+`armed` first and risks leaving the obsolete delivered notification without another recovery transition.
 
 Persisting suppression favors avoiding duplicate notifications. If the app was not running, it cannot infer whether
 the disk briefly recovered and became low again during that time.
@@ -169,7 +176,8 @@ the disk briefly recovered and became low again during that time.
 6. The app enters the suppressed state only after the system accepts the notification request for submission, and it
    submits at most one request for that transition.
 7. Focus modes or system notification settings may prevent display after submission. The episode remains suppressed
-   because the request was accepted.
+   because the request was accepted. On recovery, the app removes only the delivered notification with its stable
+   low-space identifier, even if authorization has since changed; unrelated delivered notifications remain untouched.
 8. If permission is unavailable, the app remains armed and does not attempt delivery on every check. A later explicit
    grant can make the permission-triggered check eligible to submit.
 9. If an authorized notification request fails to submit, the app remains armed, exposes the failure, and may retry on
@@ -208,7 +216,7 @@ notification failure must not be presented as if disk monitoring itself stopped.
 ## Reliability and Privacy Requirements
 
 - Monitoring uses negligible CPU while waiting between checks.
-- Checks, persistence, and notification submission do not block the main UI thread.
+- Checks, persistence, notification submission, and notification cleanup do not block the main UI thread.
 - Timer replacement, wake, user actions, permission changes, and configuration changes do not create overlapping
   checks.
 - Transient disk, persistence, notification, or login-item errors do not crash the app.
@@ -239,7 +247,8 @@ Unless a scenario states otherwise, the threshold is `100 GB`.
 4. **Space recovers**
    - Notification state is suppressed.
    - A check reports `101 GB`.
-   - No notification is submitted.
+   - The delivered DiskMeerkat low-space notification is removed; no recovery notification is submitted and unrelated
+     delivered notifications remain untouched.
    - Notification state becomes armed and is persisted.
 
 5. **Space becomes low again after recovery**
@@ -251,11 +260,14 @@ Unless a scenario states otherwise, the threshold is `100 GB`.
 6. **App restarts during a low-space episode**
    - Notification state was persisted as suppressed.
    - The first check after restart reports `90 GB`.
-   - No additional notification is submitted.
+   - No additional notification is submitted or removed.
+   - If a later successful check reports `101 GB`, the delivered low-space notification is removed and state becomes
+     armed through the normal recovery transition.
 
 7. **A disk check fails**
    - Reading `volumeAvailableCapacityForImportantUsage` throws, is missing, or is negative.
-   - No low-space notification is submitted, no zero value is fabricated, and notification state is unchanged.
+   - No low-space notification is submitted or removed, no zero value is fabricated, and notification state is
+     unchanged.
    - The UI exposes the failure and a later check retries normally.
 
 8. **Valid settings are saved**
@@ -345,7 +357,7 @@ Unit-test configuration validation, decimal-byte conversion and formatting, and 
 
 - Values below, equal to, and above the threshold.
 - Repeated low values after a notification.
-- Recovery followed by another low-space episode.
+- Targeted delivered-notification removal on strict recovery followed by another low-space episode.
 - Failed and invalid readings.
 - Restored persisted state.
 - Threshold and interval changes.
@@ -361,7 +373,7 @@ Integration-test the monitoring runtime with controlled implementations of:
 - Startup-volume capacity reading.
 - Versioned configuration and state persistence.
 - Persistence write failures and the notification-submission durability boundary.
-- Notification authorization and submission.
+- Notification authorization, submission, and targeted delivered-notification cleanup.
 - Scheduling, coalescing, wake, settings, permission, and shutdown behavior.
 - Launch-at-login state mapping without changing the test machine's login items.
 

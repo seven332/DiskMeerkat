@@ -198,11 +198,15 @@ actor TestMonitoringNotificationService: MonitoringNotificationService {
     private var remainingStatusFailures = 0
     private var remainingRequestFailures = 0
     private var remainingSubmissionFailures = 0
+    private var shouldSuspendNextRemoval = false
     private var shouldSuspendNextSubmission = false
+    private var pendingRemoval: CheckedContinuation<Void, Never>?
     private var pendingSubmission: CheckedContinuation<Void, any Error>?
+    private var removalCountWaiters: [(Int, CheckedContinuation<Void, Never>)] = []
     private var submissionCountWaiters: [(Int, CheckedContinuation<Void, Never>)] = []
     private(set) var authorizationStateCallCount = 0
     private(set) var authorizationRequestCount = 0
+    private(set) var deliveredNotificationRemovalCount = 0
     private(set) var submittedCandidates: [LowSpaceNotificationCandidate] = []
 
     init(state: NotificationAuthorizationState = .denied) {
@@ -227,6 +231,17 @@ actor TestMonitoringNotificationService: MonitoringNotificationService {
         }
         state = requestedState
         return state
+    }
+
+    func removeDeliveredLowSpaceNotification() async {
+        deliveredNotificationRemovalCount += 1
+        resumeRemovalCountWaiters()
+        if shouldSuspendNextRemoval {
+            shouldSuspendNextRemoval = false
+            await withCheckedContinuation { continuation in
+                pendingRemoval = continuation
+            }
+        }
     }
 
     func submit(_ candidate: LowSpaceNotificationCandidate) async throws {
@@ -264,8 +279,17 @@ actor TestMonitoringNotificationService: MonitoringNotificationService {
         remainingSubmissionFailures += count
     }
 
+    func suspendNextRemoval() {
+        shouldSuspendNextRemoval = true
+    }
+
     func suspendNextSubmission() {
         shouldSuspendNextSubmission = true
+    }
+
+    func completePendingRemoval() {
+        pendingRemoval?.resume()
+        pendingRemoval = nil
     }
 
     func completePendingSubmission(success: Bool) {
@@ -290,12 +314,38 @@ actor TestMonitoringNotificationService: MonitoringNotificationService {
         }
     }
 
+    func waitForRemovalCount(_ expectedCount: Int) async {
+        guard deliveredNotificationRemovalCount < expectedCount else {
+            return
+        }
+
+        await withCheckedContinuation { continuation in
+            removalCountWaiters.append((expectedCount, continuation))
+        }
+    }
+
+    func removalCount() -> Int {
+        deliveredNotificationRemovalCount
+    }
+
     func submissionCount() -> Int {
         submittedCandidates.count
     }
 
     func requestCount() -> Int {
         authorizationRequestCount
+    }
+
+    private func resumeRemovalCountWaiters() {
+        var remaining: [(Int, CheckedContinuation<Void, Never>)] = []
+        for (expectedCount, continuation) in removalCountWaiters {
+            if deliveredNotificationRemovalCount >= expectedCount {
+                continuation.resume()
+            } else {
+                remaining.append((expectedCount, continuation))
+            }
+        }
+        removalCountWaiters = remaining
     }
 
     private func resumeSubmissionCountWaiters() {

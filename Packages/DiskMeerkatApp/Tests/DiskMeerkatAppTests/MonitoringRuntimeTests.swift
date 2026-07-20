@@ -310,6 +310,7 @@ final class MonitoringRuntimeTests: XCTestCase {
 
         let saves = await fixture.repository.saves()
         await assertEqual(await fixture.notifications.submissionCount(), 2)
+        await assertEqual(await fixture.notifications.removalCount(), 1)
         XCTAssertEqual(
             saves.map(\.notificationEpisodeState),
             [
@@ -320,6 +321,85 @@ final class MonitoringRuntimeTests: XCTestCase {
         await assertEqual(
             await fixture.runtime.currentSnapshot().notificationEpisodeState,
             .suppressed
+        )
+    }
+
+    func testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization() async throws {
+        let restoredState = StoredMonitoringState(
+            configuration: .defaultValue,
+            notificationEpisodeState: .suppressed,
+            hasCompletedOnboarding: true
+        )
+        let fixture = makeFixture(
+            state: restoredState,
+            readings: [
+                .available(try startupVolume(gigabytes: 10)),
+                .available(try startupVolume(gigabytes: 20)),
+                .failed(.unavailable),
+                .available(try startupVolume(gigabytes: 21)),
+            ]
+        )
+
+        await fixture.runtime.start()
+        await fixture.scheduler.waitForSleepCount(1)
+        await fixture.runtime.checkNow()
+        await fixture.scheduler.waitForSleepCount(2)
+        await fixture.runtime.checkNow()
+        await fixture.scheduler.waitForSleepCount(3)
+
+        await assertEqual(await fixture.notifications.removalCount(), 0)
+        await assertEqual(
+            await fixture.runtime.currentSnapshot().notificationEpisodeState,
+            .suppressed
+        )
+        await assertEqual(await fixture.repository.saves(), [])
+
+        await fixture.runtime.checkNow()
+        await fixture.scheduler.waitForSleepCount(4)
+
+        await assertEqual(await fixture.notifications.removalCount(), 1)
+        await assertEqual(await fixture.notifications.submissionCount(), 0)
+        await assertEqual(
+            await fixture.runtime.currentSnapshot().notificationEpisodeState,
+            .armed
+        )
+        await assertEqual(
+            await fixture.repository.savedState().notificationEpisodeState,
+            .armed
+        )
+    }
+
+    func testRecoveryCleanupCompletesBeforeRearmIsPersisted() async throws {
+        let restoredState = StoredMonitoringState(
+            configuration: .defaultValue,
+            notificationEpisodeState: .suppressed,
+            hasCompletedOnboarding: true
+        )
+        let fixture = makeFixture(
+            state: restoredState,
+            readings: [.available(try startupVolume(gigabytes: 21))]
+        )
+        await fixture.notifications.suspendNextRemoval()
+
+        await fixture.runtime.start()
+        await fixture.notifications.waitForRemovalCount(1)
+
+        await assertEqual(
+            await fixture.runtime.currentSnapshot().notificationEpisodeState,
+            .suppressed
+        )
+        await assertEqual(await fixture.repository.saves(), [])
+
+        await fixture.notifications.completePendingRemoval()
+        await fixture.scheduler.waitForSleepCount(1)
+
+        await assertEqual(
+            await fixture.runtime.currentSnapshot().notificationEpisodeState,
+            .armed
+        )
+        await assertEqual(
+            await fixture.repository.saves().map(\.notificationEpisodeState),
+            [.armed]
         )
     }
 
@@ -535,6 +615,34 @@ final class MonitoringRuntimeTests: XCTestCase {
         let snapshot = await fixture.runtime.currentSnapshot()
         XCTAssertEqual(snapshot.lifecycleState, .stopped)
         XCTAssertEqual(snapshot.notificationEpisodeState, .armed)
+        await assertEqual(await fixture.repository.saves(), [])
+        await assertEqual(await fixture.wallClock.calls(), 0)
+        await assertEqual(await fixture.scheduler.durations(), [])
+    }
+
+    func testRecoveryCleanupReturningAfterStopCannotRearmPersistOrSchedule() async throws {
+        let restoredState = StoredMonitoringState(
+            configuration: .defaultValue,
+            notificationEpisodeState: .suppressed,
+            hasCompletedOnboarding: true
+        )
+        let fixture = makeFixture(
+            state: restoredState,
+            readings: [.available(try startupVolume(gigabytes: 21))]
+        )
+        await fixture.notifications.suspendNextRemoval()
+        await fixture.runtime.start()
+        await fixture.notifications.waitForRemovalCount(1)
+
+        await fixture.runtime.stop()
+        await fixture.notifications.completePendingRemoval()
+        for _ in 0..<3 {
+            await Task.yield()
+        }
+
+        let snapshot = await fixture.runtime.currentSnapshot()
+        XCTAssertEqual(snapshot.lifecycleState, .stopped)
+        XCTAssertEqual(snapshot.notificationEpisodeState, .suppressed)
         await assertEqual(await fixture.repository.saves(), [])
         await assertEqual(await fixture.wallClock.calls(), 0)
         await assertEqual(await fixture.scheduler.durations(), [])
