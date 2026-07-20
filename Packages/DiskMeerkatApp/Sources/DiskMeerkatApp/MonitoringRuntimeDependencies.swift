@@ -11,6 +11,7 @@ enum NotificationAuthorizationState: Equatable, Sendable {
 protocol MonitoringNotificationService: Sendable {
     func authorizationState() async throws -> NotificationAuthorizationState
     func requestAuthorization() async throws -> NotificationAuthorizationState
+    func removeDeliveredLowSpaceNotification() async
     func submit(_ candidate: LowSpaceNotificationCandidate) async throws
 }
 

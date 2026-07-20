@@ -54,7 +54,7 @@ item in that range. XCTest names identify the observable behavior that supplies 
 | Scheduling 6–7 | `RUN/testActiveTriggersCoalesceIntoOneFollowUpBeforeScheduling`, `WAKE/testOneStreamInstallsOneObserverAndForwardsWakeEvents`, `TIME/testSuspendingSchedulerPreservesCancellation` |
 | Scheduling 8 | `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState` |
 | Scheduling 9 | `MODEL/testCheckNowRoutesOnlyWhenRuntimeStateAllowsIt`, `RUN/testActiveTriggersCoalesceIntoOneFollowUpBeforeScheduling` |
-| Scheduling 10 | `RUN/testSnapshotStreamPublishesLatestStateAndLateReadCannotMutateAfterStop`, `RUN/testAcceptedSubmissionReturningAfterStopCannotSuppressPersistOrSchedule`, `RUN/testCanceledScheduleThatReturnsLateDoesNotRunAfterStop` |
+| Scheduling 10 | `RUN/testSnapshotStreamPublishesLatestStateAndLateReadCannotMutateAfterStop`, `RUN/testAcceptedSubmissionReturningAfterStopCannotSuppressPersistOrSchedule`, `RUN/testRecoveryCleanupReturningAfterStopCannotRearmPersistOrSchedule`, `RUN/testCanceledScheduleThatReturnsLateDoesNotRunAfterStop` |
 
 ### Notification State and Persistence
 
@@ -66,10 +66,10 @@ The transition identifiers below follow the six rows of the
 | Transition 1: armed, below, accepted | `POL/testArmedStateSubmitsOnlyBelowThreshold`, `POL/testSubmissionOutcomeChangesStateOnlyAfterCandidateExists` |
 | Transition 2: armed, below, rejected | `POL/testSubmissionOutcomeChangesStateOnlyAfterCandidateExists`, `RUN/testSubmissionFailureStaysArmedAndRetriesOnALaterCheck` |
 | Transition 3: armed, equal or above | `POL/testArmedStateSubmitsOnlyBelowThreshold` |
-| Transition 4: suppressed, equal or below | `POL/testSuppressedStateRearmsOnlyAboveThreshold` |
-| Transition 5: suppressed, above | `POL/testSuppressedStateRearmsOnlyAboveThreshold` |
-| Transition 6: failed reading | `POL/testFailedReadingsPreserveEveryEpisodeState`, `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState` |
-| [Persistence 1–4](disk-space-monitoring.md#state-persistence-and-configuration-changes) | `STORE/testStateRoundTripsExactValuesAndSurvivesRepositoryRecreation`, `STORE/testEveryIntervalAndEpisodeStateRoundTrips`, `RUN/testStartRestoresSuppressionAndSchedulesFromCompletion` |
+| Transition 4: suppressed, equal or below | `POL/testSuppressedStateRemovesDeliveredNotificationAndRearmsOnlyAboveThreshold`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization` |
+| Transition 5: suppressed, above | `POL/testSuppressedStateRemovesDeliveredNotificationAndRearmsOnlyAboveThreshold`, `NOTIFY/testRecoveryCleanupRemovesOnlyTheStableLowSpaceIdentifier`, `RUN/testRecoveryCleanupCompletesBeforeRearmIsPersisted` |
+| Transition 6: failed reading | `POL/testFailedReadingsPreserveEveryEpisodeState`, `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization` |
+| [Persistence 1–4](disk-space-monitoring.md#state-persistence-and-configuration-changes) | `STORE/testStateRoundTripsExactValuesAndSurvivesRepositoryRecreation`, `STORE/testEveryIntervalAndEpisodeStateRoundTrips`, `RUN/testStartRestoresSuppressionAndSchedulesFromCompletion`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization`, `RUN/testRecoveryCleanupCompletesBeforeRearmIsPersisted` |
 | Persistence 5–6 | `POL/testThresholdChangesUseTheSameTransitionRules`, `RUN/testConfigurationCommittedDuringAReadDiscardsTheOldThresholdResult` |
 | Persistence 7 | `POL/testFailedReadingsPreserveEveryEpisodeState`, `RUN/testSubmissionFailureStaysArmedAndRetriesOnALaterCheck` |
 | Persistence 8 | `STORE/testStateRoundTripsExactValuesAndSurvivesRepositoryRecreation`, `RUN/testOnboardingCompletionPersistsWithoutRequestingACheck` |
@@ -85,7 +85,7 @@ The transition identifiers below follow the six rows of the
 | Authorization 3 | `RUN/testDeniedPermissionDoesNotCheckAndLaterGrantCoalescesOneCheck` |
 | Authorization 4 | `STATE/testEveryNotificationAuthorizationStateHasTruthfulActions`, `RUN/testStartupAuthorizationFailureDoesNotStopMonitoringAndRefreshGrantChecks` |
 | Authorization 5 | `NOTIFY/testSubmissionUsesStableIdentityAndApprovedNamedVolumeContent`, `NOTIFY/testSubmissionUsesFallbackNameAndLocaleAwareThresholdSafeValues` |
-| Authorization 6–8 | `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain`, `RUN/testDeniedPermissionDoesNotCheckAndLaterGrantCoalescesOneCheck` |
+| Authorization 6–8 | `NOTIFY/testRecoveryCleanupRemovesOnlyTheStableLowSpaceIdentifier`, `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization`, `RUN/testDeniedPermissionDoesNotCheckAndLaterGrantCoalescesOneCheck` |
 | Authorization 9 | `NOTIFY/testSubmissionErrorPropagatesAfterRecordingStableRequest`, `RUN/testSubmissionFailureStaysArmedAndRetriesOnALaterCheck` |
 | Authorization 10 | `XCUI/testNotificationActivationDuringLaunchAndWhileRunningUsesOneWindow`, `APP/testOneControllerStartsAndStopsOneRuntimeWithoutDuplicateWork` |
 | [Lifecycle 1](disk-space-monitoring.md#application-lifecycle-and-launch-at-login) | `CI/Verify release app boundary` checks the built Release Info.plist and fixture isolation; `SHELL` owns `LSUIElement` |
@@ -105,9 +105,9 @@ The status and reliability identifiers refer to bullets in document order.
 | User-visible status 5–6 | `STATE/testStartingAndFirstRunningCheckHaveExplicitProgressCopy`, `STATE/testEverySupportedIntervalHasConciseDisplayCopy` |
 | User-visible status 7 | `STATE/testDiskReadFailureKeepsLastSuccessfulValueAndAddsScopedNotice`, `STATE/testPersistenceFailuresRemainScopedAndExplainTheCommittedState`, `STATE/testEveryNotificationFailureHasAScopedNotice`, `STATE/testLaunchAtLoginPresentationUsesActualStateAndScopedProblems` |
 | [Reliability/privacy 1](disk-space-monitoring.md#reliability-and-privacy-requirements) | `TIME/testSuspendingSchedulerPreservesCancellation`, `RUN/testStartRestoresSuppressionAndSchedulesFromCompletion` |
-| Reliability/privacy 2 | `RUN` uses asynchronous injected effects behind one actor; package tests exercise suspended reads and writes without blocking the UI actor |
+| Reliability/privacy 2 | `RUN` uses asynchronous injected effects behind one actor; package tests exercise suspended reads, writes, and notification cleanup without blocking the UI actor |
 | Reliability/privacy 3 | `RUN/testActiveTriggersCoalesceIntoOneFollowUpBeforeScheduling`, `RUN/testConfigurationIsPersistedBeforeItAppliesAndReplacesTheSchedule` |
-| Reliability/privacy 4 | `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState`, `RUN/testSuppressionPersistenceFailureNeverResubmitsAndRetriesUntilSaved`, `LOGIN/testThrownMutationsReturnRefreshedActualStateAndScopedFailure` |
+| Reliability/privacy 4 | `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState`, `RUN/testSuppressionPersistenceFailureNeverResubmitsAndRetriesUntilSaved`, `RUN/testRecoveryCleanupReturningAfterStopCannotRearmPersistOrSchedule`, `LOGIN/testThrownMutationsReturnRefreshedActualStateAndScopedFailure` |
 | Reliability/privacy 5–6 | `SHELL` source/dependency inspection: sandboxing is enabled, there is no network dependency or upload/history implementation, and persisted values remain local |
 | [Testing strategy and engineering constraints](disk-space-monitoring.md#testing-strategy) | Evidence is concentrated in package tests; `XCUI` covers only app-bound behavior; production effects use injected package interfaces |
 
@@ -117,11 +117,11 @@ The status and reliability identifiers refer to bullets in document order.
 | --- | --- |
 | [1. Space remains healthy](disk-space-monitoring.md#acceptance-criteria) | `POL/testArmedStateSubmitsOnlyBelowThreshold` |
 | 2. Space becomes low | `POL/testSubmissionOutcomeChangesStateOnlyAfterCandidateExists`, `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain` |
-| 3. Space remains low | `POL/testSuppressedStateRearmsOnlyAboveThreshold`, `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain` |
-| 4. Space recovers | `POL/testSuppressedStateRearmsOnlyAboveThreshold`, `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain` |
+| 3. Space remains low | `POL/testSuppressedStateRemovesDeliveredNotificationAndRearmsOnlyAboveThreshold`, `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain` |
+| 4. Space recovers | `POL/testSuppressedStateRemovesDeliveredNotificationAndRearmsOnlyAboveThreshold`, `NOTIFY/testRecoveryCleanupRemovesOnlyTheStableLowSpaceIdentifier`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization`, `RUN/testRecoveryCleanupCompletesBeforeRearmIsPersisted` |
 | 5. Space becomes low again | `RUN/testNotificationEpisodeSuppressesRearmsAndSubmitsAgain` |
-| 6. Relaunch during a low-space episode | `STORE/testStateRoundTripsExactValuesAndSurvivesRepositoryRecreation`, `RUN/testStartRestoresSuppressionAndSchedulesFromCompletion` |
-| 7. Disk check fails | `DISK/testMissingCapacityIsUnavailableRatherThanZero`, `DISK/testNegativeCapacityIsInvalidRatherThanZero`, `DISK/testThrownResourceReadIsUnavailable`, `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState` |
+| 6. Relaunch during a low-space episode | `STORE/testStateRoundTripsExactValuesAndSurvivesRepositoryRecreation`, `RUN/testStartRestoresSuppressionAndSchedulesFromCompletion`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization` |
+| 7. Disk check fails | `DISK/testMissingCapacityIsUnavailableRatherThanZero`, `DISK/testNegativeCapacityIsInvalidRatherThanZero`, `DISK/testThrownResourceReadIsUnavailable`, `RUN/testDiskFailureKeepsTheLastSuccessfulVolumeAndEpisodeState`, `RUN/testSuppressedEpisodeRemovesOnlyAfterStrictRecoveryWithoutAuthorization` |
 | 8. Valid settings are saved | `MODEL/testSuccessfulSaveRoutesValidatedConfigurationAndEndsEditing`, `RUN/testConfigurationIsPersistedBeforeItAppliesAndReplacesTheSchedule` |
 | 9. Invalid settings remain drafts | `DRAFT/testBlankFractionalAndPartialInputsHaveSpecificErrors`, `MODEL/testInvalidAndUnchangedDraftsNeverInvokeSave`, `XCUI/testMenuStatusSettingsValidationAndQuitShareTheAppBoundary` |
 | 10. Manual check is requested | `MODEL/testCheckNowRoutesOnlyWhenRuntimeStateAllowsIt`, `MODEL/testCheckNowPreventsDuplicateRequestsWhileSubmissionIsPending`, `RUN/testActiveTriggersCoalesceIntoOneFollowUpBeforeScheduling` |
@@ -132,7 +132,7 @@ The status and reliability identifiers refer to bullets in document order.
 | 15. Notification is activated | `XCUI/testNotificationActivationDuringLaunchAndWhileRunningUsesOneWindow` |
 | 16. First-run status is dismissed | `APP/testStatusWindowClosePersistsOnboardingWithoutRequestingPermission`, `XCUI/testFirstRunDismissalAndWindowCloseLeaveMenuAppRunning` |
 | 17. Launch at login cannot match | `LOGIN/testSilentMismatchAndUnavailableStateNeverClaimSuccess`, `LOGIN/testThrownMutationsReturnRefreshedActualStateAndScopedFailure`, `MODEL/testLaunchAtLoginUsesReturnedActualStateAndRoutesSystemSettings` |
-| 18. Windows close and app quits | `XCUI/testFirstRunDismissalAndWindowCloseLeaveMenuAppRunning`, `XCUI/testMenuStatusSettingsValidationAndQuitShareTheAppBoundary`, `RUN/testSnapshotStreamPublishesLatestStateAndLateReadCannotMutateAfterStop` |
+| 18. Windows close and app quits | `XCUI/testFirstRunDismissalAndWindowCloseLeaveMenuAppRunning`, `XCUI/testMenuStatusSettingsValidationAndQuitShareTheAppBoundary`, `RUN/testSnapshotStreamPublishesLatestStateAndLateReadCannotMutateAfterStop`, `RUN/testRecoveryCleanupReturningAfterStopCannotRearmPersistOrSchedule` |
 | 19. Capacity is near rounding boundary | `FMT/testIncreasesPrecisionWhenDefaultRoundingWouldReachThreshold`, `FMT/testPreservesStrictRelationshipAtByteAdjacentThresholdValues` |
 | 20. Volume name is unavailable | `DISK/testMissingAndBlankNamesRemainSuccessfulReads`, `STATE/testMissingVolumeNameUsesTheStartupDiskFallback`, `NOTIFY/testSubmissionUsesFallbackNameAndLocaleAwareThresholdSafeValues` |
 | 21. Persistence write fails | `RUN/testConfigurationFailureKeepsThePreviousStateScheduleAndCheckCount`, `MODEL/testFailedSaveKeepsDraftAndExplainsThatCommittedValuesRemainActive`, `RUN/testSuppressionPersistenceFailureNeverResubmitsAndRetriesUntilSaved`, `RUN/testAcceptedSubmissionReturningAfterStopCannotSuppressPersistOrSchedule` |

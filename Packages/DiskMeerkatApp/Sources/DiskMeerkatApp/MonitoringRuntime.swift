@@ -396,6 +396,13 @@ actor MonitoringRuntime {
             episodeState: storedState.notificationEpisodeState
         )
 
+        if case .removeDelivered = evaluation.notificationDirective {
+            await notificationService.removeDeliveredLowSpaceNotification()
+            guard isCurrent(generation: generation, lifecycle: .running), !Task.isCancelled else {
+                return .discarded
+            }
+        }
+
         if evaluation.nextEpisodeState != storedState.notificationEpisodeState {
             setEpisodeState(evaluation.nextEpisodeState)
             await persistLatestStateIfNeeded(generation: generation)

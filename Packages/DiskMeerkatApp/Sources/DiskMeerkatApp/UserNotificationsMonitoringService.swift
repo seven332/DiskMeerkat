@@ -19,6 +19,7 @@ struct UserNotificationRequestDescriptor: Equatable, Sendable {
 protocol UserNotificationCenterClient: Sendable {
     func authorizationStatus() async throws -> UserNotificationAuthorizationStatus
     func requestAuthorization() async throws -> UserNotificationAuthorizationStatus
+    func removeDeliveredNotifications(withIdentifiers identifiers: [String]) async
     func add(_ request: UserNotificationRequestDescriptor) async throws
 }
 
@@ -37,6 +38,10 @@ actor SystemUserNotificationCenterClient: UserNotificationCenterClient {
     func requestAuthorization() async throws -> UserNotificationAuthorizationStatus {
         _ = try await center.requestAuthorization(options: [.alert, .sound])
         return try await authorizationStatus()
+    }
+
+    func removeDeliveredNotifications(withIdentifiers identifiers: [String]) async {
+        center.removeDeliveredNotifications(withIdentifiers: identifiers)
     }
 
     func add(_ request: UserNotificationRequestDescriptor) async throws {
@@ -103,6 +108,12 @@ struct UserNotificationsMonitoringService: MonitoringNotificationService {
 
     func requestAuthorization() async throws -> NotificationAuthorizationState {
         try await map(client.requestAuthorization())
+    }
+
+    func removeDeliveredLowSpaceNotification() async {
+        await client.removeDeliveredNotifications(
+            withIdentifiers: [Self.lowSpaceRequestIdentifier]
+        )
     }
 
     func submit(_ candidate: LowSpaceNotificationCandidate) async throws {

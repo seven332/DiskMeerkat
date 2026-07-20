@@ -52,6 +52,7 @@ struct LowSpaceNotificationCandidate: Equatable, Sendable {
 
 enum NotificationDirective: Equatable, Sendable {
     case none
+    case removeDelivered
     case submit(LowSpaceNotificationCandidate)
 }
 
@@ -104,7 +105,7 @@ enum LowSpaceNotificationPolicy {
                         startupVolume: startupVolume,
                         relationship: relationship
                     ),
-                    notificationDirective: .none,
+                    notificationDirective: .removeDelivered,
                     nextEpisodeState: .armed
                 )
 
