@@ -10,6 +10,7 @@ final class ProblemPresentationUITests: DiskMeerkatUITestCase {
 
         for (fixture, expectedText) in expectations {
             let launch = launch(fixture: fixture, activateDuringLaunch: true)
+            defer { terminateIfNeeded(launch.app) }
             XCTAssertTrue(
                 launch.app.windows["DiskMeerkat Status"].waitForExistence(timeout: 3)
             )
