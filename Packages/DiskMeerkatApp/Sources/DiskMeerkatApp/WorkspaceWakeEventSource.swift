@@ -21,8 +21,7 @@ protocol WorkspaceWakeObserver: Sendable {
 final class SystemWorkspaceWakeObserver: WorkspaceWakeObserver {
     private let center: NotificationCenter
     private let workspace: NSWorkspace
-    private var observations: [WorkspaceWakeObservationToken: NotificationCenter.ObservationToken] =
-        [:]
+    private var observations: [WorkspaceWakeObservationToken: any NSObjectProtocol] = [:]
 
     init(
         workspace: NSWorkspace = .shared,
@@ -36,9 +35,14 @@ final class SystemWorkspaceWakeObserver: WorkspaceWakeObserver {
         _ handler: @escaping @MainActor @Sendable () -> Void
     ) -> WorkspaceWakeObservationToken {
         let token = WorkspaceWakeObservationToken()
-        let observation = center.addObserver(of: workspace, for: .didWake) {
-            (_: NSWorkspace.DidWakeMessage) in
-            handler()
+        let observation = center.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: workspace,
+            queue: .main
+        ) { _ in
+            MainActor.assumeIsolated {
+                handler()
+            }
         }
         observations[token] = observation
         return token

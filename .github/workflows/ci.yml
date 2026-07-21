@@ -44,8 +44,6 @@ jobs:
 
       - name: Run app tests
         run: |
-          # Hosted runner OS releases can trail the project's deployment target.
-          runner_deployment_target="$(sw_vers -productVersion | cut -d. -f1,2)"
           xcodebuild test \
             -project DiskMeerkat.xcodeproj \
             -scheme DiskMeerkat \
@@ -53,12 +51,10 @@ jobs:
             -derivedDataPath "$RUNNER_TEMP/DerivedData" \
             CODE_SIGN_IDENTITY=- \
             CODE_SIGNING_REQUIRED=NO \
-            DEVELOPMENT_TEAM= \
-            MACOSX_DEPLOYMENT_TARGET="$runner_deployment_target"
+            DEVELOPMENT_TEAM=
 
       - name: Verify release app boundary
         run: |
-          runner_deployment_target="$(sw_vers -productVersion | cut -d. -f1,2)"
           release_derived_data="$RUNNER_TEMP/ReleaseDerivedData"
           xcodebuild build \
             -project DiskMeerkat.xcodeproj \
@@ -68,14 +64,19 @@ jobs:
             -derivedDataPath "$release_derived_data" \
             CODE_SIGN_IDENTITY=- \
             CODE_SIGNING_REQUIRED=NO \
-            DEVELOPMENT_TEAM= \
-            MACOSX_DEPLOYMENT_TARGET="$runner_deployment_target"
+            DEVELOPMENT_TEAM=
 
           release_app="$release_derived_data/Build/Products/Release/DiskMeerkat.app"
           info_plist="$release_app/Contents/Info.plist"
           executable="$release_app/Contents/MacOS/DiskMeerkat"
           test -f "$info_plist"
           test -x "$executable"
+
+          minimum_system_version="$(plutil -extract LSMinimumSystemVersion raw -o - "$info_plist")"
+          if [[ "$minimum_system_version" != "15.0" ]]; then
+            echo "Release app must require macOS 15.0; found: $minimum_system_version" >&2
+            exit 1
+          fi
 
           lsui_element="$(plutil -extract LSUIElement raw -o - "$info_plist")"
           if [[ "$lsui_element" != "true" ]]; then

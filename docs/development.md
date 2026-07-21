@@ -204,21 +204,18 @@ swift test --package-path Packages/DiskMeerkatApp
 When a change affects behavior at the real application boundary, run app and UI tests:
 
 ```sh
-local_deployment_target="$(sw_vers -productVersion | cut -d. -f1,2)"
-
 xcodebuild test \
   -project DiskMeerkat.xcodeproj \
   -scheme DiskMeerkat \
   -destination 'platform=macOS,arch=arm64' \
-  -derivedDataPath "${TMPDIR%/}/DiskMeerkatDerivedData" \
   CODE_SIGN_IDENTITY=- \
   CODE_SIGNING_REQUIRED=NO \
-  DEVELOPMENT_TEAM= \
-  MACOSX_DEPLOYMENT_TARGET="$local_deployment_target"
+  DEVELOPMENT_TEAM=
 ```
 
 GitHub CI runs the complete validation suite for every pull request. It also builds the Release app to verify the
-menu-bar-only bundle setting and ensure debug UI-test fixture entry points are not shipped. Local validation should
-still use the narrowest credible checks for the actual change. When adding a package, add it to the relevant CI
-formatting and test commands as well. The [V1 Acceptance Matrix](v1-acceptance.md) records the current requirement and
-built-product evidence.
+macOS 15.0 deployment target, menu-bar-only bundle setting, and absence of debug UI-test fixture entry points. Xcode
+and Package.swift are the authoritative deployment-version declarations; validation commands must not replace them
+with the host system version. Local validation should still use the narrowest credible checks for the actual change.
+When adding a package, add it to the relevant CI formatting and test commands as well. The
+[V1 Acceptance Matrix](v1-acceptance.md) records the current requirement and built-product evidence.
