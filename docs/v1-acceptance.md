@@ -27,7 +27,7 @@ item in that range. XCTest names identify the observable behavior that supplies 
 | `STATE` | Unit | [MonitoringPresentationStateTests](../Packages/DiskMeerkatApp/Tests/DiskMeerkatAppTests/MonitoringPresentationStateTests.swift) |
 | `MODEL` | Unit/integration | [DiskMeerkatPresentationModelTests](../Packages/DiskMeerkatApp/Tests/DiskMeerkatAppTests/DiskMeerkatPresentationModelTests.swift) |
 | `APP` | Integration | [DiskMeerkatApplicationControllerTests](../Packages/DiskMeerkatApp/Tests/DiskMeerkatAppTests/DiskMeerkatApplicationControllerTests.swift) |
-| `XCUI` | App boundary | [DiskMeerkatUITests](../DiskMeerkatUITests/DiskMeerkatUITests.swift) |
+| `XCUI` | App boundary | [DiskMeerkatUITests](../DiskMeerkatUITests/) |
 | `SHELL` | Source/configuration | [`DiskMeerkat/`](../DiskMeerkat/) and the [Xcode project](../DiskMeerkat.xcodeproj/project.pbxproj) |
 | `CI` | Built-product boundary | [CI workflow](../.github/workflows/ci.yml) |
 
