@@ -15,12 +15,12 @@ final class WorkspaceWakeEventSourceTests: XCTestCase {
             receivedCount += 1
         }
 
-        center.post(NSWorkspace.DidWakeMessage(), subject: workspace)
+        center.post(name: NSWorkspace.didWakeNotification, object: workspace)
         XCTAssertEqual(receivedCount, 1)
 
         observer.removeWakeObserver(token)
         observer.removeWakeObserver(token)
-        center.post(NSWorkspace.DidWakeMessage(), subject: workspace)
+        center.post(name: NSWorkspace.didWakeNotification, object: workspace)
         XCTAssertEqual(receivedCount, 1)
     }
 

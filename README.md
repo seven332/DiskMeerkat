@@ -19,7 +19,7 @@ Release-build, or source evidence.
 
 ## Requirements
 
-- macOS 26.5 or later for the application target.
+- macOS 15.0 or later for the application target.
 - Xcode with a Swift toolchain compatible with Swift tools version 6.3.
 
 ## Getting Started
