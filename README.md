@@ -22,6 +22,17 @@ Release-build, or source evidence.
 - macOS 15.0 or later for the application target.
 - Xcode with a Swift toolchain compatible with Swift tools version 6.3.
 
+## Releases
+
+Versioned ZIP builds for technical users are attached to
+[GitHub Releases](https://github.com/seven332/DiskMeerkat/releases).
+These universal (`arm64` and `x86_64`) builds require macOS 15.0 or later. They are ad-hoc signed, not signed with an
+Apple Developer ID certificate, and not notarized by Apple.
+
+macOS may block DiskMeerkat before its first launch. If you trust the release and macOS blocks it, try to open the app
+once, then open **System Settings > Privacy & Security** and approve DiskMeerkat. This is a temporary distribution
+process while Developer ID signing and notarization are unavailable.
+
 ## Getting Started
 
 Clone the repository and open the Xcode project:

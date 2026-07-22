@@ -1,0 +1,250 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Build and package
+    runs-on: macos-26
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      asset_name: ${{ steps.metadata.outputs.asset_name }}
+      commit_sha: ${{ steps.metadata.outputs.commit_sha }}
+      version: ${{ steps.metadata.outputs.version }}
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+
+    steps:
+      - name: Check out tagged commit
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Build ad-hoc signed release app
+        run: |
+          xcodebuild build \
+            -project DiskMeerkat.xcodeproj \
+            -scheme DiskMeerkat \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/ReleaseDerivedData" \
+            ARCHS='arm64 x86_64' \
+            CODE_SIGN_IDENTITY=- \
+            CODE_SIGN_STYLE=Manual \
+            DEVELOPMENT_TEAM= \
+            ONLY_ACTIVE_ARCH=NO
+
+      - name: Resolve release metadata
+        id: metadata
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          release_app="$RUNNER_TEMP/ReleaseDerivedData/Build/Products/Release/DiskMeerkat.app"
+          info_plist="$release_app/Contents/Info.plist"
+          release_version="$(plutil -extract CFBundleShortVersionString raw -o - "$info_plist")"
+
+          if [[ ! "$release_version" =~ ^[0-9]+([.][0-9]+){1,2}$ ]]; then
+            echo "Release version must contain two or three numeric components; found: $release_version" >&2
+            exit 1
+          fi
+
+          expected_tag="v$release_version"
+          if [[ "$RELEASE_TAG" != "$expected_tag" ]]; then
+            echo "Release tag must match the app version: expected $expected_tag, found $RELEASE_TAG" >&2
+            exit 1
+          fi
+
+          commit_sha="$(git rev-parse HEAD)"
+          if [[ "$commit_sha" != "$GITHUB_SHA" ]]; then
+            echo "Checked-out commit does not match the triggering SHA" >&2
+            exit 1
+          fi
+
+          asset_name="DiskMeerkat-$release_version.zip"
+          {
+            echo "asset_name=$asset_name"
+            echo "commit_sha=$commit_sha"
+            echo "version=$release_version"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Verify ad-hoc signed release app
+        env:
+          RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          release_app="$RUNNER_TEMP/ReleaseDerivedData/Build/Products/Release/DiskMeerkat.app"
+          info_plist="$release_app/Contents/Info.plist"
+
+          .github/scripts/verify-release-app.sh "$release_app"
+
+          bundle_version="$(plutil -extract CFBundleShortVersionString raw -o - "$info_plist")"
+          if [[ "$bundle_version" != "$RELEASE_VERSION" ]]; then
+            echo "Built app version changed during validation" >&2
+            exit 1
+          fi
+
+          executable="$release_app/Contents/MacOS/DiskMeerkat"
+          if ! lipo "$executable" -verify_arch arm64 x86_64; then
+            echo "Release executable must contain arm64 and x86_64" >&2
+            exit 1
+          fi
+
+          signature_details="$(codesign --display --verbose=4 "$release_app" 2>&1)"
+          printf '%s\n' "$signature_details"
+          if ! grep -Fxq 'Signature=adhoc' <<< "$signature_details"; then
+            echo "Release app must use an ad-hoc signature" >&2
+            exit 1
+          fi
+
+          codesign --verify --deep --strict --verbose=2 "$release_app"
+
+      - name: Package and reverify release app
+        env:
+          ASSET_NAME: ${{ steps.metadata.outputs.asset_name }}
+          RELEASE_VERSION: ${{ steps.metadata.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          release_app="$RUNNER_TEMP/ReleaseDerivedData/Build/Products/Release/DiskMeerkat.app"
+          release_directory="$RUNNER_TEMP/release"
+          verification_directory="$RUNNER_TEMP/PackagedApp"
+          archive="$release_directory/$ASSET_NAME"
+          packaged_app="$verification_directory/DiskMeerkat.app"
+
+          mkdir -p "$release_directory" "$verification_directory"
+          ditto -c -k --sequesterRsrc --keepParent "$release_app" "$archive"
+          ditto -x -k "$archive" "$verification_directory"
+
+          entry_count="$(find "$verification_directory" -mindepth 1 -maxdepth 1 -print | wc -l | tr -d '[:space:]')"
+          if [[ "$entry_count" != "1" || ! -d "$packaged_app" ]]; then
+            echo "Release archive must contain exactly DiskMeerkat.app" >&2
+            exit 1
+          fi
+
+          .github/scripts/verify-release-app.sh "$packaged_app"
+
+          packaged_version="$(plutil -extract CFBundleShortVersionString raw -o - \
+            "$packaged_app/Contents/Info.plist")"
+          if [[ "$packaged_version" != "$RELEASE_VERSION" ]]; then
+            echo "Packaged app version mismatch: expected $RELEASE_VERSION, found $packaged_version" >&2
+            exit 1
+          fi
+
+          packaged_executable="$packaged_app/Contents/MacOS/DiskMeerkat"
+          if ! lipo "$packaged_executable" -verify_arch arm64 x86_64; then
+            echo "Packaged executable must retain arm64 and x86_64" >&2
+            exit 1
+          fi
+
+          signature_details="$(codesign --display --verbose=4 "$packaged_app" 2>&1)"
+          printf '%s\n' "$signature_details"
+          if ! grep -Fxq 'Signature=adhoc' <<< "$signature_details"; then
+            echo "Packaged app must retain its ad-hoc signature" >&2
+            exit 1
+          fi
+
+          codesign --verify --deep --strict --verbose=2 "$packaged_app"
+          cp .github/release-notes.md "$release_directory/release-notes.md"
+
+      - name: Upload verified release package
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: release-package
+          path: |
+            ${{ runner.temp }}/release/${{ steps.metadata.outputs.asset_name }}
+            ${{ runner.temp }}/release/release-notes.md
+          if-no-files-found: error
+          retention-days: 1
+          compression-level: 0
+
+  publish:
+    name: Publish GitHub Release
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download verified release package
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: release-package
+          path: ${{ runner.temp }}/release
+
+      - name: Verify tag target and publish release
+        env:
+          ASSET_NAME: ${{ needs.package.outputs.asset_name }}
+          EXPECTED_COMMIT_SHA: ${{ needs.package.outputs.commit_sha }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_DIRECTORY: ${{ runner.temp }}/release
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ needs.package.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          archive="$RELEASE_DIRECTORY/$ASSET_NAME"
+          release_notes="$RELEASE_DIRECTORY/release-notes.md"
+
+          if [[ "$ASSET_NAME" != "DiskMeerkat-$RELEASE_VERSION.zip" ]]; then
+            echo "Unexpected release asset name: $ASSET_NAME" >&2
+            exit 1
+          fi
+          if [[ "$RELEASE_TAG" != "v$RELEASE_VERSION" ]]; then
+            echo "Unexpected release tag: $RELEASE_TAG" >&2
+            exit 1
+          fi
+          if [[ ! "$EXPECTED_COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Invalid packaged commit SHA" >&2
+            exit 1
+          fi
+          if [[ ! -f "$archive" || -L "$archive" || ! -f "$release_notes" || -L "$release_notes" ]]; then
+            echo "Release artifact is incomplete or contains an unexpected link" >&2
+            exit 1
+          fi
+
+          entry_count="$(find "$RELEASE_DIRECTORY" -mindepth 1 -maxdepth 1 -print | wc -l | tr -d '[:space:]')"
+          if [[ "$entry_count" != "2" ]]; then
+            echo "Release artifact must contain exactly the ZIP and release notes" >&2
+            exit 1
+          fi
+
+          tag_reference="$(gh api "repos/$GH_REPO/git/ref/tags/$RELEASE_TAG")"
+          object_type="$(jq -r '.object.type // empty' <<< "$tag_reference")"
+          object_sha="$(jq -r '.object.sha // empty' <<< "$tag_reference")"
+
+          depth=0
+          while [[ "$object_type" == "tag" && "$depth" -lt 16 ]]; do
+            tag_object="$(gh api "repos/$GH_REPO/git/tags/$object_sha")"
+            object_type="$(jq -r '.object.type // empty' <<< "$tag_object")"
+            object_sha="$(jq -r '.object.sha // empty' <<< "$tag_object")"
+            depth=$((depth + 1))
+          done
+
+          if [[ "$object_type" != "commit" || "$object_sha" != "$EXPECTED_COMMIT_SHA" ]]; then
+            echo "Release tag no longer resolves to the packaged commit" >&2
+            exit 1
+          fi
+
+          gh release create "$RELEASE_TAG" "$archive" \
+            --repo "$GH_REPO" \
+            --verify-tag \
+            --title "DiskMeerkat $RELEASE_VERSION" \
+            --notes-file "$release_notes"
