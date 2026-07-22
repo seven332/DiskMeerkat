@@ -170,6 +170,31 @@ Before opening a pull request, confirm that:
 - Commit messages and the pull request title follow Conventional Commits.
 - The working tree is clean and checks relevant to the changed files and behavior pass.
 
+## Release Workflow
+
+Tagged ZIP releases are a temporary distribution path for technical users while Developer ID signing and Apple
+notarization are unavailable. Before creating a release, update the app target's `MARKETING_VERSION`, merge that change
+to `main`, and create a tag that is exactly `v` followed by the marketing version. For example:
+
+```sh
+git switch main
+git pull --ff-only
+git tag v1.0
+git push origin v1.0
+```
+
+The release workflow builds the tagged commit with an ad-hoc identity, requires the tag to match the built app's
+`CFBundleShortVersionString`, archives the app with `ditto`, and verifies the extracted bundle before publication. Do
+not move or delete the tag while the workflow is running; the publisher refuses a tag that no longer resolves to the
+packaged commit. The distributed app is a universal `arm64` and `x86_64` Release build; CI continues to use its
+existing `arm64` app-boundary destination.
+
+Build and packaging run with read-only repository contents access and do not use signing secrets. Only the dependent
+publisher receives `contents: write`; it performs no checkout and publishes the already verified ZIP. Pull-request jobs
+retain read-only access and receive no release credential. The first intentional version tag is the end-to-end check
+of the hosted artifact handoff and GitHub Release attachment; local or pull-request validation must not create a test
+tag or Release.
+
 ## Local Validation
 
 Choose validation according to the changed surface. Run a test suite only when the change affects its code, tests, configuration, dependencies, or covered behavior. Do not run an unrelated suite solely because it exists:
