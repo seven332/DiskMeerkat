@@ -173,14 +173,14 @@ Before opening a pull request, confirm that:
 ## Release Workflow
 
 Tagged ZIP releases are a temporary distribution path for technical users while Developer ID signing and Apple
-notarization are unavailable. Before creating a release, update the app target's `MARKETING_VERSION`, merge that change
-to `main`, and create a tag that is exactly `v` followed by the marketing version. For example:
+notarization are unavailable. Before creating a release, update the app target's three-part `MARKETING_VERSION`, merge
+that change to `main`, and create a tag that is exactly `v` followed by the marketing version. For example:
 
 ```sh
 git switch main
 git pull --ff-only
-git tag v1.0
-git push origin v1.0
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
 The release workflow builds the tagged commit with an ad-hoc identity, requires the tag to match the built app's
