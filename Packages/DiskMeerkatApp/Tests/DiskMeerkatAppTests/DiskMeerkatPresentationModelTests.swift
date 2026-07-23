@@ -177,7 +177,7 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
         XCTAssertEqual(model.settingsDraft.thresholdText, "35")
         XCTAssertTrue(model.settingsDraft.isDirty)
         XCTAssertEqual(
-            model.settingsSaveError,
+            resolvedEnglish(model.settingsSaveError),
             "Couldn't save settings. Your previous settings remain active."
         )
         XCTAssertEqual(model.snapshot.configuration, .defaultValue)
@@ -201,7 +201,7 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
             XCTAssertFalse(didSave)
             XCTAssertTrue(model.isEditingSettings)
             XCTAssertEqual(model.settingsDraft.thresholdText, "35")
-            XCTAssertEqual(model.settingsSaveError, message)
+            XCTAssertEqual(resolvedEnglish(model.settingsSaveError), message)
         }
     }
 
@@ -405,6 +405,7 @@ final class DiskMeerkatPresentationModelTests: XCTestCase {
             runtimeClient: runtime,
             launchAtLoginService: launchService,
             locale: Locale(identifier: "en_US"),
+            localization: englishLocalization,
             openNotificationSettings: openNotificationSettings
         )
     }

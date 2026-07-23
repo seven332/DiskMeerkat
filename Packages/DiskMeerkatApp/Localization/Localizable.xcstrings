@@ -1,0 +1,1686 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "accessibility.capacity" : {
+      "comment" : "Accessibility summary containing a disk name and its available capacity.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "accessibility.checking-disk" : {
+      "comment" : "Accessibility label for an in-progress disk check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking disk"
+          }
+        }
+      }
+    },
+    "accessibility.saving-settings" : {
+      "comment" : "Accessibility label for settings save progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving settings"
+          }
+        }
+      }
+    },
+    "accessibility.status" : {
+      "comment" : "Accessibility summary containing monitoring state and available disk space.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat. %1$@. %2$@."
+          }
+        }
+      }
+    },
+    "accessibility.threshold" : {
+      "comment" : "Accessibility label for the low-space threshold field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low-space threshold in decimal gigabytes"
+          }
+        }
+      }
+    },
+    "accessibility.threshold-error" : {
+      "comment" : "Accessibility label for a low-space threshold validation error.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold error: %@"
+          }
+        }
+      }
+    },
+    "accessibility.updating-notification-permission" : {
+      "comment" : "Accessibility label for notification permission progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Updating notification permission"
+          }
+        }
+      }
+    },
+    "action.cancel" : {
+      "comment" : "Button that discards Settings edits.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "action.check-now" : {
+      "comment" : "Button that starts a disk check immediately.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Now"
+          }
+        }
+      }
+    },
+    "action.checking" : {
+      "comment" : "Disabled action label while a disk check runs.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking…"
+          }
+        }
+      }
+    },
+    "action.continue" : {
+      "comment" : "Button that completes onboarding.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "action.enable" : {
+      "comment" : "Button that enables a feature.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable"
+          }
+        }
+      }
+    },
+    "action.enabled" : {
+      "comment" : "Badge indicating a feature is enabled.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled"
+          }
+        }
+      }
+    },
+    "action.not-now" : {
+      "comment" : "Button that defers an optional onboarding action.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Now"
+          }
+        }
+      }
+    },
+    "action.open-settings" : {
+      "comment" : "Button that opens the relevant macOS System Settings pane.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
+    "action.ready" : {
+      "comment" : "Badge indicating a feature is ready.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready"
+          }
+        }
+      }
+    },
+    "action.save" : {
+      "comment" : "Button that saves Settings edits.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "action.settings" : {
+      "comment" : "Button that opens DiskMeerkat Settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
+          }
+        }
+      }
+    },
+    "action.unavailable" : {
+      "comment" : "Badge indicating a feature is unavailable.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unavailable"
+          }
+        }
+      }
+    },
+    "badge.check-failed" : {
+      "comment" : "Compact disk-check failure badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check failed"
+          }
+        }
+      }
+    },
+    "badge.checking" : {
+      "comment" : "Compact checking status badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking"
+          }
+        }
+      }
+    },
+    "badge.low-space" : {
+      "comment" : "Compact low-space status badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low space"
+          }
+        }
+      }
+    },
+    "badge.monitoring" : {
+      "comment" : "Compact healthy monitoring badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring"
+          }
+        }
+      }
+    },
+    "badge.starting" : {
+      "comment" : "Compact starting status badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting"
+          }
+        }
+      }
+    },
+    "badge.stopped" : {
+      "comment" : "Compact stopped status badge.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stopped"
+          }
+        }
+      }
+    },
+    "capacity.available" : {
+      "comment" : "Available disk capacity. The argument already includes the localized GB unit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ available"
+          }
+        }
+      }
+    },
+    "capacity.gigabytes" : {
+      "comment" : "A formatted decimal number followed by the gigabyte unit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ GB"
+          }
+        }
+      }
+    },
+    "capacity.subtitle.available" : {
+      "comment" : "Compact subtitle below an available-capacity value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "available"
+          }
+        }
+      }
+    },
+    "capacity.subtitle.available-on-startup-disk" : {
+      "comment" : "Subtitle below an available-capacity value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "available on the startup disk"
+          }
+        }
+      }
+    },
+    "capacity.subtitle.on-startup-disk" : {
+      "comment" : "Subtitle below an unavailable or checking startup-disk capacity.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "on the startup disk"
+          }
+        }
+      }
+    },
+    "capacity.unavailable" : {
+      "comment" : "Shown when the startup disk capacity cannot be displayed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available space unavailable"
+          }
+        }
+      }
+    },
+    "disk.startup" : {
+      "comment" : "Fallback name for the macOS startup disk.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup Disk"
+          }
+        }
+      }
+    },
+    "interval.hour.one" : {
+      "comment" : "A monitoring interval of exactly one hour.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 hour"
+          }
+        }
+      }
+    },
+    "interval.hour.other" : {
+      "comment" : "A monitoring interval measured in multiple hours.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld hours"
+          }
+        }
+      }
+    },
+    "interval.minute.one" : {
+      "comment" : "A monitoring interval of exactly one minute.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 minute"
+          }
+        }
+      }
+    },
+    "interval.minute.other" : {
+      "comment" : "A monitoring interval measured in multiple minutes.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld minutes"
+          }
+        }
+      }
+    },
+    "launch-at-login.changed.detail" : {
+      "comment" : "Explains that an externally changed login-item switch was refreshed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat refreshed the switch to match the actual system state."
+          }
+        }
+      }
+    },
+    "launch-at-login.changed.title" : {
+      "comment" : "Title shown when Open at Login changed outside DiskMeerkat.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login changed in System Settings"
+          }
+        }
+      }
+    },
+    "launch-at-login.disable-failed.detail" : {
+      "comment" : "Recovery guidance after disabling Open at Login fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The switch still shows the actual system state. Try again or review Login Items."
+          }
+        }
+      }
+    },
+    "launch-at-login.disable-failed.title" : {
+      "comment" : "Title shown when disabling Open at Login fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't disable Launch at Login"
+          }
+        }
+      }
+    },
+    "launch-at-login.disabled.detail" : {
+      "comment" : "Detail shown when DiskMeerkat does not open at login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat starts only when you open it."
+          }
+        }
+      }
+    },
+    "launch-at-login.disabled.title" : {
+      "comment" : "Title shown when DiskMeerkat does not open at login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login is off"
+          }
+        }
+      }
+    },
+    "launch-at-login.enable-failed.detail" : {
+      "comment" : "Recovery guidance after enabling Open at Login fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The switch still shows the actual system state. Try again or review Login Items."
+          }
+        }
+      }
+    },
+    "launch-at-login.enable-failed.title" : {
+      "comment" : "Title shown when enabling Open at Login fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't enable Launch at Login"
+          }
+        }
+      }
+    },
+    "launch-at-login.enabled.detail" : {
+      "comment" : "Detail shown when DiskMeerkat opens at login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat starts after you sign in."
+          }
+        }
+      }
+    },
+    "launch-at-login.enabled.title" : {
+      "comment" : "Title shown when DiskMeerkat opens at login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login is on"
+          }
+        }
+      }
+    },
+    "launch-at-login.loading.detail" : {
+      "comment" : "Detail shown while reading the macOS Open at Login state.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat is reading the current system setting."
+          }
+        }
+      }
+    },
+    "launch-at-login.loading.title" : {
+      "comment" : "Title shown while reading the macOS Open at Login state.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login status is loading"
+          }
+        }
+      }
+    },
+    "launch-at-login.requires-approval.detail" : {
+      "comment" : "Explains where to approve DiskMeerkat as a login item.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Review DiskMeerkat in Login Items in System Settings."
+          }
+        }
+      }
+    },
+    "launch-at-login.requires-approval.title" : {
+      "comment" : "Title shown when macOS requires approval for Open at Login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login needs approval"
+          }
+        }
+      }
+    },
+    "launch-at-login.unavailable.detail" : {
+      "comment" : "Detail shown when the macOS login-item service is unavailable.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The system login-item service couldn't be accessed."
+          }
+        }
+      }
+    },
+    "launch-at-login.unavailable.title" : {
+      "comment" : "Title shown when the macOS login-item service is unavailable.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login is unavailable"
+          }
+        }
+      }
+    },
+    "menu.open-status" : {
+      "comment" : "Button that opens the status window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Status"
+          }
+        }
+      }
+    },
+    "menu.quit" : {
+      "comment" : "Button that quits DiskMeerkat.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit DiskMeerkat"
+          }
+        }
+      }
+    },
+    "menu.subtitle" : {
+      "comment" : "Subtitle below the DiskMeerkat name in the menu.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup disk monitor"
+          }
+        }
+      }
+    },
+    "monitoring.checking-disk" : {
+      "comment" : "Shown while DiskMeerkat reads the startup disk.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking disk…"
+          }
+        }
+      }
+    },
+    "monitoring.headline.low-space" : {
+      "comment" : "Headline shown when available disk space is below the configured threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low disk space"
+          }
+        }
+      }
+    },
+    "monitoring.headline.low-space-alert-sent" : {
+      "comment" : "Headline shown after a low-space alert was submitted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low disk space · Alert sent"
+          }
+        }
+      }
+    },
+    "monitoring.headline.low-space-delivery-failed" : {
+      "comment" : "Headline shown when a low-space notification submission failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low disk space · Couldn't send alert · Will retry"
+          }
+        }
+      }
+    },
+    "monitoring.headline.low-space-notifications-off" : {
+      "comment" : "Headline shown for low disk space when notifications cannot be delivered.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low disk space · Notifications are off"
+          }
+        }
+      }
+    },
+    "monitoring.headline.monitoring" : {
+      "comment" : "Headline shown while disk monitoring is healthy.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring"
+          }
+        }
+      }
+    },
+    "monitoring.headline.read-failed" : {
+      "comment" : "Headline shown when the startup disk could not be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check disk · Will retry"
+          }
+        }
+      }
+    },
+    "monitoring.headline.starting" : {
+      "comment" : "Headline shown while monitoring starts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting monitoring…"
+          }
+        }
+      }
+    },
+    "monitoring.headline.stopped" : {
+      "comment" : "Headline shown when monitoring is stopped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring stopped"
+          }
+        }
+      }
+    },
+    "monitoring.status.checking" : {
+      "comment" : "Status detail shown while reading the startup disk.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading available space on the startup disk."
+          }
+        }
+      }
+    },
+    "monitoring.status.low-space" : {
+      "comment" : "Low-space status detail. The argument is the localized threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available space is below %@."
+          }
+        }
+      }
+    },
+    "monitoring.status.low-space-alert-sent" : {
+      "comment" : "Status detail shown after a low-space alert was submitted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An alert was submitted for this low-space episode."
+          }
+        }
+      }
+    },
+    "monitoring.status.low-space-delivery-failed" : {
+      "comment" : "Status detail shown after low-space notification delivery failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring continues and a later eligible check may retry the alert."
+          }
+        }
+      }
+    },
+    "monitoring.status.low-space-notifications-off" : {
+      "comment" : "Status detail shown when monitoring continues without notification permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring continues, but DiskMeerkat cannot currently send alerts."
+          }
+        }
+      }
+    },
+    "monitoring.status.monitoring" : {
+      "comment" : "Healthy status detail. The argument is the localized low-space threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat will alert when available space falls below %@."
+          }
+        }
+      }
+    },
+    "monitoring.status.read-failed-no-value" : {
+      "comment" : "Status detail shown when every startup disk read has failed.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No successful disk reading is available yet."
+          }
+        }
+      }
+    },
+    "monitoring.status.read-failed-with-value" : {
+      "comment" : "Status detail shown when a stale successful disk value remains available.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The last successful value remains visible."
+          }
+        }
+      }
+    },
+    "monitoring.status.starting" : {
+      "comment" : "Status detail shown while monitoring starts.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring saved settings and notification status."
+          }
+        }
+      }
+    },
+    "monitoring.status.stopped" : {
+      "comment" : "Status detail shown when monitoring is stopped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring is not running."
+          }
+        }
+      }
+    },
+    "monitoring.status.stopped-load-failed" : {
+      "comment" : "Status detail shown when persisted monitoring state failed to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved monitoring state couldn't be loaded."
+          }
+        }
+      }
+    },
+    "monitoring.suppression-explanation" : {
+      "comment" : "Explains when another low-space alert can be delivered.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another alert becomes eligible after available space rises above %@ and later falls below it again."
+          }
+        }
+      }
+    },
+    "notice.configuration-save.detail" : {
+      "comment" : "Detail shown after monitoring settings fail to save.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The previous settings and schedule remain active."
+          }
+        }
+      }
+    },
+    "notice.configuration-save.title" : {
+      "comment" : "Problem title shown when monitoring settings cannot be saved.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save settings"
+          }
+        }
+      }
+    },
+    "notice.disk-read.no-value.detail" : {
+      "comment" : "Recovery detail when no successful startup disk reading exists.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat will retry on the next check."
+          }
+        }
+      }
+    },
+    "notice.disk-read.title" : {
+      "comment" : "Problem title shown when the startup disk cannot be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't check the startup disk"
+          }
+        }
+      }
+    },
+    "notice.disk-read.with-value.detail" : {
+      "comment" : "Recovery detail when a stale successful startup disk reading is shown.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The last successful value is shown. DiskMeerkat will retry."
+          }
+        }
+      }
+    },
+    "notice.notification-permission.detail" : {
+      "comment" : "Recovery detail after notification permission cannot be updated.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk monitoring continues without changing the current permission."
+          }
+        }
+      }
+    },
+    "notice.notification-permission.title" : {
+      "comment" : "Problem title shown when notification permission cannot be requested.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't update notification permission"
+          }
+        }
+      }
+    },
+    "notice.notification-status.detail" : {
+      "comment" : "Recovery detail after notification permission cannot be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk monitoring continues. Try refreshing notification status later."
+          }
+        }
+      }
+    },
+    "notice.notification-status.title" : {
+      "comment" : "Problem title shown when notification permission cannot be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't read notification status"
+          }
+        }
+      }
+    },
+    "notice.notification-submission.detail" : {
+      "comment" : "Recovery detail after a low-space notification submission fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The episode remains eligible and a later check may retry."
+          }
+        }
+      }
+    },
+    "notice.notification-submission.title" : {
+      "comment" : "Problem title shown when a low-space notification cannot be submitted.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't send the low-space alert"
+          }
+        }
+      }
+    },
+    "notice.persistence.load.detail" : {
+      "comment" : "Detail shown after persisted monitoring state fails to load.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring is stopped so the problem can be reviewed safely."
+          }
+        }
+      }
+    },
+    "notice.persistence.load.title" : {
+      "comment" : "Problem title shown when persisted monitoring state cannot be loaded.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load saved monitoring state"
+          }
+        }
+      }
+    },
+    "notice.persistence.save.detail" : {
+      "comment" : "Detail shown after runtime monitoring state fails to save.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In-memory monitoring continues and DiskMeerkat will retry."
+          }
+        }
+      }
+    },
+    "notice.persistence.save.title" : {
+      "comment" : "Problem title shown when runtime monitoring state cannot be saved.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save monitoring state"
+          }
+        }
+      }
+    },
+    "notification.low-space.body" : {
+      "comment" : "Body of an immediate low-space notification. Arguments are disk name, available capacity, and threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ has %2$@ available, below your %3$@ limit."
+          }
+        }
+      }
+    },
+    "notification.low-space.title" : {
+      "comment" : "Title of an immediate low-space notification.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disk space is low"
+          }
+        }
+      }
+    },
+    "onboarding.check-interval" : {
+      "comment" : "Onboarding interval label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check interval"
+          }
+        }
+      }
+    },
+    "onboarding.detail" : {
+      "comment" : "Short explanation of DiskMeerkat during onboarding.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat watches your startup disk and alerts you when available space falls below your limit."
+          }
+        }
+      }
+    },
+    "onboarding.enable-notifications" : {
+      "comment" : "Onboarding button that requests notification permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable Notifications"
+          }
+        }
+      }
+    },
+    "onboarding.low-space-alert" : {
+      "comment" : "Onboarding threshold label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low-space alert"
+          }
+        }
+      }
+    },
+    "onboarding.monitoring" : {
+      "comment" : "Onboarding monitoring status label.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring"
+          }
+        }
+      }
+    },
+    "onboarding.open-notification-settings" : {
+      "comment" : "Onboarding button that opens macOS notification settings.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Notification Settings"
+          }
+        }
+      }
+    },
+    "onboarding.title" : {
+      "comment" : "Onboarding welcome title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome to DiskMeerkat"
+          }
+        }
+      }
+    },
+    "permission.authorized.detail" : {
+      "comment" : "Explains enabled notification behavior.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat can submit low-space alerts."
+          }
+        }
+      }
+    },
+    "permission.authorized.title" : {
+      "comment" : "Title shown when notification permission is available.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are enabled"
+          }
+        }
+      }
+    },
+    "permission.denied.detail" : {
+      "comment" : "Explains how to enable notifications after permission was denied.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring continues. Allow alerts in System Settings if you want notifications."
+          }
+        }
+      }
+    },
+    "permission.denied.title" : {
+      "comment" : "Title shown when notification permission is denied.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are off"
+          }
+        }
+      }
+    },
+    "permission.not-determined.detail" : {
+      "comment" : "Explains why DiskMeerkat requests notification permission.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable notifications to receive low-space alerts."
+          }
+        }
+      }
+    },
+    "permission.not-determined.title" : {
+      "comment" : "Title shown before notification permission has been requested.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications are not enabled"
+          }
+        }
+      }
+    },
+    "permission.unavailable.detail" : {
+      "comment" : "Explains behavior when notification permission status is unavailable.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring continues without relying on notification permission."
+          }
+        }
+      }
+    },
+    "permission.unavailable.title" : {
+      "comment" : "Title shown when notification permission status cannot be read.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notification status is unavailable"
+          }
+        }
+      }
+    },
+    "runtime.not-connected" : {
+      "comment" : "Fallback message shown when the app shell has no monitoring model.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The app is not connected to its monitoring runtime yet."
+          }
+        }
+      }
+    },
+    "schedule.after-this-check" : {
+      "comment" : "Shown for the next check time while a disk check is in progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After this check"
+          }
+        }
+      }
+    },
+    "schedule.last-check" : {
+      "comment" : "Label for the last disk check time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last check"
+          }
+        }
+      }
+    },
+    "schedule.next-check" : {
+      "comment" : "Label for the next disk check time.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next check"
+          }
+        }
+      }
+    },
+    "schedule.not-scheduled" : {
+      "comment" : "Shown when no next disk check is scheduled.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not scheduled"
+          }
+        }
+      }
+    },
+    "schedule.not-yet" : {
+      "comment" : "Shown before the first successful disk check.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not yet"
+          }
+        }
+      }
+    },
+    "settings.alert-threshold" : {
+      "comment" : "Settings label for the low-space threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alert threshold"
+          }
+        }
+      }
+    },
+    "settings.alert-threshold.detail" : {
+      "comment" : "Settings help text for the low-space threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notify when available space is below this value."
+          }
+        }
+      }
+    },
+    "settings.check-interval" : {
+      "comment" : "Settings label for the automatic disk-check interval.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check interval"
+          }
+        }
+      }
+    },
+    "settings.gigabytes-unit" : {
+      "comment" : "Gigabyte unit beside the threshold field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GB"
+          }
+        }
+      }
+    },
+    "settings.launch-at-login" : {
+      "comment" : "Settings label for opening DiskMeerkat at login.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Launch at Login"
+          }
+        }
+      }
+    },
+    "settings.login-items" : {
+      "comment" : "Settings label for the macOS Login Items pane.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Login Items"
+          }
+        }
+      }
+    },
+    "settings.low-space-alerts" : {
+      "comment" : "Settings notification row title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low-space alerts"
+          }
+        }
+      }
+    },
+    "settings.save-error.already-saving" : {
+      "comment" : "Error shown when another settings save is already in progress.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Another settings save is still in progress."
+          }
+        }
+      }
+    },
+    "settings.save-error.failed" : {
+      "comment" : "Error shown when saving monitoring settings fails.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't save settings. Your previous settings remain active."
+          }
+        }
+      }
+    },
+    "settings.save-error.not-running" : {
+      "comment" : "Error shown when settings cannot be saved because monitoring is stopped.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring is not running, so settings couldn't be saved."
+          }
+        }
+      }
+    },
+    "settings.section.monitoring" : {
+      "comment" : "Settings monitoring section title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring"
+          }
+        }
+      }
+    },
+    "settings.section.notifications" : {
+      "comment" : "Settings notification section title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notifications"
+          }
+        }
+      }
+    },
+    "settings.section.startup" : {
+      "comment" : "Settings startup section title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup"
+          }
+        }
+      }
+    },
+    "settings.startup-disk" : {
+      "comment" : "Settings label for the startup disk.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Startup disk"
+          }
+        }
+      }
+    },
+    "settings.threshold-field" : {
+      "comment" : "Placeholder and label for the low-space threshold field.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Threshold"
+          }
+        }
+      }
+    },
+    "status.alert-below" : {
+      "comment" : "Label for the low-space threshold value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alert below"
+          }
+        }
+      }
+    },
+    "status.automatic-checks" : {
+      "comment" : "Explains automatic background disk checks.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your startup disk is checked automatically in the background."
+          }
+        }
+      }
+    },
+    "status.check-every" : {
+      "comment" : "Label for the monitoring interval value.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check every"
+          }
+        }
+      }
+    },
+    "status.current" : {
+      "comment" : "Heading in the status window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Current status"
+          }
+        }
+      }
+    },
+    "status.monitoring" : {
+      "comment" : "Monitoring information card title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monitoring"
+          }
+        }
+      }
+    },
+    "status.schedule" : {
+      "comment" : "Schedule information card title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule"
+          }
+        }
+      }
+    },
+    "threshold.alert-below" : {
+      "comment" : "Monitoring threshold summary. The argument includes a localized GB unit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alert below %@"
+          }
+        }
+      }
+    },
+    "threshold.below" : {
+      "comment" : "Compact threshold summary. The argument includes a localized GB unit.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below %@"
+          }
+        }
+      }
+    },
+    "validation.threshold.range" : {
+      "comment" : "Validation message for a low-space threshold outside the supported range.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a value from 1 through 1,000,000 GB."
+          }
+        }
+      }
+    },
+    "validation.threshold.required" : {
+      "comment" : "Validation message for an empty low-space threshold.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a low-space threshold."
+          }
+        }
+      }
+    },
+    "validation.threshold.whole-number" : {
+      "comment" : "Validation message for a low-space threshold that is not a whole number.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a whole number of decimal GB."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

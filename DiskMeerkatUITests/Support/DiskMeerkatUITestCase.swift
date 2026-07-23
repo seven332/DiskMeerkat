@@ -14,7 +14,12 @@ class DiskMeerkatUITestCase: XCTestCase {
     ) -> DiskMeerkatLaunch {
         let app = XCUIApplication()
         let session = UUID().uuidString
-        app.launchArguments += ["-ApplePersistenceIgnoreState", "YES"]
+        app.launchArguments += [
+            "-ApplePersistenceIgnoreState",
+            "YES",
+            "-AppleLanguages",
+            "(en)",
+        ]
         app.launchEnvironment["DISK_MEERKAT_UI_TEST_FIXTURE"] = fixture.rawValue
         app.launchEnvironment["DISK_MEERKAT_UI_TEST_SESSION"] = session
         if activateDuringLaunch {

@@ -10,7 +10,7 @@ struct DiskCapacityFormatter: Sendable {
         self.locale = locale
     }
 
-    func string(
+    func numberString(
         for capacity: DiskCapacity,
         relativeTo threshold: LowSpaceThreshold
     ) -> String {
@@ -24,17 +24,13 @@ struct DiskCapacityFormatter: Sendable {
         )
         let formatter = makeNumberFormatter(maximumFractionDigits: maximumFractionDigits)
         let number = NSDecimalNumber(decimal: capacityInGigabytes)
-        let formattedNumber = formatter.string(from: number) ?? number.stringValue
-
-        return "\(formattedNumber) GB"
+        return formatter.string(from: number) ?? number.stringValue
     }
 
-    func string(for threshold: LowSpaceThreshold) -> String {
+    func numberString(for threshold: LowSpaceThreshold) -> String {
         let formatter = makeNumberFormatter(maximumFractionDigits: 0)
         let number = NSNumber(value: threshold.gigabytes)
-        let formattedNumber = formatter.string(from: number) ?? number.stringValue
-
-        return "\(formattedNumber) GB"
+        return formatter.string(from: number) ?? number.stringValue
     }
 
     private func maximumFractionDigits(

@@ -131,7 +131,7 @@ final class UserNotificationsMonitoringServiceTests: XCTestCase {
         let service = UserNotificationsMonitoringService(
             client: client,
             locale: Locale(identifier: "de_DE"),
-            notificationTitle: "Disk space is low",
+            localization: .english,
             startupDiskName: "Startup Disk"
         )
         let candidate = try notificationCandidate(
@@ -179,7 +179,7 @@ final class UserNotificationsMonitoringServiceTests: XCTestCase {
         UserNotificationsMonitoringService(
             client: client,
             locale: Locale(identifier: "en_US_POSIX"),
-            notificationTitle: "Disk space is low",
+            localization: .english,
             startupDiskName: "Startup Disk"
         )
     }

@@ -49,7 +49,7 @@ public final class DiskMeerkatPresentationModel {
     private(set) var launchAtLoginSnapshot: LaunchAtLoginSnapshot?
     var settingsDraft: MonitoringSettingsDraft
     private(set) var isEditingSettings = false
-    private(set) var settingsSaveError: String?
+    private(set) var settingsSaveError: LocalizedStringResource?
     private(set) var isSavingSettings = false
     private(set) var isRequestingCheck = false
     private(set) var isUpdatingNotificationPermission = false
@@ -60,6 +60,7 @@ public final class DiskMeerkatPresentationModel {
     @ObservationIgnored private let launchAtLoginService: any LaunchAtLoginService
     @ObservationIgnored private let openNotificationSettingsAction: @MainActor @Sendable () async -> Void
     @ObservationIgnored private let locale: Locale
+    @ObservationIgnored let localization: DiskMeerkatLocalization
     @ObservationIgnored private var observationTask: Task<Void, Never>?
     @ObservationIgnored private var observationID: UUID?
     @ObservationIgnored private var initialRefreshTask: Task<Void, Never>?
@@ -69,12 +70,14 @@ public final class DiskMeerkatPresentationModel {
         runtimeClient: any MonitoringPresentationRuntimeClient,
         launchAtLoginService: any LaunchAtLoginService,
         locale: Locale = .autoupdatingCurrent,
+        localization: DiskMeerkatLocalization = .current,
         openNotificationSettings: @escaping @MainActor @Sendable () async -> Void
     ) {
         self.snapshot = snapshot
         self.runtimeClient = runtimeClient
         self.launchAtLoginService = launchAtLoginService
         self.locale = locale
+        self.localization = localization
         openNotificationSettingsAction = openNotificationSettings
         settingsDraft = MonitoringSettingsDraft(configuration: snapshot.configuration, locale: locale)
 
@@ -117,7 +120,8 @@ public final class DiskMeerkatPresentationModel {
         MonitoringPresentationState(
             snapshot: snapshot,
             launchAtLoginSnapshot: launchAtLoginSnapshot,
-            locale: locale
+            locale: locale,
+            localization: localization
         )
     }
 
@@ -166,11 +170,11 @@ public final class DiskMeerkatPresentationModel {
             isEditingSettings = false
             return true
         case .failed:
-            settingsSaveError = "Couldn't save settings. Your previous settings remain active."
+            settingsSaveError = localization.settingsSaveFailed
         case .notRunning:
-            settingsSaveError = "Monitoring is not running, so settings couldn't be saved."
+            settingsSaveError = localization.settingsSaveNotRunning
         case .alreadySaving:
-            settingsSaveError = "Another settings save is still in progress."
+            settingsSaveError = localization.settingsSaveAlreadySaving
         }
         return false
     }

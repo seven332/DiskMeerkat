@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "DiskMeerkatApp",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v15)
     ],
@@ -14,7 +15,12 @@ let package = Package(
         )
     ],
     targets: [
-        .target(name: "DiskMeerkatApp"),
+        .target(
+            name: "DiskMeerkatApp",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .testTarget(
             name: "DiskMeerkatAppTests",
             dependencies: ["DiskMeerkatApp"]

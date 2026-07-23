@@ -83,18 +83,18 @@ struct UserNotificationsMonitoringService: MonitoringNotificationService {
 
     private let client: any UserNotificationCenterClient
     private let formatter: DiskCapacityFormatter
-    private let notificationTitle: String
-    private let startupDiskName: String
+    private let localization: DiskMeerkatLocalization
+    private let startupDiskName: String?
 
     init(
         client: any UserNotificationCenterClient,
         locale: Locale = .autoupdatingCurrent,
-        notificationTitle: String = String(localized: "Disk space is low"),
-        startupDiskName: String = String(localized: "Startup Disk")
+        localization: DiskMeerkatLocalization = .current,
+        startupDiskName: String? = nil
     ) {
         self.client = client
         formatter = DiskCapacityFormatter(locale: locale)
-        self.notificationTitle = notificationTitle
+        self.localization = localization
         self.startupDiskName = startupDiskName
     }
 
@@ -117,16 +117,33 @@ struct UserNotificationsMonitoringService: MonitoringNotificationService {
     }
 
     func submit(_ candidate: LowSpaceNotificationCandidate) async throws {
-        let volumeName = candidate.volumeName ?? startupDiskName
-        let availableCapacity = formatter.string(
-            for: candidate.availableCapacity,
-            relativeTo: candidate.threshold
+        let volumeName =
+            candidate.volumeName
+            ?? startupDiskName
+            ?? localization.resolve(localization.startupDisk)
+        let availableCapacity = localization.resolve(
+            localization.gigabytes(
+                formatter.numberString(
+                    for: candidate.availableCapacity,
+                    relativeTo: candidate.threshold
+                )
+            )
         )
-        let threshold = formatter.string(for: candidate.threshold)
+        let threshold = localization.resolve(
+            localization.gigabytes(
+                formatter.numberString(for: candidate.threshold)
+            )
+        )
         let request = UserNotificationRequestDescriptor(
             identifier: Self.lowSpaceRequestIdentifier,
-            title: notificationTitle,
-            body: "\(volumeName) has \(availableCapacity) available, below your \(threshold) limit.",
+            title: localization.resolve(localization.notificationTitle),
+            body: localization.resolve(
+                localization.notificationBody(
+                    volumeName: volumeName,
+                    availableCapacity: availableCapacity,
+                    threshold: threshold
+                )
+            ),
             usesDefaultSound: true
         )
         try await client.add(request)

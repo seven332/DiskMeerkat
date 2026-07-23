@@ -59,9 +59,9 @@ public struct DiskMeerkatMenuView: View {
                 .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 1) {
-                    Text("DiskMeerkat")
+                    Text(verbatim: "DiskMeerkat")
                         .font(.subheadline.weight(.semibold))
-                    Text("Startup disk monitor")
+                    Text(DiskMeerkatLocalization.current.menuSubtitle)
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -94,7 +94,8 @@ public struct DiskMeerkatMenuView: View {
                     } label: {
                         Label(
                             state.isCheckInProgress || model.isRequestingCheck
-                                ? "Checking…" : "Check Now",
+                                ? DiskMeerkatLocalization.current.actionChecking
+                                : DiskMeerkatLocalization.current.actionCheckNow,
                             systemImage: "arrow.clockwise"
                         )
                         .frame(maxWidth: .infinity)
@@ -107,7 +108,7 @@ public struct DiskMeerkatMenuView: View {
                     Button {
                         actions.openStatus()
                     } label: {
-                        Text("Open Status")
+                        Text(DiskMeerkatLocalization.current.menuOpenStatus)
                             .frame(maxWidth: .infinity)
                     }
                     .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuOpenStatus)
@@ -119,13 +120,17 @@ public struct DiskMeerkatMenuView: View {
             Divider()
 
             HStack {
-                Button("Settings", action: actions.openSettings)
-                    .keyboardShortcut(",", modifiers: .command)
-                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuOpenSettings)
+                Button(action: actions.openSettings) {
+                    Text(DiskMeerkatLocalization.current.actionSettings)
+                }
+                .keyboardShortcut(",", modifiers: .command)
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuOpenSettings)
                 Spacer()
-                Button("Quit DiskMeerkat", action: actions.quit)
-                    .keyboardShortcut("q", modifiers: .command)
-                    .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuQuit)
+                Button(action: actions.quit) {
+                    Text(DiskMeerkatLocalization.current.menuQuit)
+                }
+                .keyboardShortcut("q", modifiers: .command)
+                .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.menuQuit)
             }
             .buttonStyle(.plain)
             .font(.caption)
@@ -186,9 +191,9 @@ public struct DiskMeerkatStatusView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack(alignment: .center, spacing: 16) {
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Current status")
+                            Text(DiskMeerkatLocalization.current.statusCurrent)
                                 .font(.title2.weight(.semibold))
-                            Text("Your startup disk is checked automatically in the background.")
+                            Text(DiskMeerkatLocalization.current.statusAutomaticChecks)
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         }
@@ -203,27 +208,42 @@ public struct DiskMeerkatStatusView: View {
                     MonitoringCapacityHeroView(state: state)
 
                     HStack(alignment: .top, spacing: 12) {
-                        MonitoringInfoCard(title: "Monitoring", systemImage: "slider.horizontal.3") {
-                            MonitoringInfoRow("Alert below") {
-                                Text(thresholdValue(for: state))
+                        MonitoringInfoCard(
+                            title: DiskMeerkatLocalization.current.statusMonitoringSection,
+                            systemImage: "slider.horizontal.3"
+                        ) {
+                            MonitoringInfoRow(
+                                DiskMeerkatLocalization.current.statusAlertBelow
+                            ) {
+                                Text(state.thresholdValueText)
                             }
-                            MonitoringInfoRow("Check every") {
+                            MonitoringInfoRow(
+                                DiskMeerkatLocalization.current.statusCheckEvery
+                            ) {
                                 Text(state.intervalText)
                             }
                         }
 
-                        MonitoringInfoCard(title: "Schedule", systemImage: "clock") {
-                            MonitoringInfoRow("Last check") {
+                        MonitoringInfoCard(
+                            title: DiskMeerkatLocalization.current.statusScheduleSection,
+                            systemImage: "clock"
+                        ) {
+                            MonitoringInfoRow(
+                                DiskMeerkatLocalization.current.scheduleLastCheck
+                            ) {
                                 MonitoringRelativeDateView(
                                     date: state.lastSuccessfulCheckAt,
-                                    fallback: "Not yet"
+                                    fallback: DiskMeerkatLocalization.current.scheduleNotYet
                                 )
                             }
-                            MonitoringInfoRow("Next check") {
+                            MonitoringInfoRow(
+                                DiskMeerkatLocalization.current.scheduleNextCheck
+                            ) {
                                 MonitoringRelativeDateView(
                                     date: state.nextScheduledCheckAt,
                                     fallback: state.isCheckInProgress
-                                        ? "After this check" : "Not scheduled"
+                                        ? DiskMeerkatLocalization.current.scheduleAfterThisCheck
+                                        : DiskMeerkatLocalization.current.scheduleNotScheduled
                                 )
                             }
                         }
@@ -266,15 +286,18 @@ public struct DiskMeerkatStatusView: View {
             Divider()
 
             HStack(spacing: 8) {
-                Button("Settings", action: openSettings)
-                    .keyboardShortcut(",", modifiers: .command)
+                Button(action: openSettings) {
+                    Text(DiskMeerkatLocalization.current.actionSettings)
+                }
+                .keyboardShortcut(",", modifiers: .command)
                 Spacer()
                 Button {
                     Task { await model.checkNow() }
                 } label: {
                     Label(
                         state.isCheckInProgress || model.isRequestingCheck
-                            ? "Checking…" : "Check Now",
+                            ? DiskMeerkatLocalization.current.actionChecking
+                            : DiskMeerkatLocalization.current.actionCheckNow,
                         systemImage: "arrow.clockwise"
                     )
                 }
@@ -300,10 +323,6 @@ public struct DiskMeerkatStatusView: View {
             await model.refreshExternalState()
         }
     }
-
-    private func thresholdValue(for state: MonitoringPresentationState) -> String {
-        state.thresholdText.replacingOccurrences(of: "Alert below ", with: "")
-    }
 }
 
 public struct DiskMeerkatSettingsView: View {
@@ -321,8 +340,12 @@ public struct DiskMeerkatSettingsView: View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 15) {
-                    DiskMeerkatSettingsSection(title: "Monitoring") {
-                        DiskMeerkatSettingsRow(title: "Startup disk") {
+                    DiskMeerkatSettingsSection(
+                        title: DiskMeerkatLocalization.current.settingsMonitoringSection
+                    ) {
+                        DiskMeerkatSettingsRow(
+                            title: DiskMeerkatLocalization.current.settingsStartupDisk
+                        ) {
                             VStack(alignment: .trailing, spacing: 2) {
                                 Text(state.volumeName)
                                     .fontWeight(.semibold)
@@ -335,39 +358,54 @@ public struct DiskMeerkatSettingsView: View {
                         DiskMeerkatSettingsDivider()
 
                         DiskMeerkatSettingsRow(
-                            title: "Alert threshold",
-                            detail: "Notify when available space is below this value."
+                            title: DiskMeerkatLocalization.current.settingsAlertThreshold,
+                            detail: DiskMeerkatLocalization.current.settingsAlertThresholdDetail
                         ) {
                             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                                TextField("Threshold", text: $model.settingsDraft.thresholdText)
-                                    .frame(width: 74)
-                                    .multilineTextAlignment(.trailing)
-                                    .accessibilityLabel("Low-space threshold in decimal gigabytes")
-                                    .accessibilityIdentifier(
-                                        DiskMeerkatAccessibilityIdentifiers.settingsThreshold
-                                    )
-                                Text("GB")
+                                TextField(text: $model.settingsDraft.thresholdText) {
+                                    Text(DiskMeerkatLocalization.current.settingsThresholdField)
+                                }
+                                .frame(width: 74)
+                                .multilineTextAlignment(.trailing)
+                                .accessibilityLabel(
+                                    DiskMeerkatLocalization.current.accessibilityThreshold
+                                )
+                                .accessibilityIdentifier(
+                                    DiskMeerkatAccessibilityIdentifiers.settingsThreshold
+                                )
+                                Text(DiskMeerkatLocalization.current.settingsGigabytesUnit)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                         }
 
                         if let error = model.settingsDraft.thresholdError {
-                            Text(error.message)
+                            let message = error.message(localization: model.localization)
+                            let resolvedMessage = model.localization.resolve(message)
+                            Text(message)
                                 .font(.caption2)
                                 .foregroundStyle(.red)
                                 .frame(maxWidth: .infinity, alignment: .trailing)
                                 .padding(.horizontal, 13)
                                 .padding(.bottom, 8)
-                                .accessibilityLabel("Threshold error: \(error.message)")
+                                .accessibilityLabel(
+                                    model.localization.thresholdErrorAccessibilityLabel(
+                                        resolvedMessage
+                                    )
+                                )
                         }
 
                         DiskMeerkatSettingsDivider()
 
-                        DiskMeerkatSettingsRow(title: "Check interval") {
-                            Picker("Check interval", selection: $model.settingsDraft.interval) {
+                        DiskMeerkatSettingsRow(
+                            title: DiskMeerkatLocalization.current.settingsCheckInterval
+                        ) {
+                            Picker(
+                                DiskMeerkatLocalization.current.settingsCheckInterval,
+                                selection: $model.settingsDraft.interval
+                            ) {
                                 ForEach(CheckInterval.allCases, id: \.rawValue) { interval in
-                                    Text(interval.displayName)
+                                    Text(interval.displayName(localization: model.localization))
                                         .tag(interval)
                                 }
                             }
@@ -380,18 +418,22 @@ public struct DiskMeerkatSettingsView: View {
                     }
                     .disabled(model.isSavingSettings || state.isSavingConfiguration)
 
-                    DiskMeerkatSettingsSection(title: "Notifications") {
+                    DiskMeerkatSettingsSection(
+                        title: DiskMeerkatLocalization.current.settingsNotificationsSection
+                    ) {
                         DiskMeerkatSettingsRow(
-                            title: "Low-space alerts",
+                            title: DiskMeerkatLocalization.current.settingsLowSpaceAlerts,
                             detail: state.notificationPermission.title
                         ) {
                             settingsNotificationAction
                         }
                     }
 
-                    DiskMeerkatSettingsSection(title: "Startup") {
+                    DiskMeerkatSettingsSection(
+                        title: DiskMeerkatLocalization.current.settingsStartupSection
+                    ) {
                         DiskMeerkatSettingsRow(
-                            title: "Launch at Login",
+                            title: DiskMeerkatLocalization.current.settingsLaunchAtLogin,
                             detail: state.launchAtLogin.title
                         ) {
                             Toggle(
@@ -415,11 +457,13 @@ public struct DiskMeerkatSettingsView: View {
                         if state.launchAtLogin.canOpenSettings {
                             DiskMeerkatSettingsDivider()
                             DiskMeerkatSettingsRow(
-                                title: "Login Items",
+                                title: DiskMeerkatLocalization.current.settingsLoginItems,
                                 detail: state.launchAtLogin.detail
                             ) {
-                                Button("Open Settings") {
+                                Button {
                                     Task { await model.openLaunchAtLoginSettings() }
+                                } label: {
+                                    Text(DiskMeerkatLocalization.current.actionOpenSettings)
                                 }
                                 .disabled(model.isUpdatingLaunchAtLogin)
                                 .accessibilityIdentifier(
@@ -446,9 +490,11 @@ public struct DiskMeerkatSettingsView: View {
 
             HStack(spacing: 8) {
                 Spacer()
-                Button("Cancel") {
+                Button {
                     model.cancelSettingsEditing()
                     dismiss()
+                } label: {
+                    Text(DiskMeerkatLocalization.current.actionCancel)
                 }
                 .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsCancel)
                 .keyboardShortcut(.cancelAction)
@@ -457,15 +503,19 @@ public struct DiskMeerkatSettingsView: View {
                 if model.isSavingSettings || state.isSavingConfiguration {
                     ProgressView()
                         .controlSize(.small)
-                        .accessibilityLabel("Saving settings")
+                        .accessibilityLabel(
+                            DiskMeerkatLocalization.current.accessibilitySavingSettings
+                        )
                 }
 
-                Button("Save") {
+                Button {
                     Task {
                         if await model.saveSettings() {
                             dismiss()
                         }
                     }
+                } label: {
+                    Text(DiskMeerkatLocalization.current.actionSave)
                 }
                 .accessibilityIdentifier(DiskMeerkatAccessibilityIdentifiers.settingsSave)
                 .buttonStyle(.borderedProminent)
@@ -497,41 +547,54 @@ public struct DiskMeerkatSettingsView: View {
         if model.isUpdatingNotificationPermission {
             ProgressView()
                 .controlSize(.small)
-                .accessibilityLabel("Updating notification permission")
+                .accessibilityLabel(
+                    DiskMeerkatLocalization.current.accessibilityUpdatingNotificationPermission
+                )
         } else if permission.kind == .authorized {
-            MonitoringInlineBadge(text: "Enabled", tint: .green)
+            MonitoringInlineBadge(
+                text: DiskMeerkatLocalization.current.actionEnabled,
+                tint: .green
+            )
         } else if permission.canRequestAuthorization {
-            Button("Enable") {
+            Button {
                 Task { await model.enableNotifications() }
+            } label: {
+                Text(DiskMeerkatLocalization.current.actionEnable)
             }
             .accessibilityIdentifier(
                 DiskMeerkatAccessibilityIdentifiers.settingsEnableNotifications
             )
         } else if permission.canOpenSettings {
-            Button("Open Settings") {
+            Button {
                 Task { await model.openNotificationSettings() }
+            } label: {
+                Text(DiskMeerkatLocalization.current.actionOpenSettings)
             }
             .accessibilityIdentifier(
                 DiskMeerkatAccessibilityIdentifiers.settingsOpenNotificationSettings
             )
         } else {
-            MonitoringInlineBadge(text: "Unavailable", tint: .orange)
+            MonitoringInlineBadge(
+                text: DiskMeerkatLocalization.current.actionUnavailable,
+                tint: .orange
+            )
         }
     }
 }
 
 private struct DiskMeerkatSettingsSection<Content: View>: View {
-    let title: String
+    let title: LocalizedStringResource
     let content: Content
 
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: LocalizedStringResource, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text(title.uppercased())
+            Text(title)
+                .textCase(.uppercase)
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.secondary)
                 .padding(.leading, 8)
@@ -552,13 +615,13 @@ private struct DiskMeerkatSettingsSection<Content: View>: View {
 }
 
 private struct DiskMeerkatSettingsRow<Control: View>: View {
-    let title: String
-    let detail: String?
+    let title: LocalizedStringResource
+    let detail: LocalizedStringResource?
     let control: Control
 
     init(
-        title: String,
-        detail: String? = nil,
+        title: LocalizedStringResource,
+        detail: LocalizedStringResource? = nil,
         @ViewBuilder control: () -> Control
     ) {
         self.title = title

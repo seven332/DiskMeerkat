@@ -11,26 +11,26 @@ enum MonitoringHeadline: Equatable, Sendable {
     case lowSpaceDeliveryFailed
     case readFailed
 
-    var text: String {
+    func text(localization: DiskMeerkatLocalization) -> LocalizedStringResource {
         switch self {
         case .stopped:
-            "Monitoring stopped"
+            localization.headlineStopped
         case .starting:
-            "Starting monitoring…"
+            localization.headlineStarting
         case .checking:
-            "Checking disk…"
+            localization.headlineChecking
         case .monitoring:
-            "Monitoring"
+            localization.headlineMonitoring
         case .lowSpace:
-            "Low disk space"
+            localization.headlineLowSpace
         case .lowSpaceAlertSent:
-            "Low disk space · Alert sent"
+            localization.headlineLowSpaceAlertSent
         case .lowSpaceNotificationsOff:
-            "Low disk space · Notifications are off"
+            localization.headlineLowSpaceNotificationsOff
         case .lowSpaceDeliveryFailed:
-            "Low disk space · Couldn't send alert · Will retry"
+            localization.headlineLowSpaceDeliveryFailed
         case .readFailed:
-            "Couldn't check disk · Will retry"
+            localization.headlineReadFailed
         }
     }
 
@@ -54,8 +54,8 @@ enum NotificationPermissionPresentationKind: Equatable, Sendable {
 
 struct NotificationPermissionPresentation: Equatable, Sendable {
     let kind: NotificationPermissionPresentationKind
-    let title: String
-    let detail: String
+    let title: LocalizedStringResource
+    let detail: LocalizedStringResource
     let canRequestAuthorization: Bool
     let canOpenSettings: Bool
 
@@ -73,8 +73,8 @@ enum MonitoringNoticeKind: String, Equatable, Hashable, Sendable {
 
 struct MonitoringNotice: Equatable, Identifiable, Sendable {
     let kind: MonitoringNoticeKind
-    let title: String
-    let detail: String
+    let title: LocalizedStringResource
+    let detail: LocalizedStringResource
 
     var id: MonitoringNoticeKind {
         kind
@@ -83,30 +83,40 @@ struct MonitoringNotice: Equatable, Identifiable, Sendable {
 
 struct LaunchAtLoginPresentation: Equatable, Sendable {
     let actualState: LaunchAtLoginActualState?
-    let title: String
-    let detail: String
+    let title: LocalizedStringResource
+    let detail: LocalizedStringResource
     let isEnabled: Bool
     let canToggle: Bool
     let canOpenSettings: Bool
     let requiresAttention: Bool
 }
 
+enum MonitoringCapacityPresentationKind: Equatable, Sendable {
+    case available
+    case unavailable
+    case checking
+}
+
 struct MonitoringPresentationState: Equatable, Sendable {
     let headline: MonitoringHeadline
-    let statusDetail: String
+    let headlineText: LocalizedStringResource
+    let statusDetail: LocalizedStringResource
     let symbolName: String
     let statusAccessibilityLabel: String
     let volumeName: String
-    let availableSpaceText: String
+    let capacityKind: MonitoringCapacityPresentationKind
+    let availableCapacityText: String?
+    let availableSpaceText: LocalizedStringResource
     let capacityAccessibilityLabel: String
-    let thresholdText: String
-    let intervalText: String
+    let thresholdValueText: String
+    let thresholdText: LocalizedStringResource
+    let intervalText: LocalizedStringResource
     let lastSuccessfulCheckAt: Date?
     let nextScheduledCheckAt: Date?
     let notificationPermission: NotificationPermissionPresentation
     let launchAtLogin: LaunchAtLoginPresentation
     let notices: [MonitoringNotice]
-    let suppressionExplanation: String?
+    let suppressionExplanation: LocalizedStringResource?
     let isCheckInProgress: Bool
     let isSavingConfiguration: Bool
     let canCheckNow: Bool
@@ -116,50 +126,88 @@ struct MonitoringPresentationState: Equatable, Sendable {
         snapshot: MonitoringSnapshot,
         launchAtLoginSnapshot: LaunchAtLoginSnapshot?,
         locale: Locale = .autoupdatingCurrent,
-        startupDiskName: String = String(localized: "Startup Disk")
+        localization: DiskMeerkatLocalization = .current,
+        startupDiskName: String? = nil
     ) {
         let formatter = DiskCapacityFormatter(locale: locale)
         let headline = Self.headline(for: snapshot)
-        let permission = Self.permission(for: snapshot)
-        let login = Self.launchAtLogin(for: launchAtLoginSnapshot)
+        let permission = Self.permission(for: snapshot, localization: localization)
+        let login = Self.launchAtLogin(
+            for: launchAtLoginSnapshot,
+            localization: localization
+        )
+        let startupDiskName = startupDiskName ?? localization.resolve(localization.startupDisk)
         let volumeName = snapshot.latestSuccessfulVolume?.volumeName ?? startupDiskName
-        let availableSpaceText: String
+        let capacityKind: MonitoringCapacityPresentationKind
+        let availableCapacityText: String?
+        let availableSpaceText: LocalizedStringResource
         if let volume = snapshot.latestSuccessfulVolume {
-            availableSpaceText =
-                formatter.string(
-                    for: volume.availableCapacity,
-                    relativeTo: snapshot.configuration.threshold
-                ) + " available"
+            let formattedNumber = formatter.numberString(
+                for: volume.availableCapacity,
+                relativeTo: snapshot.configuration.threshold
+            )
+            let formattedCapacity = localization.resolve(
+                localization.gigabytes(formattedNumber)
+            )
+            capacityKind = .available
+            availableCapacityText = formattedCapacity
+            availableSpaceText = localization.availableCapacity(formattedCapacity)
         } else if snapshot.lifecycleState == .stopped {
-            availableSpaceText = "Available space unavailable"
+            capacityKind = .unavailable
+            availableCapacityText = nil
+            availableSpaceText = localization.availableSpaceUnavailable
         } else if case .unavailable = snapshot.latestAssessment {
-            availableSpaceText = "Available space unavailable"
+            capacityKind = .unavailable
+            availableCapacityText = nil
+            availableSpaceText = localization.availableSpaceUnavailable
         } else {
-            availableSpaceText = "Checking disk…"
+            capacityKind = .checking
+            availableCapacityText = nil
+            availableSpaceText = localization.checkingDisk
         }
-        let threshold = formatter.string(for: snapshot.configuration.threshold)
+        let thresholdNumber = formatter.numberString(for: snapshot.configuration.threshold)
+        let threshold = localization.resolve(localization.gigabytes(thresholdNumber))
         let statusDetail = Self.statusDetail(
             headline: headline,
             snapshot: snapshot,
-            threshold: threshold
+            threshold: threshold,
+            localization: localization
         )
         let notices = Self.notices(
             snapshot: snapshot,
-            launchAtLoginSnapshot: launchAtLoginSnapshot
+            launchAtLoginSnapshot: launchAtLoginSnapshot,
+            localization: localization
         )
         let requiresAttention =
             headline.requiresAttention || permission.requiresAttention || login.requiresAttention
             || !notices.isEmpty
+        let headlineText = headline.text(localization: localization)
+        let resolvedHeadline = localization.resolve(headlineText)
+        let resolvedAvailableSpace = localization.resolve(availableSpaceText)
 
         self.headline = headline
+        self.headlineText = headlineText
         self.statusDetail = statusDetail
         symbolName = requiresAttention ? "internaldrive.fill" : "internaldrive"
-        statusAccessibilityLabel = "DiskMeerkat. \(headline.text). \(availableSpaceText)."
+        statusAccessibilityLabel = localization.resolve(
+            localization.statusAccessibilityLabel(
+                headline: resolvedHeadline,
+                availableSpace: resolvedAvailableSpace
+            )
+        )
         self.volumeName = volumeName
+        self.capacityKind = capacityKind
+        self.availableCapacityText = availableCapacityText
         self.availableSpaceText = availableSpaceText
-        capacityAccessibilityLabel = "\(volumeName), \(availableSpaceText)"
-        thresholdText = "Alert below \(threshold)"
-        intervalText = snapshot.configuration.interval.displayName
+        capacityAccessibilityLabel = localization.resolve(
+            localization.capacityAccessibilityLabel(
+                volumeName: volumeName,
+                availableSpace: resolvedAvailableSpace
+            )
+        )
+        thresholdValueText = threshold
+        thresholdText = localization.alertBelow(threshold)
+        intervalText = snapshot.configuration.interval.displayName(localization: localization)
         lastSuccessfulCheckAt = snapshot.lastSuccessfulCheckAt
         nextScheduledCheckAt = snapshot.nextScheduledCheckAt
         notificationPermission = permission
@@ -168,8 +216,7 @@ struct MonitoringPresentationState: Equatable, Sendable {
         if snapshot.notificationEpisodeState == .suppressed,
             case .available(_, .below) = snapshot.latestAssessment
         {
-            suppressionExplanation =
-                "Another alert becomes eligible after available space rises above \(threshold) and later falls below it again."
+            suppressionExplanation = localization.suppressionExplanation(threshold)
         } else {
             suppressionExplanation = nil
         }
@@ -218,69 +265,71 @@ struct MonitoringPresentationState: Equatable, Sendable {
     private static func statusDetail(
         headline: MonitoringHeadline,
         snapshot: MonitoringSnapshot,
-        threshold: String
-    ) -> String {
+        threshold: String,
+        localization: DiskMeerkatLocalization
+    ) -> LocalizedStringResource {
         switch headline {
         case .stopped:
             if snapshot.persistenceFailure == .load {
-                "Saved monitoring state couldn't be loaded."
+                localization.statusStoppedLoadFailed
             } else {
-                "Monitoring is not running."
+                localization.statusStopped
             }
         case .starting:
-            "Restoring saved settings and notification status."
+            localization.statusStarting
         case .checking:
-            "Reading available space on the startup disk."
+            localization.statusChecking
         case .monitoring:
-            "DiskMeerkat will alert when available space falls below \(threshold)."
+            localization.statusMonitoring(threshold)
         case .lowSpace:
-            "Available space is below \(threshold)."
+            localization.statusLowSpace(threshold)
         case .lowSpaceAlertSent:
-            "An alert was submitted for this low-space episode."
+            localization.statusLowSpaceAlertSent
         case .lowSpaceNotificationsOff:
-            "Monitoring continues, but DiskMeerkat cannot currently send alerts."
+            localization.statusLowSpaceNotificationsOff
         case .lowSpaceDeliveryFailed:
-            "Monitoring continues and a later eligible check may retry the alert."
+            localization.statusLowSpaceDeliveryFailed
         case .readFailed:
             snapshot.latestSuccessfulVolume == nil
-                ? "No successful disk reading is available yet."
-                : "The last successful value remains visible."
+                ? localization.statusReadFailedNoValue
+                : localization.statusReadFailedWithValue
         }
     }
 
     private static func permission(
-        for snapshot: MonitoringSnapshot
+        for snapshot: MonitoringSnapshot,
+        localization: DiskMeerkatLocalization
     ) -> NotificationPermissionPresentation {
         switch snapshot.notificationAuthorizationState {
         case .notDetermined:
             NotificationPermissionPresentation(
                 kind: .notDetermined,
-                title: "Notifications are not enabled",
-                detail: "Enable notifications to receive low-space alerts.",
+                title: localization.permissionNotDeterminedTitle,
+                detail: localization.permissionNotDeterminedDetail,
                 canRequestAuthorization: true,
                 canOpenSettings: false
             )
         case .authorized:
             NotificationPermissionPresentation(
                 kind: .authorized,
-                title: "Notifications are enabled",
-                detail: "DiskMeerkat can submit low-space alerts.",
+                title: localization.permissionAuthorizedTitle,
+                detail: localization.permissionAuthorizedDetail,
                 canRequestAuthorization: false,
                 canOpenSettings: false
             )
         case .denied:
             NotificationPermissionPresentation(
                 kind: .denied,
-                title: "Notifications are off",
-                detail: "Monitoring continues. Allow alerts in System Settings if you want notifications.",
+                title: localization.permissionDeniedTitle,
+                detail: localization.permissionDeniedDetail,
                 canRequestAuthorization: false,
                 canOpenSettings: true
             )
         case .unknown, .unavailable:
             NotificationPermissionPresentation(
                 kind: .unavailable,
-                title: "Notification status is unavailable",
-                detail: "Monitoring continues without relying on notification permission.",
+                title: localization.permissionUnavailableTitle,
+                detail: localization.permissionUnavailableDetail,
                 canRequestAuthorization: false,
                 canOpenSettings: false
             )
@@ -288,13 +337,14 @@ struct MonitoringPresentationState: Equatable, Sendable {
     }
 
     private static func launchAtLogin(
-        for snapshot: LaunchAtLoginSnapshot?
+        for snapshot: LaunchAtLoginSnapshot?,
+        localization: DiskMeerkatLocalization
     ) -> LaunchAtLoginPresentation {
         guard let snapshot else {
             return LaunchAtLoginPresentation(
                 actualState: nil,
-                title: "Launch at Login status is loading",
-                detail: "DiskMeerkat is reading the current system setting.",
+                title: localization.launchAtLoginLoadingTitle,
+                detail: localization.launchAtLoginLoadingDetail,
                 isEnabled: false,
                 canToggle: false,
                 canOpenSettings: false,
@@ -307,8 +357,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .disabled:
             base = LaunchAtLoginPresentation(
                 actualState: .disabled,
-                title: "Launch at Login is off",
-                detail: "DiskMeerkat starts only when you open it.",
+                title: localization.launchAtLoginDisabledTitle,
+                detail: localization.launchAtLoginDisabledDetail,
                 isEnabled: false,
                 canToggle: true,
                 canOpenSettings: false,
@@ -317,8 +367,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .enabled:
             base = LaunchAtLoginPresentation(
                 actualState: .enabled,
-                title: "Launch at Login is on",
-                detail: "DiskMeerkat starts after you sign in.",
+                title: localization.launchAtLoginEnabledTitle,
+                detail: localization.launchAtLoginEnabledDetail,
                 isEnabled: true,
                 canToggle: true,
                 canOpenSettings: false,
@@ -327,8 +377,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .requiresApproval:
             base = LaunchAtLoginPresentation(
                 actualState: .requiresApproval,
-                title: "Launch at Login needs approval",
-                detail: "Review DiskMeerkat in Login Items in System Settings.",
+                title: localization.launchAtLoginRequiresApprovalTitle,
+                detail: localization.launchAtLoginRequiresApprovalDetail,
                 isEnabled: false,
                 canToggle: false,
                 canOpenSettings: true,
@@ -337,8 +387,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .unavailable:
             base = LaunchAtLoginPresentation(
                 actualState: .unavailable,
-                title: "Launch at Login is unavailable",
-                detail: "The system login-item service couldn't be accessed.",
+                title: localization.launchAtLoginUnavailableTitle,
+                detail: localization.launchAtLoginUnavailableDetail,
                 isEnabled: false,
                 canToggle: false,
                 canOpenSettings: true,
@@ -353,8 +403,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .changedExternally:
             return LaunchAtLoginPresentation(
                 actualState: base.actualState,
-                title: "Launch at Login changed in System Settings",
-                detail: "DiskMeerkat refreshed the switch to match the actual system state.",
+                title: localization.launchAtLoginChangedTitle,
+                detail: localization.launchAtLoginChangedDetail,
                 isEnabled: base.isEnabled,
                 canToggle: base.canToggle,
                 canOpenSettings: true,
@@ -363,8 +413,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .enableFailed:
             return LaunchAtLoginPresentation(
                 actualState: base.actualState,
-                title: "Couldn't enable Launch at Login",
-                detail: "The switch still shows the actual system state. Try again or review Login Items.",
+                title: localization.launchAtLoginEnableFailedTitle,
+                detail: localization.launchAtLoginEnableFailedDetail,
                 isEnabled: base.isEnabled,
                 canToggle: base.canToggle,
                 canOpenSettings: true,
@@ -373,8 +423,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
         case .disableFailed:
             return LaunchAtLoginPresentation(
                 actualState: base.actualState,
-                title: "Couldn't disable Launch at Login",
-                detail: "The switch still shows the actual system state. Try again or review Login Items.",
+                title: localization.launchAtLoginDisableFailedTitle,
+                detail: localization.launchAtLoginDisableFailedDetail,
                 isEnabled: base.isEnabled,
                 canToggle: base.canToggle,
                 canOpenSettings: true,
@@ -385,7 +435,8 @@ struct MonitoringPresentationState: Equatable, Sendable {
 
     private static func notices(
         snapshot: MonitoringSnapshot,
-        launchAtLoginSnapshot: LaunchAtLoginSnapshot?
+        launchAtLoginSnapshot: LaunchAtLoginSnapshot?,
+        localization: DiskMeerkatLocalization
     ) -> [MonitoringNotice] {
         var notices: [MonitoringNotice] = []
 
@@ -393,31 +444,31 @@ struct MonitoringPresentationState: Equatable, Sendable {
             notices.append(
                 MonitoringNotice(
                     kind: .diskRead,
-                    title: "Couldn't check the startup disk",
+                    title: localization.noticeDiskReadTitle,
                     detail: snapshot.latestSuccessfulVolume == nil
-                        ? "DiskMeerkat will retry on the next check."
-                        : "The last successful value is shown. DiskMeerkat will retry."
+                        ? localization.noticeDiskReadNoValueDetail
+                        : localization.noticeDiskReadWithValueDetail
                 )
             )
         }
 
         if let failure = snapshot.persistenceFailure {
-            let copy: (String, String)
+            let copy: (LocalizedStringResource, LocalizedStringResource)
             switch failure {
             case .load:
                 copy = (
-                    "Couldn't load saved monitoring state",
-                    "Monitoring is stopped so the problem can be reviewed safely."
+                    localization.noticePersistenceLoadTitle,
+                    localization.noticePersistenceLoadDetail
                 )
             case .save:
                 copy = (
-                    "Couldn't save monitoring state",
-                    "In-memory monitoring continues and DiskMeerkat will retry."
+                    localization.noticePersistenceSaveTitle,
+                    localization.noticePersistenceSaveDetail
                 )
             case .configurationSave:
                 copy = (
-                    "Couldn't save settings",
-                    "The previous settings and schedule remain active."
+                    localization.noticeConfigurationSaveTitle,
+                    localization.noticeConfigurationSaveDetail
                 )
             }
             notices.append(
@@ -426,22 +477,22 @@ struct MonitoringPresentationState: Equatable, Sendable {
         }
 
         if let failure = snapshot.notificationFailure {
-            let copy: (String, String)
+            let copy: (LocalizedStringResource, LocalizedStringResource)
             switch failure {
             case .authorizationStatus:
                 copy = (
-                    "Couldn't read notification status",
-                    "Disk monitoring continues. Try refreshing notification status later."
+                    localization.noticeNotificationStatusTitle,
+                    localization.noticeNotificationStatusDetail
                 )
             case .authorizationRequest:
                 copy = (
-                    "Couldn't update notification permission",
-                    "Disk monitoring continues without changing the current permission."
+                    localization.noticeNotificationPermissionTitle,
+                    localization.noticeNotificationPermissionDetail
                 )
             case .submission:
                 copy = (
-                    "Couldn't send the low-space alert",
-                    "The episode remains eligible and a later check may retry."
+                    localization.noticeNotificationSubmissionTitle,
+                    localization.noticeNotificationSubmissionDetail
                 )
             }
             notices.append(
@@ -454,7 +505,10 @@ struct MonitoringPresentationState: Equatable, Sendable {
                 || launchAtLoginSnapshot.actualState == .unavailable
                 || launchAtLoginSnapshot.problem != nil
         {
-            let presentation = launchAtLogin(for: launchAtLoginSnapshot)
+            let presentation = launchAtLogin(
+                for: launchAtLoginSnapshot,
+                localization: localization
+            )
             notices.append(
                 MonitoringNotice(
                     kind: .launchAtLogin,
@@ -469,22 +523,24 @@ struct MonitoringPresentationState: Equatable, Sendable {
 }
 
 extension CheckInterval {
-    var displayName: String {
+    func displayName(
+        localization: DiskMeerkatLocalization = .current
+    ) -> LocalizedStringResource {
         switch self {
         case .oneMinute:
-            "1 minute"
+            localization.intervalMinutes(1)
         case .fiveMinutes:
-            "5 minutes"
+            localization.intervalMinutes(5)
         case .fifteenMinutes:
-            "15 minutes"
+            localization.intervalMinutes(15)
         case .thirtyMinutes:
-            "30 minutes"
+            localization.intervalMinutes(30)
         case .oneHour:
-            "1 hour"
+            localization.intervalHours(1)
         case .sixHours:
-            "6 hours"
+            localization.intervalHours(6)
         case .twentyFourHours:
-            "24 hours"
+            localization.intervalHours(24)
         }
     }
 }

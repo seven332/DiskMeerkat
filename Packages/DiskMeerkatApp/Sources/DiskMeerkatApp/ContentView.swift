@@ -5,10 +5,10 @@ public struct ContentView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("DiskMeerkat")
+            Text(verbatim: "DiskMeerkat")
                 .font(.title.weight(.semibold))
             MonitoringSummaryView(state: PreviewPresentationFixtures.stopped)
-            Text("The app is not connected to its monitoring runtime yet.")
+            Text(DiskMeerkatLocalization.current.runtimeNotConnected)
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
