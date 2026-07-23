@@ -10,6 +10,8 @@ class DiskMeerkatUITestCase: XCTestCase {
     @MainActor
     func launch(
         fixture: DiskMeerkatFixture,
+        language: String = "en",
+        locale: String? = nil,
         activateDuringLaunch: Bool = false
     ) -> DiskMeerkatLaunch {
         let app = XCUIApplication()
@@ -18,8 +20,11 @@ class DiskMeerkatUITestCase: XCTestCase {
             "-ApplePersistenceIgnoreState",
             "YES",
             "-AppleLanguages",
-            "(en)",
+            "(\(language))",
         ]
+        if let locale {
+            app.launchArguments += ["-AppleLocale", locale]
+        }
         app.launchEnvironment["DISK_MEERKAT_UI_TEST_FIXTURE"] = fixture.rawValue
         app.launchEnvironment["DISK_MEERKAT_UI_TEST_SESSION"] = session
         if activateDuringLaunch {

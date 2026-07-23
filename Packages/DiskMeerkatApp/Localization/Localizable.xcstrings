@@ -10,6 +10,12 @@
             "state" : "translated",
             "value" : "%1$@, %2$@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@，%2$@"
+          }
         }
       }
     },
@@ -21,6 +27,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Checking disk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查磁盘"
           }
         }
       }
@@ -34,6 +46,12 @@
             "state" : "translated",
             "value" : "Saving settings"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在保存设置"
+          }
         }
       }
     },
@@ -45,6 +63,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat. %1$@. %2$@."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat。%1$@。%2$@。"
           }
         }
       }
@@ -58,6 +82,12 @@
             "state" : "translated",
             "value" : "Low-space threshold in decimal gigabytes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足提醒阈值（单位为十进制 GB）"
+          }
         }
       }
     },
@@ -69,6 +99,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Threshold error: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "阈值错误：%@"
           }
         }
       }
@@ -82,6 +118,12 @@
             "state" : "translated",
             "value" : "Updating notification permission"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在更新通知权限"
+          }
         }
       }
     },
@@ -93,6 +135,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消"
           }
         }
       }
@@ -106,6 +154,12 @@
             "state" : "translated",
             "value" : "Check Now"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即检查"
+          }
         }
       }
     },
@@ -117,6 +171,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Checking…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查…"
           }
         }
       }
@@ -130,6 +190,12 @@
             "state" : "translated",
             "value" : "Continue"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "继续"
+          }
         }
       }
     },
@@ -141,6 +207,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用"
           }
         }
       }
@@ -154,6 +226,12 @@
             "state" : "translated",
             "value" : "Enabled"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已启用"
+          }
         }
       }
     },
@@ -165,6 +243,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not Now"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "暂不"
           }
         }
       }
@@ -178,6 +262,12 @@
             "state" : "translated",
             "value" : "Open Settings"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开系统设置"
+          }
         }
       }
     },
@@ -189,6 +279,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ready"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "就绪"
           }
         }
       }
@@ -202,6 +298,12 @@
             "state" : "translated",
             "value" : "Save"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保存"
+          }
         }
       }
     },
@@ -213,6 +315,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "设置"
           }
         }
       }
@@ -226,6 +334,12 @@
             "state" : "translated",
             "value" : "Unavailable"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "不可用"
+          }
         }
       }
     },
@@ -237,6 +351,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check failed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查失败"
           }
         }
       }
@@ -250,6 +370,12 @@
             "state" : "translated",
             "value" : "Checking"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查"
+          }
         }
       }
     },
@@ -261,6 +387,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Low space"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足"
           }
         }
       }
@@ -274,6 +406,12 @@
             "state" : "translated",
             "value" : "Monitoring"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在监控"
+          }
         }
       }
     },
@@ -285,6 +423,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Starting"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在启动"
           }
         }
       }
@@ -298,6 +442,12 @@
             "state" : "translated",
             "value" : "Stopped"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已停止"
+          }
         }
       }
     },
@@ -310,6 +460,12 @@
             "state" : "translated",
             "value" : "%@ available"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ 可用"
+          }
         }
       }
     },
@@ -318,6 +474,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ GB"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ GB"
@@ -334,6 +496,12 @@
             "state" : "translated",
             "value" : "available"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用"
+          }
         }
       }
     },
@@ -345,6 +513,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "available on the startup disk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动磁盘上可用"
           }
         }
       }
@@ -358,6 +532,12 @@
             "state" : "translated",
             "value" : "on the startup disk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动磁盘上"
+          }
         }
       }
     },
@@ -369,6 +549,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Available space unavailable"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法显示可用空间"
           }
         }
       }
@@ -382,6 +568,12 @@
             "state" : "translated",
             "value" : "Startup Disk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动磁盘"
+          }
         }
       }
     },
@@ -393,6 +585,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 hour"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 小时"
           }
         }
       }
@@ -406,6 +604,12 @@
             "state" : "translated",
             "value" : "%lld hours"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 小时"
+          }
         }
       }
     },
@@ -417,6 +621,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 minute"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 分钟"
           }
         }
       }
@@ -430,6 +640,12 @@
             "state" : "translated",
             "value" : "%lld minutes"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld 分钟"
+          }
         }
       }
     },
@@ -441,6 +657,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat refreshed the switch to match the actual system state."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 已刷新开关，使其与系统的实际状态一致。"
           }
         }
       }
@@ -454,6 +676,12 @@
             "state" : "translated",
             "value" : "Launch at Login changed in System Settings"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“登录时打开”已在“系统设置”中更改"
+          }
         }
       }
     },
@@ -465,6 +693,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The switch still shows the actual system state. Try again or review Login Items."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开关仍会显示系统的实际状态。请重试或查看“登录项与扩展”。"
           }
         }
       }
@@ -478,6 +712,12 @@
             "state" : "translated",
             "value" : "Couldn't disable Launch at Login"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法停用“登录时打开”"
+          }
         }
       }
     },
@@ -489,6 +729,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat starts only when you open it."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "只有在你打开 DiskMeerkat 时，它才会启动。"
           }
         }
       }
@@ -502,6 +748,12 @@
             "state" : "translated",
             "value" : "Launch at Login is off"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“登录时打开”已关闭"
+          }
         }
       }
     },
@@ -513,6 +765,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The switch still shows the actual system state. Try again or review Login Items."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开关仍会显示系统的实际状态。请重试或查看“登录项与扩展”。"
           }
         }
       }
@@ -526,6 +784,12 @@
             "state" : "translated",
             "value" : "Couldn't enable Launch at Login"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法启用“登录时打开”"
+          }
         }
       }
     },
@@ -537,6 +801,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat starts after you sign in."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录后，DiskMeerkat 会启动。"
           }
         }
       }
@@ -550,6 +820,12 @@
             "state" : "translated",
             "value" : "Launch at Login is on"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“登录时打开”已开启"
+          }
         }
       }
     },
@@ -561,6 +837,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat is reading the current system setting."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 正在读取当前的系统设置。"
           }
         }
       }
@@ -574,6 +856,12 @@
             "state" : "translated",
             "value" : "Launch at Login status is loading"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在载入“登录时打开”的状态"
+          }
         }
       }
     },
@@ -585,6 +873,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Review DiskMeerkat in Login Items in System Settings."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在“系统设置”的“登录项与扩展”中检查 DiskMeerkat。"
           }
         }
       }
@@ -598,6 +892,12 @@
             "state" : "translated",
             "value" : "Launch at Login needs approval"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“登录时打开”需要批准"
+          }
         }
       }
     },
@@ -609,6 +909,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The system login-item service couldn't be accessed."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法访问系统的登录项服务。"
           }
         }
       }
@@ -622,6 +928,12 @@
             "state" : "translated",
             "value" : "Launch at Login is unavailable"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“登录时打开”不可用"
+          }
         }
       }
     },
@@ -633,6 +945,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open Status"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开状态窗口"
           }
         }
       }
@@ -646,6 +964,12 @@
             "state" : "translated",
             "value" : "Quit DiskMeerkat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "退出 DiskMeerkat"
+          }
         }
       }
     },
@@ -657,6 +981,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Startup disk monitor"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动磁盘监控器"
           }
         }
       }
@@ -670,6 +1000,12 @@
             "state" : "translated",
             "value" : "Checking disk…"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在检查磁盘…"
+          }
         }
       }
     },
@@ -681,6 +1017,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Low disk space"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足"
           }
         }
       }
@@ -694,6 +1036,12 @@
             "state" : "translated",
             "value" : "Low disk space · Alert sent"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足 · 已发送提醒"
+          }
         }
       }
     },
@@ -705,6 +1053,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Low disk space · Couldn't send alert · Will retry"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足 · 无法发送提醒 · 将重试"
           }
         }
       }
@@ -718,6 +1072,12 @@
             "state" : "translated",
             "value" : "Low disk space · Notifications are off"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足 · 通知已关闭"
+          }
         }
       }
     },
@@ -729,6 +1089,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在监控"
           }
         }
       }
@@ -742,6 +1108,12 @@
             "state" : "translated",
             "value" : "Couldn't check disk · Will retry"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查磁盘 · 将重试"
+          }
         }
       }
     },
@@ -753,6 +1125,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Starting monitoring…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在启动监控…"
           }
         }
       }
@@ -766,6 +1144,12 @@
             "state" : "translated",
             "value" : "Monitoring stopped"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控已停止"
+          }
         }
       }
     },
@@ -777,6 +1161,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reading available space on the startup disk."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在读取启动磁盘上的可用空间。"
           }
         }
       }
@@ -790,6 +1180,12 @@
             "state" : "translated",
             "value" : "Available space is below %@."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用空间低于 %@。"
+          }
         }
       }
     },
@@ -801,6 +1197,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An alert was submitted for this low-space episode."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已为此次储存空间不足情况发送提醒。"
           }
         }
       }
@@ -814,6 +1216,12 @@
             "state" : "translated",
             "value" : "Monitoring continues and a later eligible check may retry the alert."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控会继续，稍后符合条件的检查可能会重试发送提醒。"
+          }
         }
       }
     },
@@ -825,6 +1233,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring continues, but DiskMeerkat cannot currently send alerts."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控会继续，但 DiskMeerkat 目前无法发送提醒。"
           }
         }
       }
@@ -838,6 +1252,12 @@
             "state" : "translated",
             "value" : "DiskMeerkat will alert when available space falls below %@."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当可用空间低于 %@ 时，DiskMeerkat 会发出提醒。"
+          }
         }
       }
     },
@@ -849,6 +1269,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No successful disk reading is available yet."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚无成功的磁盘读取结果。"
           }
         }
       }
@@ -862,6 +1288,12 @@
             "state" : "translated",
             "value" : "The last successful value remains visible."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次成功读取的值仍会显示。"
+          }
         }
       }
     },
@@ -873,6 +1305,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restoring saved settings and notification status."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在恢复已保存的设置和通知状态。"
           }
         }
       }
@@ -886,6 +1324,12 @@
             "state" : "translated",
             "value" : "Monitoring is not running."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控未运行。"
+          }
         }
       }
     },
@@ -897,6 +1341,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Saved monitoring state couldn't be loaded."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法载入已保存的监控状态。"
           }
         }
       }
@@ -910,6 +1360,12 @@
             "state" : "translated",
             "value" : "Another alert becomes eligible after available space rises above %@ and later falls below it again."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用空间升至 %@ 以上并在之后再次降至该值以下后，才能再次发送提醒。"
+          }
         }
       }
     },
@@ -921,6 +1377,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The previous settings and schedule remain active."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "之前的设置和计划仍然有效。"
           }
         }
       }
@@ -934,6 +1396,12 @@
             "state" : "translated",
             "value" : "Couldn't save settings"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法保存设置"
+          }
         }
       }
     },
@@ -945,6 +1413,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat will retry on the next check."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 将在下次检查时重试。"
           }
         }
       }
@@ -958,6 +1432,12 @@
             "state" : "translated",
             "value" : "Couldn't check the startup disk"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法检查启动磁盘"
+          }
         }
       }
     },
@@ -969,6 +1449,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The last successful value is shown. DiskMeerkat will retry."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "会显示上次成功读取的值。DiskMeerkat 将重试。"
           }
         }
       }
@@ -982,6 +1468,12 @@
             "state" : "translated",
             "value" : "Disk monitoring continues without changing the current permission."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘监控会继续，当前权限不会更改。"
+          }
         }
       }
     },
@@ -993,6 +1485,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't update notification permission"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法更新通知权限"
           }
         }
       }
@@ -1006,6 +1504,12 @@
             "state" : "translated",
             "value" : "Disk monitoring continues. Try refreshing notification status later."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "磁盘监控会继续。请稍后尝试刷新通知状态。"
+          }
         }
       }
     },
@@ -1017,6 +1521,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't read notification status"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法读取通知状态"
           }
         }
       }
@@ -1030,6 +1540,12 @@
             "state" : "translated",
             "value" : "The episode remains eligible and a later check may retry."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此次情况仍符合提醒条件，稍后的检查可能会再次尝试发送提醒。"
+          }
         }
       }
     },
@@ -1041,6 +1557,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't send the low-space alert"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法发送储存空间不足提醒"
           }
         }
       }
@@ -1054,6 +1576,12 @@
             "state" : "translated",
             "value" : "Monitoring is stopped so the problem can be reviewed safely."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控已停止，以便安全地检查问题。"
+          }
         }
       }
     },
@@ -1065,6 +1593,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't load saved monitoring state"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法载入已保存的监控状态"
           }
         }
       }
@@ -1078,6 +1612,12 @@
             "state" : "translated",
             "value" : "In-memory monitoring continues and DiskMeerkat will retry."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内存中的监控会继续，DiskMeerkat 将重试。"
+          }
         }
       }
     },
@@ -1089,6 +1629,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Couldn't save monitoring state"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法保存监控状态"
           }
         }
       }
@@ -1102,6 +1648,12 @@
             "state" : "translated",
             "value" : "%1$@ has %2$@ available, below your %3$@ limit."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%1$@”的可用空间为 %2$@，低于你设置的 %3$@ 阈值。"
+          }
         }
       }
     },
@@ -1113,6 +1665,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disk space is low"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足"
           }
         }
       }
@@ -1126,6 +1684,12 @@
             "state" : "translated",
             "value" : "Check interval"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查间隔"
+          }
         }
       }
     },
@@ -1137,6 +1701,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat watches your startup disk and alerts you when available space falls below your limit."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 会监控你的启动磁盘，并在可用空间低于你设置的阈值时提醒你。"
           }
         }
       }
@@ -1150,6 +1720,12 @@
             "state" : "translated",
             "value" : "Enable Notifications"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用通知"
+          }
         }
       }
     },
@@ -1161,6 +1737,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Low-space alert"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足提醒"
           }
         }
       }
@@ -1174,6 +1756,12 @@
             "state" : "translated",
             "value" : "Monitoring"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控"
+          }
         }
       }
     },
@@ -1185,6 +1773,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open Notification Settings"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "打开通知设置"
           }
         }
       }
@@ -1198,6 +1792,12 @@
             "state" : "translated",
             "value" : "Welcome to DiskMeerkat"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "欢迎使用 DiskMeerkat"
+          }
         }
       }
     },
@@ -1209,6 +1809,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "DiskMeerkat can submit low-space alerts."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 可以发送储存空间不足提醒。"
           }
         }
       }
@@ -1222,6 +1828,12 @@
             "state" : "translated",
             "value" : "Notifications are enabled"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知已启用"
+          }
         }
       }
     },
@@ -1233,6 +1845,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring continues. Allow alerts in System Settings if you want notifications."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控会继续。如果你想接收通知，请在“系统设置”中允许通知。"
           }
         }
       }
@@ -1246,6 +1864,12 @@
             "state" : "translated",
             "value" : "Notifications are off"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知已关闭"
+          }
         }
       }
     },
@@ -1257,6 +1881,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enable notifications to receive low-space alerts."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启用通知即可接收储存空间不足提醒。"
           }
         }
       }
@@ -1270,6 +1900,12 @@
             "state" : "translated",
             "value" : "Notifications are not enabled"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知未启用"
+          }
         }
       }
     },
@@ -1281,6 +1917,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring continues without relying on notification permission."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控会继续，不依赖通知权限。"
           }
         }
       }
@@ -1294,6 +1936,12 @@
             "state" : "translated",
             "value" : "Notification status is unavailable"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知状态不可用"
+          }
         }
       }
     },
@@ -1305,6 +1953,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The app is not connected to its monitoring runtime yet."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用尚未连接到监控服务。"
           }
         }
       }
@@ -1318,6 +1972,12 @@
             "state" : "translated",
             "value" : "After this check"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此次检查完成后"
+          }
         }
       }
     },
@@ -1329,6 +1989,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Last check"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "上次检查"
           }
         }
       }
@@ -1342,6 +2008,12 @@
             "state" : "translated",
             "value" : "Next check"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "下次检查"
+          }
         }
       }
     },
@@ -1353,6 +2025,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not scheduled"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未安排"
           }
         }
       }
@@ -1366,6 +2044,12 @@
             "state" : "translated",
             "value" : "Not yet"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "尚未"
+          }
         }
       }
     },
@@ -1377,6 +2061,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alert threshold"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "提醒阈值"
           }
         }
       }
@@ -1390,6 +2080,12 @@
             "state" : "translated",
             "value" : "Notify when available space is below this value."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "可用空间低于此值时发出通知。"
+          }
         }
       }
     },
@@ -1402,6 +2098,12 @@
             "state" : "translated",
             "value" : "Check interval"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查间隔"
+          }
         }
       }
     },
@@ -1410,6 +2112,12 @@
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GB"
+          }
+        },
+        "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "GB"
@@ -1426,6 +2134,12 @@
             "state" : "translated",
             "value" : "Launch at Login"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录时打开"
+          }
         }
       }
     },
@@ -1437,6 +2151,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Login Items"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "登录项与扩展"
           }
         }
       }
@@ -1450,6 +2170,12 @@
             "state" : "translated",
             "value" : "Low-space alerts"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "储存空间不足提醒"
+          }
         }
       }
     },
@@ -1461,6 +2187,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Another settings save is still in progress."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "另一项设置仍在保存中。"
           }
         }
       }
@@ -1474,6 +2206,12 @@
             "state" : "translated",
             "value" : "Couldn't save settings. Your previous settings remain active."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法保存设置。之前的设置仍然有效。"
+          }
         }
       }
     },
@@ -1485,6 +2223,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring is not running, so settings couldn't be saved."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控未运行，因此无法保存设置。"
           }
         }
       }
@@ -1498,6 +2242,12 @@
             "state" : "translated",
             "value" : "Monitoring"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控"
+          }
         }
       }
     },
@@ -1509,6 +2259,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Notifications"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "通知"
           }
         }
       }
@@ -1522,6 +2278,12 @@
             "state" : "translated",
             "value" : "Startup"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动"
+          }
         }
       }
     },
@@ -1533,6 +2295,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Startup disk"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "启动磁盘"
           }
         }
       }
@@ -1546,6 +2314,12 @@
             "state" : "translated",
             "value" : "Threshold"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "阈值"
+          }
         }
       }
     },
@@ -1557,6 +2331,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alert below"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "低于此值时提醒"
           }
         }
       }
@@ -1570,6 +2350,12 @@
             "state" : "translated",
             "value" : "Your startup disk is checked automatically in the background."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 会在后台自动检查你的启动磁盘。"
+          }
         }
       }
     },
@@ -1581,6 +2367,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Check every"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查间隔"
           }
         }
       }
@@ -1594,6 +2386,12 @@
             "state" : "translated",
             "value" : "Current status"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "当前状态"
+          }
         }
       }
     },
@@ -1605,6 +2403,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monitoring"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "监控"
           }
         }
       }
@@ -1618,6 +2422,12 @@
             "state" : "translated",
             "value" : "Schedule"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "检查计划"
+          }
         }
       }
     },
@@ -1629,6 +2439,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alert below %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "低于 %@ 时提醒"
           }
         }
       }
@@ -1642,6 +2458,12 @@
             "state" : "translated",
             "value" : "Below %@"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "低于 %@"
+          }
         }
       }
     },
@@ -1653,6 +2475,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter a value from 1 through 1,000,000 GB."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入 1 至 1,000,000 GB 的值。"
           }
         }
       }
@@ -1666,6 +2494,12 @@
             "state" : "translated",
             "value" : "Enter a low-space threshold."
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入储存空间不足提醒阈值。"
+          }
         }
       }
     },
@@ -1677,6 +2511,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter a whole number of decimal GB."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "请输入整数值（单位为十进制 GB）。"
           }
         }
       }

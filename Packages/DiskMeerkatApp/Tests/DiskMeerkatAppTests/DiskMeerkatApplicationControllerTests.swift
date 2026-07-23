@@ -121,8 +121,8 @@ final class DiskMeerkatApplicationControllerTests: XCTestCase {
             case .readFailure:
                 XCTAssertEqual(controller.model.presentation.headline, .readFailed)
                 XCTAssertEqual(
-                    resolvedEnglish(controller.model.presentation.availableSpaceText),
-                    "Available space unavailable"
+                    controller.model.presentation.availableSpaceText,
+                    controller.model.localization.availableSpaceUnavailable
                 )
             }
             await controller.stop()

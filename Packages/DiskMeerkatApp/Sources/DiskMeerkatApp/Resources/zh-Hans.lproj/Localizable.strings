@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>accessibility.capacity</key>
+	<string>%1$@，%2$@</string>
+	<key>accessibility.checking-disk</key>
+	<string>正在检查磁盘</string>
+	<key>accessibility.saving-settings</key>
+	<string>正在保存设置</string>
+	<key>accessibility.status</key>
+	<string>DiskMeerkat。%1$@。%2$@。</string>
+	<key>accessibility.threshold</key>
+	<string>储存空间不足提醒阈值（单位为十进制 GB）</string>
+	<key>accessibility.threshold-error</key>
+	<string>阈值错误：%@</string>
+	<key>accessibility.updating-notification-permission</key>
+	<string>正在更新通知权限</string>
+	<key>action.cancel</key>
+	<string>取消</string>
+	<key>action.check-now</key>
+	<string>立即检查</string>
+	<key>action.checking</key>
+	<string>正在检查…</string>
+	<key>action.continue</key>
+	<string>继续</string>
+	<key>action.enable</key>
+	<string>启用</string>
+	<key>action.enabled</key>
+	<string>已启用</string>
+	<key>action.not-now</key>
+	<string>暂不</string>
+	<key>action.open-settings</key>
+	<string>打开系统设置</string>
+	<key>action.ready</key>
+	<string>就绪</string>
+	<key>action.save</key>
+	<string>保存</string>
+	<key>action.settings</key>
+	<string>设置</string>
+	<key>action.unavailable</key>
+	<string>不可用</string>
+	<key>badge.check-failed</key>
+	<string>检查失败</string>
+	<key>badge.checking</key>
+	<string>正在检查</string>
+	<key>badge.low-space</key>
+	<string>储存空间不足</string>
+	<key>badge.monitoring</key>
+	<string>正在监控</string>
+	<key>badge.starting</key>
+	<string>正在启动</string>
+	<key>badge.stopped</key>
+	<string>已停止</string>
+	<key>capacity.available</key>
+	<string>%@ 可用</string>
+	<key>capacity.gigabytes</key>
+	<string>%@ GB</string>
+	<key>capacity.subtitle.available</key>
+	<string>可用</string>
+	<key>capacity.subtitle.available-on-startup-disk</key>
+	<string>启动磁盘上可用</string>
+	<key>capacity.subtitle.on-startup-disk</key>
+	<string>启动磁盘上</string>
+	<key>capacity.unavailable</key>
+	<string>无法显示可用空间</string>
+	<key>disk.startup</key>
+	<string>启动磁盘</string>
+	<key>interval.hour.one</key>
+	<string>1 小时</string>
+	<key>interval.hour.other</key>
+	<string>%lld 小时</string>
+	<key>interval.minute.one</key>
+	<string>1 分钟</string>
+	<key>interval.minute.other</key>
+	<string>%lld 分钟</string>
+	<key>launch-at-login.changed.detail</key>
+	<string>DiskMeerkat 已刷新开关，使其与系统的实际状态一致。</string>
+	<key>launch-at-login.changed.title</key>
+	<string>“登录时打开”已在“系统设置”中更改</string>
+	<key>launch-at-login.disable-failed.detail</key>
+	<string>开关仍会显示系统的实际状态。请重试或查看“登录项与扩展”。</string>
+	<key>launch-at-login.disable-failed.title</key>
+	<string>无法停用“登录时打开”</string>
+	<key>launch-at-login.disabled.detail</key>
+	<string>只有在你打开 DiskMeerkat 时，它才会启动。</string>
+	<key>launch-at-login.disabled.title</key>
+	<string>“登录时打开”已关闭</string>
+	<key>launch-at-login.enable-failed.detail</key>
+	<string>开关仍会显示系统的实际状态。请重试或查看“登录项与扩展”。</string>
+	<key>launch-at-login.enable-failed.title</key>
+	<string>无法启用“登录时打开”</string>
+	<key>launch-at-login.enabled.detail</key>
+	<string>登录后，DiskMeerkat 会启动。</string>
+	<key>launch-at-login.enabled.title</key>
+	<string>“登录时打开”已开启</string>
+	<key>launch-at-login.loading.detail</key>
+	<string>DiskMeerkat 正在读取当前的系统设置。</string>
+	<key>launch-at-login.loading.title</key>
+	<string>正在载入“登录时打开”的状态</string>
+	<key>launch-at-login.requires-approval.detail</key>
+	<string>在“系统设置”的“登录项与扩展”中检查 DiskMeerkat。</string>
+	<key>launch-at-login.requires-approval.title</key>
+	<string>“登录时打开”需要批准</string>
+	<key>launch-at-login.unavailable.detail</key>
+	<string>无法访问系统的登录项服务。</string>
+	<key>launch-at-login.unavailable.title</key>
+	<string>“登录时打开”不可用</string>
+	<key>menu.open-status</key>
+	<string>打开状态窗口</string>
+	<key>menu.quit</key>
+	<string>退出 DiskMeerkat</string>
+	<key>menu.subtitle</key>
+	<string>启动磁盘监控器</string>
+	<key>monitoring.checking-disk</key>
+	<string>正在检查磁盘…</string>
+	<key>monitoring.headline.low-space</key>
+	<string>储存空间不足</string>
+	<key>monitoring.headline.low-space-alert-sent</key>
+	<string>储存空间不足 · 已发送提醒</string>
+	<key>monitoring.headline.low-space-delivery-failed</key>
+	<string>储存空间不足 · 无法发送提醒 · 将重试</string>
+	<key>monitoring.headline.low-space-notifications-off</key>
+	<string>储存空间不足 · 通知已关闭</string>
+	<key>monitoring.headline.monitoring</key>
+	<string>正在监控</string>
+	<key>monitoring.headline.read-failed</key>
+	<string>无法检查磁盘 · 将重试</string>
+	<key>monitoring.headline.starting</key>
+	<string>正在启动监控…</string>
+	<key>monitoring.headline.stopped</key>
+	<string>监控已停止</string>
+	<key>monitoring.status.checking</key>
+	<string>正在读取启动磁盘上的可用空间。</string>
+	<key>monitoring.status.low-space</key>
+	<string>可用空间低于 %@。</string>
+	<key>monitoring.status.low-space-alert-sent</key>
+	<string>已为此次储存空间不足情况发送提醒。</string>
+	<key>monitoring.status.low-space-delivery-failed</key>
+	<string>监控会继续，稍后符合条件的检查可能会重试发送提醒。</string>
+	<key>monitoring.status.low-space-notifications-off</key>
+	<string>监控会继续，但 DiskMeerkat 目前无法发送提醒。</string>
+	<key>monitoring.status.monitoring</key>
+	<string>当可用空间低于 %@ 时，DiskMeerkat 会发出提醒。</string>
+	<key>monitoring.status.read-failed-no-value</key>
+	<string>尚无成功的磁盘读取结果。</string>
+	<key>monitoring.status.read-failed-with-value</key>
+	<string>上次成功读取的值仍会显示。</string>
+	<key>monitoring.status.starting</key>
+	<string>正在恢复已保存的设置和通知状态。</string>
+	<key>monitoring.status.stopped</key>
+	<string>监控未运行。</string>
+	<key>monitoring.status.stopped-load-failed</key>
+	<string>无法载入已保存的监控状态。</string>
+	<key>monitoring.suppression-explanation</key>
+	<string>可用空间升至 %@ 以上并在之后再次降至该值以下后，才能再次发送提醒。</string>
+	<key>notice.configuration-save.detail</key>
+	<string>之前的设置和计划仍然有效。</string>
+	<key>notice.configuration-save.title</key>
+	<string>无法保存设置</string>
+	<key>notice.disk-read.no-value.detail</key>
+	<string>DiskMeerkat 将在下次检查时重试。</string>
+	<key>notice.disk-read.title</key>
+	<string>无法检查启动磁盘</string>
+	<key>notice.disk-read.with-value.detail</key>
+	<string>会显示上次成功读取的值。DiskMeerkat 将重试。</string>
+	<key>notice.notification-permission.detail</key>
+	<string>磁盘监控会继续，当前权限不会更改。</string>
+	<key>notice.notification-permission.title</key>
+	<string>无法更新通知权限</string>
+	<key>notice.notification-status.detail</key>
+	<string>磁盘监控会继续。请稍后尝试刷新通知状态。</string>
+	<key>notice.notification-status.title</key>
+	<string>无法读取通知状态</string>
+	<key>notice.notification-submission.detail</key>
+	<string>此次情况仍符合提醒条件，稍后的检查可能会再次尝试发送提醒。</string>
+	<key>notice.notification-submission.title</key>
+	<string>无法发送储存空间不足提醒</string>
+	<key>notice.persistence.load.detail</key>
+	<string>监控已停止，以便安全地检查问题。</string>
+	<key>notice.persistence.load.title</key>
+	<string>无法载入已保存的监控状态</string>
+	<key>notice.persistence.save.detail</key>
+	<string>内存中的监控会继续，DiskMeerkat 将重试。</string>
+	<key>notice.persistence.save.title</key>
+	<string>无法保存监控状态</string>
+	<key>notification.low-space.body</key>
+	<string>“%1$@”的可用空间为 %2$@，低于你设置的 %3$@ 阈值。</string>
+	<key>notification.low-space.title</key>
+	<string>储存空间不足</string>
+	<key>onboarding.check-interval</key>
+	<string>检查间隔</string>
+	<key>onboarding.detail</key>
+	<string>DiskMeerkat 会监控你的启动磁盘，并在可用空间低于你设置的阈值时提醒你。</string>
+	<key>onboarding.enable-notifications</key>
+	<string>启用通知</string>
+	<key>onboarding.low-space-alert</key>
+	<string>储存空间不足提醒</string>
+	<key>onboarding.monitoring</key>
+	<string>监控</string>
+	<key>onboarding.open-notification-settings</key>
+	<string>打开通知设置</string>
+	<key>onboarding.title</key>
+	<string>欢迎使用 DiskMeerkat</string>
+	<key>permission.authorized.detail</key>
+	<string>DiskMeerkat 可以发送储存空间不足提醒。</string>
+	<key>permission.authorized.title</key>
+	<string>通知已启用</string>
+	<key>permission.denied.detail</key>
+	<string>监控会继续。如果你想接收通知，请在“系统设置”中允许通知。</string>
+	<key>permission.denied.title</key>
+	<string>通知已关闭</string>
+	<key>permission.not-determined.detail</key>
+	<string>启用通知即可接收储存空间不足提醒。</string>
+	<key>permission.not-determined.title</key>
+	<string>通知未启用</string>
+	<key>permission.unavailable.detail</key>
+	<string>监控会继续，不依赖通知权限。</string>
+	<key>permission.unavailable.title</key>
+	<string>通知状态不可用</string>
+	<key>runtime.not-connected</key>
+	<string>应用尚未连接到监控服务。</string>
+	<key>schedule.after-this-check</key>
+	<string>此次检查完成后</string>
+	<key>schedule.last-check</key>
+	<string>上次检查</string>
+	<key>schedule.next-check</key>
+	<string>下次检查</string>
+	<key>schedule.not-scheduled</key>
+	<string>未安排</string>
+	<key>schedule.not-yet</key>
+	<string>尚未</string>
+	<key>settings.alert-threshold</key>
+	<string>提醒阈值</string>
+	<key>settings.alert-threshold.detail</key>
+	<string>可用空间低于此值时发出通知。</string>
+	<key>settings.check-interval</key>
+	<string>检查间隔</string>
+	<key>settings.gigabytes-unit</key>
+	<string>GB</string>
+	<key>settings.launch-at-login</key>
+	<string>登录时打开</string>
+	<key>settings.login-items</key>
+	<string>登录项与扩展</string>
+	<key>settings.low-space-alerts</key>
+	<string>储存空间不足提醒</string>
+	<key>settings.save-error.already-saving</key>
+	<string>另一项设置仍在保存中。</string>
+	<key>settings.save-error.failed</key>
+	<string>无法保存设置。之前的设置仍然有效。</string>
+	<key>settings.save-error.not-running</key>
+	<string>监控未运行，因此无法保存设置。</string>
+	<key>settings.section.monitoring</key>
+	<string>监控</string>
+	<key>settings.section.notifications</key>
+	<string>通知</string>
+	<key>settings.section.startup</key>
+	<string>启动</string>
+	<key>settings.startup-disk</key>
+	<string>启动磁盘</string>
+	<key>settings.threshold-field</key>
+	<string>阈值</string>
+	<key>status.alert-below</key>
+	<string>低于此值时提醒</string>
+	<key>status.automatic-checks</key>
+	<string>DiskMeerkat 会在后台自动检查你的启动磁盘。</string>
+	<key>status.check-every</key>
+	<string>检查间隔</string>
+	<key>status.current</key>
+	<string>当前状态</string>
+	<key>status.monitoring</key>
+	<string>监控</string>
+	<key>status.schedule</key>
+	<string>检查计划</string>
+	<key>threshold.alert-below</key>
+	<string>低于 %@ 时提醒</string>
+	<key>threshold.below</key>
+	<string>低于 %@</string>
+	<key>validation.threshold.range</key>
+	<string>请输入 1 至 1,000,000 GB 的值。</string>
+	<key>validation.threshold.required</key>
+	<string>请输入储存空间不足提醒阈值。</string>
+	<key>validation.threshold.whole-number</key>
+	<string>请输入整数值（单位为十进制 GB）。</string>
+</dict>
+</plist>

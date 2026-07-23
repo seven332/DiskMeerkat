@@ -10,6 +10,12 @@
             "state" : "translated",
             "value" : "DiskMeerkat Status"
           }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat 状态"
+          }
         }
       }
     }
