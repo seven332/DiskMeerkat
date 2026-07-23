@@ -121,13 +121,13 @@ final class LocalizationUITests: DiskMeerkatUITestCase {
                 locale: "zh_CN",
                 activateDuringLaunch: true
             )
+            defer { terminateIfNeeded(launch.app) }
             let statusWindow = launch.app.windows["DiskMeerkat 状态"]
             XCTAssertTrue(statusWindow.waitForExistence(timeout: 3))
             XCTAssertTrue(
                 launch.app.staticTexts[expectedText].waitForExistence(timeout: 2)
             )
             attachScreenshot(of: statusWindow, named: screenshotName)
-            terminateIfNeeded(launch.app)
         }
     }
 
@@ -139,6 +139,7 @@ final class LocalizationUITests: DiskMeerkatUITestCase {
             locale: "zh_CN",
             activateDuringLaunch: true
         )
+        defer { terminateIfNeeded(englishLaunch.app) }
         let englishWindow = englishLaunch.app.windows["DiskMeerkat Status"]
         XCTAssertTrue(englishWindow.waitForExistence(timeout: 3))
         XCTAssertTrue(englishLaunch.app.staticTexts["Current status"].exists)
