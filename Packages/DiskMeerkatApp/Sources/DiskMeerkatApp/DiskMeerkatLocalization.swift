@@ -3,6 +3,7 @@ import Foundation
 struct DiskMeerkatLocalization: Equatable, Sendable {
     static let current = Self()
     static let english = Self(locale: Locale(identifier: "en"))
+    static let simplifiedChinese = Self(locale: Locale(identifier: "zh-Hans"))
     static var resourceBundle: Bundle {
         Bundle.module
     }

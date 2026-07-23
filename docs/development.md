@@ -100,6 +100,11 @@ Keep localizable copy with the target that owns it. Package product copy belongs
 belongs to the `DiskMeerkat` target. Use stable semantic keys, English default values, and comments that explain the
 text to translators. Keep the `DiskMeerkat` brand and machine identifiers unchanged.
 
+The supported runtime localizations are English (`en`) and Simplified Chinese (`zh-Hans`), with English as the
+development language. Use Apple's language and script matching through `Bundle`; do not add a parallel locale
+resolver. In particular, Chinese (China) preferences select `zh-Hans`, while Traditional Chinese preferences fall
+back to English until a `zh-Hant` localization is intentionally added.
+
 The Package catalog at `Packages/DiskMeerkatApp/Localization/Localizable.xcstrings` is the source of truth. Xcode
 compiles string catalogs, but command-line Swift Package Manager copies `.xcstrings` without compiling it. The
 Package therefore ships generated `.strings` files under
@@ -116,8 +121,13 @@ xcrun xcstringstool compile \
 ```
 
 Commit the catalog and generated runtime resources together. Package localization tests compare their keys and values
-to prevent drift. The App shell uses `DiskMeerkat/Localizable.xcstrings` directly because its canonical validation
-builds through Xcode.
+for every supported language and verify compatible format placeholders to prevent drift. The App shell uses
+`DiskMeerkat/Localizable.xcstrings` directly because its canonical validation builds through Xcode. UI tests must set
+`AppleLanguages` and `AppleLocale` independently when language selection or regional formatting is under test.
+
+Release validation requires `en.lproj/Localizable.strings` and `zh-Hans.lproj/Localizable.strings` in both the app
+resources and the embedded `DiskMeerkatApp_DiskMeerkatApp.bundle`. Keep
+`.github/scripts/verify-release-app.sh` aligned with the supported localization set.
 
 ## Testing Strategy
 
@@ -264,8 +274,9 @@ xcodebuild test \
 ```
 
 GitHub CI runs the complete validation suite for every pull request. It also builds the Release app to verify the
-macOS 15.0 deployment target, menu-bar-only bundle setting, and absence of debug UI-test fixture entry points. Xcode
-and Package.swift are the authoritative deployment-version declarations; validation commands must not replace them
-with the host system version. Local validation should still use the narrowest credible checks for the actual change.
-When adding a package, add it to the relevant CI formatting and test commands as well. The
+macOS 15.0 deployment target, menu-bar-only bundle setting, supported app/package localization resources, and absence
+of debug UI-test fixture entry points. Xcode and Package.swift are the authoritative deployment-version declarations;
+validation commands must not replace them with the host system version. Local validation should still use the
+narrowest credible checks for the actual change. When adding a package, add it to the relevant CI formatting and test
+commands as well. The
 [V1 Acceptance Matrix](v1-acceptance.md) records the current requirement and built-product evidence.

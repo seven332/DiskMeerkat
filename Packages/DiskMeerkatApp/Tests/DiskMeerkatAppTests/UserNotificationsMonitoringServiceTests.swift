@@ -150,6 +150,35 @@ final class UserNotificationsMonitoringServiceTests: XCTestCase {
         )
     }
 
+    func testSubmissionResolvesSimplifiedChineseContentWhenRequestIsCreated() async throws {
+        let client = RecordingUserNotificationCenterClient(status: .authorized)
+        let service = UserNotificationsMonitoringService(
+            client: client,
+            locale: Locale(identifier: "zh_CN"),
+            localization: .simplifiedChinese
+        )
+        let candidate = try notificationCandidate(
+            availableBytes: 18_400_000_000,
+            thresholdGigabytes: 20,
+            volumeName: nil
+        )
+
+        try await service.submit(candidate)
+        let requests = await client.requests()
+        let request = try XCTUnwrap(requests.first)
+
+        XCTAssertEqual(
+            request.identifier,
+            UserNotificationsMonitoringService.lowSpaceRequestIdentifier
+        )
+        XCTAssertEqual(request.title, "储存空间不足")
+        XCTAssertEqual(
+            request.body,
+            "“启动磁盘”的可用空间为 18.4 GB，低于你设置的 20 GB 阈值。"
+        )
+        XCTAssertTrue(request.usesDefaultSound)
+    }
+
     func testSubmissionErrorPropagatesAfterRecordingStableRequest() async throws {
         let client = RecordingUserNotificationCenterClient(
             status: .authorized,
