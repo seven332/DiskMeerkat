@@ -94,6 +94,31 @@ Code belongs in `DiskMeerkat/` or the Xcode project only when it genuinely depen
 
 Do not put business logic, data access, reusable views, or unit-testable behavior in the shell. When the correct location is unclear, start in a package. Treat app-target code as an exception that requires a concrete dependency on the target's identity, bundle, lifecycle, or capabilities.
 
+## Localization Resources
+
+Keep localizable copy with the target that owns it. Package product copy belongs to `DiskMeerkatApp`; app-shell copy
+belongs to the `DiskMeerkat` target. Use stable semantic keys, English default values, and comments that explain the
+text to translators. Keep the `DiskMeerkat` brand and machine identifiers unchanged.
+
+The Package catalog at `Packages/DiskMeerkatApp/Localization/Localizable.xcstrings` is the source of truth. Xcode
+compiles string catalogs, but command-line Swift Package Manager copies `.xcstrings` without compiling it. The
+Package therefore ships generated `.strings` files under
+`Packages/DiskMeerkatApp/Sources/DiskMeerkatApp/Resources/<language>.lproj/` so `swift test` and Xcode resolve the
+same Package-owned resources.
+
+After changing the Package catalog, regenerate its runtime resources from the repository root:
+
+```sh
+xcrun xcstringstool compile \
+  Packages/DiskMeerkatApp/Localization/Localizable.xcstrings \
+  --output-directory Packages/DiskMeerkatApp/Sources/DiskMeerkatApp/Resources \
+  --serialization-format text
+```
+
+Commit the catalog and generated runtime resources together. Package localization tests compare their keys and values
+to prevent drift. The App shell uses `DiskMeerkat/Localizable.xcstrings` directly because its canonical validation
+builds through Xcode.
+
 ## Testing Strategy
 
 Keep tests close to the code they cover, and use the lowest layer that can reliably verify the behavior.

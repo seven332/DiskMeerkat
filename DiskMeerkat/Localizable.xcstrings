@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "app.status-window.title" : {
+      "comment" : "Title of the DiskMeerkat status window.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "DiskMeerkat Status"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

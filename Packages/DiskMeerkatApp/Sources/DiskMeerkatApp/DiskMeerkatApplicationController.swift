@@ -39,6 +39,7 @@ public final class DiskMeerkatApplicationController {
         runtime: MonitoringRuntime,
         launchAtLoginService: any LaunchAtLoginService,
         locale: Locale = .autoupdatingCurrent,
+        localization: DiskMeerkatLocalization = .current,
         openNotificationSettings: @escaping @MainActor @Sendable () async -> Void
     ) {
         self.runtime = runtime
@@ -47,6 +48,7 @@ public final class DiskMeerkatApplicationController {
             runtimeClient: MonitoringRuntimePresentationClient(runtime: runtime),
             launchAtLoginService: launchAtLoginService,
             locale: locale,
+            localization: localization,
             openNotificationSettings: openNotificationSettings
         )
     }

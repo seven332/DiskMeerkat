@@ -19,7 +19,14 @@ struct DiskMeerkatApp: App {
         }
         .menuBarExtraStyle(.window)
 
-        Window("DiskMeerkat Status", id: DiskMeerkatSceneIdentifier.status) {
+        Window(
+            String(
+                localized: "app.status-window.title",
+                defaultValue: "DiskMeerkat Status",
+                comment: "Title of the DiskMeerkat status window."
+            ),
+            id: DiskMeerkatSceneIdentifier.status
+        ) {
             DiskMeerkatStatusScene(controller: applicationDelegate.controller)
         }
         .defaultSize(width: 640, height: 540)

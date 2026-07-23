@@ -5,14 +5,16 @@ enum MonitoringThresholdDraftError: Error, Equatable, Sendable {
     case wholeNumber
     case outsideSupportedRange
 
-    var message: String {
+    func message(
+        localization: DiskMeerkatLocalization = .current
+    ) -> LocalizedStringResource {
         switch self {
         case .required:
-            "Enter a low-space threshold."
+            localization.validationThresholdRequired
         case .wholeNumber:
-            "Enter a whole number of decimal GB."
+            localization.validationThresholdWholeNumber
         case .outsideSupportedRange:
-            "Enter a value from 1 through 1,000,000 GB."
+            localization.validationThresholdRange
         }
     }
 }

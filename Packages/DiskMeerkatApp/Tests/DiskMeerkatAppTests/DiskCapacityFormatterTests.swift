@@ -9,22 +9,22 @@ final class DiskCapacityFormatterTests: XCTestCase {
         let threshold = try LowSpaceThreshold(gigabytes: 20)
 
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: 82_400_000_000),
                 relativeTo: threshold
             ),
-            "82.4 GB"
+            "82.4"
         )
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: 1_000_000_000_000_000),
                 relativeTo: threshold
             ),
-            "1,000,000 GB"
+            "1,000,000"
         )
         XCTAssertEqual(
-            formatter.string(for: try DiskCapacity(bytes: 0), relativeTo: threshold),
-            "0 GB"
+            formatter.numberString(for: try DiskCapacity(bytes: 0), relativeTo: threshold),
+            "0"
         )
     }
 
@@ -33,11 +33,11 @@ final class DiskCapacityFormatterTests: XCTestCase {
         let threshold = try LowSpaceThreshold(gigabytes: 20)
 
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: 19_950_000_000),
                 relativeTo: threshold
             ),
-            "19.95 GB"
+            "19.95"
         )
     }
 
@@ -46,25 +46,25 @@ final class DiskCapacityFormatterTests: XCTestCase {
         let threshold = try LowSpaceThreshold(gigabytes: 20)
 
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: threshold.bytes - 1),
                 relativeTo: threshold
             ),
-            "19.999999999 GB"
+            "19.999999999"
         )
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: threshold.bytes),
                 relativeTo: threshold
             ),
-            "20 GB"
+            "20"
         )
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: threshold.bytes + 1),
                 relativeTo: threshold
             ),
-            "20.000000001 GB"
+            "20.000000001"
         )
     }
 
@@ -73,18 +73,18 @@ final class DiskCapacityFormatterTests: XCTestCase {
         let threshold = try LowSpaceThreshold(gigabytes: 20)
 
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: threshold.bytes - 1),
                 relativeTo: threshold
             ),
-            "19,999999999 GB"
+            "19,999999999"
         )
         XCTAssertEqual(
-            formatter.string(
+            formatter.numberString(
                 for: try DiskCapacity(bytes: 1_000_000_000_000_000),
                 relativeTo: threshold
             ),
-            "1.000.000 GB"
+            "1.000.000"
         )
     }
 
@@ -93,7 +93,7 @@ final class DiskCapacityFormatterTests: XCTestCase {
         let germanFormatter = DiskCapacityFormatter(locale: Locale(identifier: "de_DE"))
         let threshold = try LowSpaceThreshold(gigabytes: 1_000)
 
-        XCTAssertEqual(englishFormatter.string(for: threshold), "1,000 GB")
-        XCTAssertEqual(germanFormatter.string(for: threshold), "1.000 GB")
+        XCTAssertEqual(englishFormatter.numberString(for: threshold), "1,000")
+        XCTAssertEqual(germanFormatter.numberString(for: threshold), "1.000")
     }
 }

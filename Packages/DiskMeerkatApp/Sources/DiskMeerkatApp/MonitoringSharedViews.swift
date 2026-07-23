@@ -7,21 +7,21 @@ struct MonitoringStatusBadge: View {
         MonitoringInlineBadge(text: badgeText, tint: tint)
     }
 
-    private var badgeText: String {
+    private var badgeText: LocalizedStringResource {
         switch state.headline {
         case .stopped:
-            "Stopped"
+            DiskMeerkatLocalization.current.badgeStopped
         case .starting:
-            "Starting"
+            DiskMeerkatLocalization.current.badgeStarting
         case .checking:
-            "Checking"
+            DiskMeerkatLocalization.current.badgeChecking
         case .monitoring:
-            "Monitoring"
+            DiskMeerkatLocalization.current.badgeMonitoring
         case .lowSpace, .lowSpaceAlertSent, .lowSpaceNotificationsOff,
             .lowSpaceDeliveryFailed:
-            "Low space"
+            DiskMeerkatLocalization.current.badgeLowSpace
         case .readFailed:
-            "Check failed"
+            DiskMeerkatLocalization.current.badgeCheckFailed
         }
     }
 
@@ -39,7 +39,7 @@ struct MonitoringStatusBadge: View {
 }
 
 struct MonitoringInlineBadge: View {
-    let text: String
+    let text: LocalizedStringResource
     let tint: Color
 
     var body: some View {
@@ -71,7 +71,9 @@ struct MonitoringSummaryView: View {
                 if state.isCheckInProgress {
                     ProgressView()
                         .controlSize(.small)
-                        .accessibilityLabel("Checking disk")
+                        .accessibilityLabel(
+                            DiskMeerkatLocalization.current.accessibilityCheckingDisk
+                        )
                 }
             }
 
@@ -126,7 +128,7 @@ struct MonitoringCapacityHeroView: View {
             }
 
             if !compact && state.headline != .monitoring {
-                Text(state.headline.text)
+                Text(state.headlineText)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(heroTint)
                     .fixedSize(horizontal: false, vertical: true)
@@ -164,22 +166,22 @@ struct MonitoringCapacityHeroView: View {
     }
 
     private var capacityValueText: String {
-        let suffix = " available"
-        guard state.availableSpaceText.hasSuffix(suffix) else {
-            return state.availableSpaceText
-        }
-        return String(state.availableSpaceText.dropLast(suffix.count))
+        state.availableCapacityText
+            ?? DiskMeerkatLocalization.current.resolve(state.availableSpaceText)
     }
 
-    private var capacityCaptionText: String {
-        state.availableSpaceText.hasSuffix(" available")
-            ? (compact ? "available" : "available on the startup disk")
-            : "on the startup disk"
+    private var capacityCaptionText: LocalizedStringResource {
+        guard state.capacityKind == .available else {
+            return DiskMeerkatLocalization.current.capacitySubtitleOnStartupDisk
+        }
+        return compact
+            ? DiskMeerkatLocalization.current.capacitySubtitleAvailable
+            : DiskMeerkatLocalization.current.capacitySubtitleAvailableOnStartupDisk
     }
 }
 
 struct MonitoringFactPill: View {
-    let text: String
+    let text: LocalizedStringResource
     let systemImage: String
 
     var body: some View {
@@ -198,13 +200,19 @@ struct MonitoringScheduleStripView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            scheduleItem(title: "Last check", date: state.lastSuccessfulCheckAt, fallback: "Not yet")
+            scheduleItem(
+                title: DiskMeerkatLocalization.current.scheduleLastCheck,
+                date: state.lastSuccessfulCheckAt,
+                fallback: DiskMeerkatLocalization.current.scheduleNotYet
+            )
             Divider()
                 .frame(height: 32)
             scheduleItem(
-                title: "Next check",
+                title: DiskMeerkatLocalization.current.scheduleNextCheck,
                 date: state.nextScheduledCheckAt,
-                fallback: state.isCheckInProgress ? "After this check" : "Not scheduled"
+                fallback: state.isCheckInProgress
+                    ? DiskMeerkatLocalization.current.scheduleAfterThisCheck
+                    : DiskMeerkatLocalization.current.scheduleNotScheduled
             )
         }
         .padding(.horizontal, 12)
@@ -212,7 +220,11 @@ struct MonitoringScheduleStripView: View {
         .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 11))
     }
 
-    private func scheduleItem(title: String, date: Date?, fallback: String) -> some View {
+    private func scheduleItem(
+        title: LocalizedStringResource,
+        date: Date?,
+        fallback: LocalizedStringResource
+    ) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(title)
                 .font(.caption2)
@@ -226,7 +238,7 @@ struct MonitoringScheduleStripView: View {
 
 struct MonitoringRelativeDateView: View {
     let date: Date?
-    let fallback: String
+    let fallback: LocalizedStringResource
 
     var body: some View {
         if let date {
@@ -239,12 +251,12 @@ struct MonitoringRelativeDateView: View {
 }
 
 struct MonitoringInfoCard<Content: View>: View {
-    let title: String
+    let title: LocalizedStringResource
     let systemImage: String
     let content: Content
 
     init(
-        title: String,
+        title: LocalizedStringResource,
         systemImage: String,
         @ViewBuilder content: () -> Content
     ) {
@@ -273,10 +285,10 @@ struct MonitoringInfoCard<Content: View>: View {
 }
 
 struct MonitoringInfoRow<Value: View>: View {
-    let label: String
+    let label: LocalizedStringResource
     let value: Value
 
-    init(_ label: String, @ViewBuilder value: () -> Value) {
+    init(_ label: LocalizedStringResource, @ViewBuilder value: () -> Value) {
         self.label = label
         self.value = value()
     }
@@ -371,17 +383,26 @@ struct NotificationPermissionView: View {
         if isWorking {
             ProgressView()
                 .controlSize(.small)
-                .accessibilityLabel("Updating notification permission")
+                .accessibilityLabel(
+                    DiskMeerkatLocalization.current.accessibilityUpdatingNotificationPermission
+                )
         } else if permission.kind == .authorized {
-            MonitoringInlineBadge(text: "Ready", tint: .green)
+            MonitoringInlineBadge(text: DiskMeerkatLocalization.current.actionReady, tint: .green)
         } else if permission.canRequestAuthorization {
-            Button("Enable", action: enable)
-                .accessibilityIdentifier(enableIdentifier)
+            Button(action: enable) {
+                Text(DiskMeerkatLocalization.current.actionEnable)
+            }
+            .accessibilityIdentifier(enableIdentifier)
         } else if permission.canOpenSettings {
-            Button("Open Settings", action: openSettings)
-                .accessibilityIdentifier(openSettingsIdentifier)
+            Button(action: openSettings) {
+                Text(DiskMeerkatLocalization.current.actionOpenSettings)
+            }
+            .accessibilityIdentifier(openSettingsIdentifier)
         } else {
-            MonitoringInlineBadge(text: "Unavailable", tint: .orange)
+            MonitoringInlineBadge(
+                text: DiskMeerkatLocalization.current.actionUnavailable,
+                tint: .orange
+            )
         }
     }
 
@@ -400,25 +421,29 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Label("Welcome to DiskMeerkat", systemImage: "internaldrive")
+            Label(DiskMeerkatLocalization.current.onboardingTitle, systemImage: "internaldrive")
                 .font(.title2.weight(.semibold))
-            Text("DiskMeerkat watches your startup disk and alerts you when available space falls below your limit.")
+            Text(DiskMeerkatLocalization.current.onboardingDetail)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 8) {
                 GridRow {
-                    Text("Monitoring")
+                    Text(DiskMeerkatLocalization.current.onboardingMonitoring)
                         .foregroundStyle(.secondary)
                     Text(state.volumeName)
                 }
                 GridRow {
-                    Text("Low-space alert")
+                    Text(DiskMeerkatLocalization.current.onboardingLowSpaceAlert)
                         .foregroundStyle(.secondary)
-                    Text(state.thresholdText.replacingOccurrences(of: "Alert below ", with: "Below "))
+                    Text(
+                        DiskMeerkatLocalization.current.belowThreshold(
+                            state.thresholdValueText
+                        )
+                    )
                 }
                 GridRow {
-                    Text("Check interval")
+                    Text(DiskMeerkatLocalization.current.onboardingCheckInterval)
                         .foregroundStyle(.secondary)
                     Text(state.intervalText)
                 }
@@ -426,23 +451,33 @@ struct OnboardingView: View {
 
             HStack {
                 if state.notificationPermission.canRequestAuthorization {
-                    Button("Enable Notifications", action: enableNotifications)
-                        .accessibilityIdentifier(
-                            DiskMeerkatAccessibilityIdentifiers.statusEnableNotifications
-                        )
-                        .buttonStyle(.borderedProminent)
-                        .disabled(isUpdatingNotificationPermission || isCompleting)
+                    Button(action: enableNotifications) {
+                        Text(DiskMeerkatLocalization.current.onboardingEnableNotifications)
+                    }
+                    .accessibilityIdentifier(
+                        DiskMeerkatAccessibilityIdentifiers.statusEnableNotifications
+                    )
+                    .buttonStyle(.borderedProminent)
+                    .disabled(isUpdatingNotificationPermission || isCompleting)
                 } else if state.notificationPermission.canOpenSettings {
-                    Button("Open Notification Settings", action: openNotificationSettings)
-                        .disabled(isUpdatingNotificationPermission || isCompleting)
-                        .accessibilityIdentifier(
-                            DiskMeerkatAccessibilityIdentifiers.statusOpenNotificationSettings
+                    Button(action: openNotificationSettings) {
+                        Text(
+                            DiskMeerkatLocalization.current
+                                .onboardingOpenNotificationSettings
                         )
+                    }
+                    .disabled(isUpdatingNotificationPermission || isCompleting)
+                    .accessibilityIdentifier(
+                        DiskMeerkatAccessibilityIdentifiers.statusOpenNotificationSettings
+                    )
                 }
-                Button(
-                    state.notificationPermission.kind == .authorized ? "Continue" : "Not Now",
-                    action: dismiss
-                )
+                Button(action: dismiss) {
+                    Text(
+                        state.notificationPermission.kind == .authorized
+                            ? DiskMeerkatLocalization.current.actionContinue
+                            : DiskMeerkatLocalization.current.actionNotNow
+                    )
+                }
                 .disabled(isCompleting)
                 .keyboardShortcut(.cancelAction)
                 .accessibilityIdentifier(

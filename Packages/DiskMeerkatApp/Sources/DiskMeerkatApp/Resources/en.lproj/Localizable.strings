@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>accessibility.capacity</key>
+	<string>%1$@, %2$@</string>
+	<key>accessibility.checking-disk</key>
+	<string>Checking disk</string>
+	<key>accessibility.saving-settings</key>
+	<string>Saving settings</string>
+	<key>accessibility.status</key>
+	<string>DiskMeerkat. %1$@. %2$@.</string>
+	<key>accessibility.threshold</key>
+	<string>Low-space threshold in decimal gigabytes</string>
+	<key>accessibility.threshold-error</key>
+	<string>Threshold error: %@</string>
+	<key>accessibility.updating-notification-permission</key>
+	<string>Updating notification permission</string>
+	<key>action.cancel</key>
+	<string>Cancel</string>
+	<key>action.check-now</key>
+	<string>Check Now</string>
+	<key>action.checking</key>
+	<string>Checking…</string>
+	<key>action.continue</key>
+	<string>Continue</string>
+	<key>action.enable</key>
+	<string>Enable</string>
+	<key>action.enabled</key>
+	<string>Enabled</string>
+	<key>action.not-now</key>
+	<string>Not Now</string>
+	<key>action.open-settings</key>
+	<string>Open Settings</string>
+	<key>action.ready</key>
+	<string>Ready</string>
+	<key>action.save</key>
+	<string>Save</string>
+	<key>action.settings</key>
+	<string>Settings</string>
+	<key>action.unavailable</key>
+	<string>Unavailable</string>
+	<key>badge.check-failed</key>
+	<string>Check failed</string>
+	<key>badge.checking</key>
+	<string>Checking</string>
+	<key>badge.low-space</key>
+	<string>Low space</string>
+	<key>badge.monitoring</key>
+	<string>Monitoring</string>
+	<key>badge.starting</key>
+	<string>Starting</string>
+	<key>badge.stopped</key>
+	<string>Stopped</string>
+	<key>capacity.available</key>
+	<string>%@ available</string>
+	<key>capacity.gigabytes</key>
+	<string>%@ GB</string>
+	<key>capacity.subtitle.available</key>
+	<string>available</string>
+	<key>capacity.subtitle.available-on-startup-disk</key>
+	<string>available on the startup disk</string>
+	<key>capacity.subtitle.on-startup-disk</key>
+	<string>on the startup disk</string>
+	<key>capacity.unavailable</key>
+	<string>Available space unavailable</string>
+	<key>disk.startup</key>
+	<string>Startup Disk</string>
+	<key>interval.hour.one</key>
+	<string>1 hour</string>
+	<key>interval.hour.other</key>
+	<string>%lld hours</string>
+	<key>interval.minute.one</key>
+	<string>1 minute</string>
+	<key>interval.minute.other</key>
+	<string>%lld minutes</string>
+	<key>launch-at-login.changed.detail</key>
+	<string>DiskMeerkat refreshed the switch to match the actual system state.</string>
+	<key>launch-at-login.changed.title</key>
+	<string>Launch at Login changed in System Settings</string>
+	<key>launch-at-login.disable-failed.detail</key>
+	<string>The switch still shows the actual system state. Try again or review Login Items.</string>
+	<key>launch-at-login.disable-failed.title</key>
+	<string>Couldn't disable Launch at Login</string>
+	<key>launch-at-login.disabled.detail</key>
+	<string>DiskMeerkat starts only when you open it.</string>
+	<key>launch-at-login.disabled.title</key>
+	<string>Launch at Login is off</string>
+	<key>launch-at-login.enable-failed.detail</key>
+	<string>The switch still shows the actual system state. Try again or review Login Items.</string>
+	<key>launch-at-login.enable-failed.title</key>
+	<string>Couldn't enable Launch at Login</string>
+	<key>launch-at-login.enabled.detail</key>
+	<string>DiskMeerkat starts after you sign in.</string>
+	<key>launch-at-login.enabled.title</key>
+	<string>Launch at Login is on</string>
+	<key>launch-at-login.loading.detail</key>
+	<string>DiskMeerkat is reading the current system setting.</string>
+	<key>launch-at-login.loading.title</key>
+	<string>Launch at Login status is loading</string>
+	<key>launch-at-login.requires-approval.detail</key>
+	<string>Review DiskMeerkat in Login Items in System Settings.</string>
+	<key>launch-at-login.requires-approval.title</key>
+	<string>Launch at Login needs approval</string>
+	<key>launch-at-login.unavailable.detail</key>
+	<string>The system login-item service couldn't be accessed.</string>
+	<key>launch-at-login.unavailable.title</key>
+	<string>Launch at Login is unavailable</string>
+	<key>menu.open-status</key>
+	<string>Open Status</string>
+	<key>menu.quit</key>
+	<string>Quit DiskMeerkat</string>
+	<key>menu.subtitle</key>
+	<string>Startup disk monitor</string>
+	<key>monitoring.checking-disk</key>
+	<string>Checking disk…</string>
+	<key>monitoring.headline.low-space</key>
+	<string>Low disk space</string>
+	<key>monitoring.headline.low-space-alert-sent</key>
+	<string>Low disk space · Alert sent</string>
+	<key>monitoring.headline.low-space-delivery-failed</key>
+	<string>Low disk space · Couldn't send alert · Will retry</string>
+	<key>monitoring.headline.low-space-notifications-off</key>
+	<string>Low disk space · Notifications are off</string>
+	<key>monitoring.headline.monitoring</key>
+	<string>Monitoring</string>
+	<key>monitoring.headline.read-failed</key>
+	<string>Couldn't check disk · Will retry</string>
+	<key>monitoring.headline.starting</key>
+	<string>Starting monitoring…</string>
+	<key>monitoring.headline.stopped</key>
+	<string>Monitoring stopped</string>
+	<key>monitoring.status.checking</key>
+	<string>Reading available space on the startup disk.</string>
+	<key>monitoring.status.low-space</key>
+	<string>Available space is below %@.</string>
+	<key>monitoring.status.low-space-alert-sent</key>
+	<string>An alert was submitted for this low-space episode.</string>
+	<key>monitoring.status.low-space-delivery-failed</key>
+	<string>Monitoring continues and a later eligible check may retry the alert.</string>
+	<key>monitoring.status.low-space-notifications-off</key>
+	<string>Monitoring continues, but DiskMeerkat cannot currently send alerts.</string>
+	<key>monitoring.status.monitoring</key>
+	<string>DiskMeerkat will alert when available space falls below %@.</string>
+	<key>monitoring.status.read-failed-no-value</key>
+	<string>No successful disk reading is available yet.</string>
+	<key>monitoring.status.read-failed-with-value</key>
+	<string>The last successful value remains visible.</string>
+	<key>monitoring.status.starting</key>
+	<string>Restoring saved settings and notification status.</string>
+	<key>monitoring.status.stopped</key>
+	<string>Monitoring is not running.</string>
+	<key>monitoring.status.stopped-load-failed</key>
+	<string>Saved monitoring state couldn't be loaded.</string>
+	<key>monitoring.suppression-explanation</key>
+	<string>Another alert becomes eligible after available space rises above %@ and later falls below it again.</string>
+	<key>notice.configuration-save.detail</key>
+	<string>The previous settings and schedule remain active.</string>
+	<key>notice.configuration-save.title</key>
+	<string>Couldn't save settings</string>
+	<key>notice.disk-read.no-value.detail</key>
+	<string>DiskMeerkat will retry on the next check.</string>
+	<key>notice.disk-read.title</key>
+	<string>Couldn't check the startup disk</string>
+	<key>notice.disk-read.with-value.detail</key>
+	<string>The last successful value is shown. DiskMeerkat will retry.</string>
+	<key>notice.notification-permission.detail</key>
+	<string>Disk monitoring continues without changing the current permission.</string>
+	<key>notice.notification-permission.title</key>
+	<string>Couldn't update notification permission</string>
+	<key>notice.notification-status.detail</key>
+	<string>Disk monitoring continues. Try refreshing notification status later.</string>
+	<key>notice.notification-status.title</key>
+	<string>Couldn't read notification status</string>
+	<key>notice.notification-submission.detail</key>
+	<string>The episode remains eligible and a later check may retry.</string>
+	<key>notice.notification-submission.title</key>
+	<string>Couldn't send the low-space alert</string>
+	<key>notice.persistence.load.detail</key>
+	<string>Monitoring is stopped so the problem can be reviewed safely.</string>
+	<key>notice.persistence.load.title</key>
+	<string>Couldn't load saved monitoring state</string>
+	<key>notice.persistence.save.detail</key>
+	<string>In-memory monitoring continues and DiskMeerkat will retry.</string>
+	<key>notice.persistence.save.title</key>
+	<string>Couldn't save monitoring state</string>
+	<key>notification.low-space.body</key>
+	<string>%1$@ has %2$@ available, below your %3$@ limit.</string>
+	<key>notification.low-space.title</key>
+	<string>Disk space is low</string>
+	<key>onboarding.check-interval</key>
+	<string>Check interval</string>
+	<key>onboarding.detail</key>
+	<string>DiskMeerkat watches your startup disk and alerts you when available space falls below your limit.</string>
+	<key>onboarding.enable-notifications</key>
+	<string>Enable Notifications</string>
+	<key>onboarding.low-space-alert</key>
+	<string>Low-space alert</string>
+	<key>onboarding.monitoring</key>
+	<string>Monitoring</string>
+	<key>onboarding.open-notification-settings</key>
+	<string>Open Notification Settings</string>
+	<key>onboarding.title</key>
+	<string>Welcome to DiskMeerkat</string>
+	<key>permission.authorized.detail</key>
+	<string>DiskMeerkat can submit low-space alerts.</string>
+	<key>permission.authorized.title</key>
+	<string>Notifications are enabled</string>
+	<key>permission.denied.detail</key>
+	<string>Monitoring continues. Allow alerts in System Settings if you want notifications.</string>
+	<key>permission.denied.title</key>
+	<string>Notifications are off</string>
+	<key>permission.not-determined.detail</key>
+	<string>Enable notifications to receive low-space alerts.</string>
+	<key>permission.not-determined.title</key>
+	<string>Notifications are not enabled</string>
+	<key>permission.unavailable.detail</key>
+	<string>Monitoring continues without relying on notification permission.</string>
+	<key>permission.unavailable.title</key>
+	<string>Notification status is unavailable</string>
+	<key>runtime.not-connected</key>
+	<string>The app is not connected to its monitoring runtime yet.</string>
+	<key>schedule.after-this-check</key>
+	<string>After this check</string>
+	<key>schedule.last-check</key>
+	<string>Last check</string>
+	<key>schedule.next-check</key>
+	<string>Next check</string>
+	<key>schedule.not-scheduled</key>
+	<string>Not scheduled</string>
+	<key>schedule.not-yet</key>
+	<string>Not yet</string>
+	<key>settings.alert-threshold</key>
+	<string>Alert threshold</string>
+	<key>settings.alert-threshold.detail</key>
+	<string>Notify when available space is below this value.</string>
+	<key>settings.check-interval</key>
+	<string>Check interval</string>
+	<key>settings.gigabytes-unit</key>
+	<string>GB</string>
+	<key>settings.launch-at-login</key>
+	<string>Launch at Login</string>
+	<key>settings.login-items</key>
+	<string>Login Items</string>
+	<key>settings.low-space-alerts</key>
+	<string>Low-space alerts</string>
+	<key>settings.save-error.already-saving</key>
+	<string>Another settings save is still in progress.</string>
+	<key>settings.save-error.failed</key>
+	<string>Couldn't save settings. Your previous settings remain active.</string>
+	<key>settings.save-error.not-running</key>
+	<string>Monitoring is not running, so settings couldn't be saved.</string>
+	<key>settings.section.monitoring</key>
+	<string>Monitoring</string>
+	<key>settings.section.notifications</key>
+	<string>Notifications</string>
+	<key>settings.section.startup</key>
+	<string>Startup</string>
+	<key>settings.startup-disk</key>
+	<string>Startup disk</string>
+	<key>settings.threshold-field</key>
+	<string>Threshold</string>
+	<key>status.alert-below</key>
+	<string>Alert below</string>
+	<key>status.automatic-checks</key>
+	<string>Your startup disk is checked automatically in the background.</string>
+	<key>status.check-every</key>
+	<string>Check every</string>
+	<key>status.current</key>
+	<string>Current status</string>
+	<key>status.monitoring</key>
+	<string>Monitoring</string>
+	<key>status.schedule</key>
+	<string>Schedule</string>
+	<key>threshold.alert-below</key>
+	<string>Alert below %@</string>
+	<key>threshold.below</key>
+	<string>Below %@</string>
+	<key>validation.threshold.range</key>
+	<string>Enter a value from 1 through 1,000,000 GB.</string>
+	<key>validation.threshold.required</key>
+	<string>Enter a low-space threshold.</string>
+	<key>validation.threshold.whole-number</key>
+	<string>Enter a whole number of decimal GB.</string>
+</dict>
+</plist>

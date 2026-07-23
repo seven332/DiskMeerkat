@@ -11,8 +11,10 @@ final class MonitoringPresentationStateTests: XCTestCase {
 
         XCTAssertEqual(state.headline, .stopped)
         XCTAssertEqual(state.volumeName, "Startup Disk")
-        XCTAssertEqual(state.availableSpaceText, "Available space unavailable")
-        XCTAssertEqual(state.statusDetail, "Monitoring is not running.")
+        XCTAssertEqual(state.capacityKind, .unavailable)
+        XCTAssertNil(state.availableCapacityText)
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "Available space unavailable")
+        XCTAssertEqual(resolvedEnglish(state.statusDetail), "Monitoring is not running.")
         XCTAssertFalse(state.canCheckNow)
         XCTAssertTrue(state.shouldShowOnboarding)
         XCTAssertEqual(state.symbolName, "internaldrive.fill")
@@ -21,7 +23,8 @@ final class MonitoringPresentationStateTests: XCTestCase {
     func testStartingAndFirstRunningCheckHaveExplicitProgressCopy() {
         var state = presentation(snapshot: snapshot(lifecycleState: .starting))
         XCTAssertEqual(state.headline, .starting)
-        XCTAssertEqual(state.availableSpaceText, "Checking disk…")
+        XCTAssertEqual(state.capacityKind, .checking)
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "Checking disk…")
         XCTAssertFalse(state.canCheckNow)
 
         state = presentation(
@@ -31,7 +34,10 @@ final class MonitoringPresentationStateTests: XCTestCase {
             )
         )
         XCTAssertEqual(state.headline, .checking)
-        XCTAssertEqual(state.statusDetail, "Reading available space on the startup disk.")
+        XCTAssertEqual(
+            resolvedEnglish(state.statusDetail),
+            "Reading available space on the startup disk."
+        )
         XCTAssertTrue(state.isCheckInProgress)
         XCTAssertFalse(state.canCheckNow)
     }
@@ -52,9 +58,11 @@ final class MonitoringPresentationStateTests: XCTestCase {
 
         XCTAssertEqual(state.headline, .monitoring)
         XCTAssertEqual(state.volumeName, "Macintosh HD")
-        XCTAssertEqual(state.availableSpaceText, "42 GB available")
+        XCTAssertEqual(state.capacityKind, .available)
+        XCTAssertEqual(state.availableCapacityText, "42 GB")
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "42 GB available")
         XCTAssertEqual(
-            state.statusDetail,
+            resolvedEnglish(state.statusDetail),
             "DiskMeerkat will alert when available space falls below 20 GB."
         )
         XCTAssertTrue(state.isCheckInProgress)
@@ -79,7 +87,8 @@ final class MonitoringPresentationStateTests: XCTestCase {
         )
 
         XCTAssertEqual(state.headline, .lowSpaceAlertSent)
-        XCTAssertEqual(state.availableSpaceText, "18 GB available")
+        XCTAssertEqual(state.availableCapacityText, "18 GB")
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "18 GB available")
         XCTAssertTrue(state.isCheckInProgress)
         XCTAssertFalse(state.canCheckNow)
     }
@@ -155,9 +164,12 @@ final class MonitoringPresentationStateTests: XCTestCase {
         )
 
         XCTAssertEqual(state.headline, .readFailed)
-        XCTAssertEqual(state.availableSpaceText, "52 GB available")
+        XCTAssertEqual(state.availableCapacityText, "52 GB")
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "52 GB available")
         XCTAssertEqual(state.notices.map(\.kind), [.diskRead])
-        XCTAssertTrue(state.notices[0].detail.contains("last successful value"))
+        XCTAssertTrue(
+            resolvedEnglish(state.notices[0].detail).contains("last successful value")
+        )
     }
 
     func testMissingVolumeNameUsesTheStartupDiskFallback() {
@@ -186,7 +198,8 @@ final class MonitoringPresentationStateTests: XCTestCase {
         )
 
         XCTAssertEqual(state.headline, .readFailed)
-        XCTAssertEqual(state.availableSpaceText, "Available space unavailable")
+        XCTAssertEqual(state.capacityKind, .unavailable)
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "Available space unavailable")
         XCTAssertEqual(state.notices.map(\.kind), [.diskRead])
     }
 
@@ -230,7 +243,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
                 )
             )
             XCTAssertEqual(state.notices.map(\.kind), [.persistence])
-            XCTAssertEqual(state.notices[0].title, title)
+            XCTAssertEqual(resolvedEnglish(state.notices[0].title), title)
         }
     }
 
@@ -247,7 +260,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
             )
 
             XCTAssertEqual(state.notices.map(\.kind), [.notification])
-            XCTAssertEqual(state.notices[0].title, title)
+            XCTAssertEqual(resolvedEnglish(state.notices[0].title), title)
         }
     }
 
@@ -304,7 +317,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
             XCTAssertTrue(state.launchAtLogin.canToggle)
             XCTAssertTrue(state.launchAtLogin.canOpenSettings)
             XCTAssertTrue(state.launchAtLogin.requiresAttention)
-            XCTAssertEqual(state.launchAtLogin.title, title)
+            XCTAssertEqual(resolvedEnglish(state.launchAtLogin.title), title)
             XCTAssertEqual(state.notices.map(\.kind), [.launchAtLogin])
         }
     }
@@ -324,11 +337,14 @@ final class MonitoringPresentationStateTests: XCTestCase {
                 )
             ),
             launchAtLoginSnapshot: nil,
-            locale: Locale(identifier: "de_DE")
+            locale: Locale(identifier: "de_DE"),
+            localization: englishLocalization
         )
 
-        XCTAssertEqual(state.availableSpaceText, "19,5 GB available")
-        XCTAssertEqual(state.thresholdText, "Alert below 20 GB")
+        XCTAssertEqual(state.availableCapacityText, "19,5 GB")
+        XCTAssertEqual(resolvedEnglish(state.availableSpaceText), "19,5 GB available")
+        XCTAssertEqual(state.thresholdValueText, "20 GB")
+        XCTAssertEqual(resolvedEnglish(state.thresholdText), "Alert below 20 GB")
     }
 
     func testEverySupportedIntervalHasConciseDisplayCopy() {
@@ -348,7 +364,7 @@ final class MonitoringPresentationStateTests: XCTestCase {
                 interval: interval
             )
             let state = presentation(snapshot: snapshot(configuration: configuration))
-            XCTAssertEqual(state.intervalText, copy)
+            XCTAssertEqual(resolvedEnglish(state.intervalText), copy)
         }
     }
 
@@ -359,7 +375,8 @@ final class MonitoringPresentationStateTests: XCTestCase {
         MonitoringPresentationState(
             snapshot: snapshot,
             launchAtLoginSnapshot: launchAtLoginSnapshot,
-            locale: locale
+            locale: locale,
+            localization: englishLocalization
         )
     }
 
